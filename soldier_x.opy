@@ -84,128 +84,128 @@ settings {
 }
 
 #Global variables
-globalvar talent_names 4
-globalvar unique_talents 5
-globalvar always_available_talents 6
-globalvar talent_descriptions 7
-globalvar orb_rarity_colors 8
-globalvar talent_rarity_colors 9
-globalvar xp_orb_locations 10
-globalvar xp_orb_effects 11
-globalvar antiCrashActivated 12
-globalvar xp_orb_values 13
-globalvar xp_orb_mines 14
-globalvar dummy_bot_spawn_position 15
-globalvar dummy_bot_spawn_facing 16
-globalvar upgrade_information 17
-globalvar amount_of_dummy_bots 19
-globalvar vote_cooldown 22
-globalvar lifesteal_total_healing 33
-globalvar lifesteal_time_in_combat 34
-globalvar health_regen_total_healing 36
-globalvar health_regen_time_in_combat 37
-globalvar health_potions_total_healing 38
-globalvar health_potions_time_in_combat 39
-globalvar ignore_pain_total_resisted 40
-globalvar ignore_pain_time_in_combat 41
-globalvar additional_information 43
-globalvar pathfinding_positions 45
-globalvar pathfinding_connections 46
-globalvar talent_information_unique 48
-globalvar talent_information_expand_mind 49
-globalvar xp_code 50
-globalvar endless_mode 18
-globalvar match_is_in_showdown 28
-globalvar player_who_started_vote 27
-globalvar players_that_voted_yes 21
-globalvar players_that_voted_no 25
-globalvar someone_is_voting_to_change_map 20
+globalvar talent_names
+globalvar unique_talents
+globalvar always_available_talents
+globalvar talent_descriptions
+globalvar orb_rarity_colors
+globalvar talent_rarity_colors
+globalvar xp_orb_locations
+globalvar xp_orb_effects
+globalvar antiCrashActivated
+globalvar xp_orb_values
+globalvar xp_orb_mines
+globalvar dummy_bot_spawn_position
+globalvar dummy_bot_spawn_facing
+globalvar upgrade_information
+globalvar amount_of_dummy_bots
+globalvar vote_cooldown
+globalvar lifesteal_total_healing
+globalvar lifesteal_time_in_combat
+globalvar health_regen_total_healing
+globalvar health_regen_time_in_combat
+globalvar health_potions_total_healing
+globalvar health_potions_time_in_combat
+globalvar ignore_pain_total_resisted
+globalvar ignore_pain_time_in_combat
+globalvar additional_information
+globalvar pathfinding_positions
+globalvar pathfinding_connections
+globalvar talent_information_unique
+globalvar talent_information_expand_mind
+globalvar xp_code
+globalvar endless_mode
+globalvar match_is_in_showdown
+globalvar player_who_started_vote
+globalvar players_that_voted_yes
+globalvar players_that_voted_no
+globalvar someone_is_voting_to_change_map
 
 #Player variables
 
-playervar pathfinding_pos_pre_current_next 11
-playervar which_unique_talents_unlocked 15
-playervar juggernaut_cooldown 27
-playervar dive_bomb_cooldown 30
-playervar is_electrified 39
-playervar poison_vial_effects 40
-playervar juggernaut_charge 68
-playervar time_since_poison_vial_exploded 76
-playervar player_name 87
-playervar luck 92
-playervar typing_in_xp_code 94
-playervar code_cooldown 96
-playervar poison_vial_clouds_spawned 98
-playervar cloudData 99
-playervar indexMemory 101
-playervar interactablePlayers 105
-playervar javelin_middle_position 107
-playervar health_potion_cooldown_memory 108
-playervar projPos 109
-playervar projPosIn0032 110
-playervar healing_done_in_combat 119
-playervar xp_orb_destination 124
-playervar dropped_xp_orb 125
-playervar replace_replacing_or_cancelled 47
-playervar talents_you_do_not_have 43
-playervar bought_and_upgraded_talents 13
-playervar player_temp_effects 25
-playervar browsing_shop 0
-playervar is_using_ability 28
-playervar talent_counter_or_position_etc 12
-playervar in_combat 20
-playervar stats 24
-playervar possible_talents 7
-playervar stealth_cooldown 26
-playervar offered_talents_in_shop 3
-playervar selected_talent 1
-playervar bought_talents 6
-playervar is_using_hearthstone 60
-playervar amount_of_potions_or_vials 35
-playervar amount_of_talents_purchased 8
-playervar xp_boost_is_active 72
-playervar can_enter_shop 18
-playervar experience_current 85
-playervar experience_max 93
-playervar skipped_a_talent 32
-playervar random_integer_between_0_to_5 4
-playervar canVote_hasVoted_canStartVote 31
-playervar time_since_joined_match 23
-playervar using_one_of_the_hearthstones 95
+playervar pathfinding_pos_pre_current_next
+playervar which_unique_talents_unlocked
+playervar juggernaut_cooldown
+playervar dive_bomb_cooldown
+playervar is_electrified
+playervar poison_vial_effects
+playervar juggernaut_charge
+playervar time_since_poison_vial_exploded
+playervar player_name
+playervar luck
+playervar typing_in_xp_code
+playervar code_cooldown
+playervar poison_vial_clouds_spawned
+playervar cloudData
+playervar indexMemory
+playervar interactablePlayers
+playervar javelin_middle_position
+playervar health_potion_cooldown_memory
+playervar projPos
+playervar projPosIn0032
+playervar healing_done_in_combat
+playervar xp_orb_destination
+playervar dropped_xp_orb
+playervar replace_replacing_or_cancelled
+playervar talents_you_do_not_have
+playervar talent_ranks
+playervar player_temp_effects
+playervar browsing_shop
+playervar is_using_ability
+playervar talent_counter_or_position_etc
+playervar in_combat
+playervar stats
+playervar possible_talents
+playervar stealth_cooldown
+playervar offered_talents_in_shop
+playervar selected_talent
+playervar bought_talents
+playervar is_using_hearthstone
+playervar amount_of_potions_or_vials
+playervar amount_of_talents_purchased
+playervar xp_boost_is_active
+playervar can_enter_shop
+playervar experience_current
+playervar experience_max
+playervar skipped_a_talent
+playervar random_integer_between_0_to_5
+playervar canVote_hasVoted_canStartVote
+playervar time_since_joined_match
+playervar using_one_of_the_hearthstones
 
 #Subroutine names
 
-subroutine create_talent_hud_texts 3
-subroutine create_talent_helpers 4
-subroutine If_map 27
-subroutine juggernaut_effects 47
-subroutine start_pathfinding 56
-subroutine map_black_forest 57
-subroutine map_blizzard_world 58
-subroutine map_chateau_guillard 60
-subroutine map_antarctica 62
-subroutine map_eichenwalde 63
-subroutine map_hollywood 64
-subroutine map_kanezaka 65
-subroutine map_kings_row 66
-subroutine map_malevento 67
-subroutine map_paris 68
-subroutine map_petra 69
-subroutine map_necropolis 70
-subroutine bloodthirst_effects 71
-subroutine shadowstrike 73
-subroutine dropped_burning_soul_orb 74
-subroutine replace_talent 75
-subroutine juggernaut_knockback 78
-subroutine juggernaut_impulse_sound_cd 79
-subroutine cancel_juggernaut 80
-subroutine cancel_shop_camera 81
-subroutine new_reaper_pathfinding 83
-subroutine dropped_xp_orb 85
-subroutine break_stealth 1
-subroutine using_one_of_the_hearthstones 82
-subroutine stopped_using_hearthstone 84
-subroutine spawned_with_fireball 46
+subroutine create_talent_hud_texts
+subroutine create_talent_helpers
+subroutine If_map
+subroutine juggernaut_effects
+subroutine start_pathfinding
+subroutine map_black_forest
+subroutine map_blizzard_world
+subroutine map_chateau_guillard
+subroutine map_antarctica
+subroutine map_eichenwalde
+subroutine map_hollywood
+subroutine map_kanezaka
+subroutine map_kings_row
+subroutine map_malevento
+subroutine map_paris
+subroutine map_petra
+subroutine map_necropolis
+subroutine bloodthirst_effects
+subroutine shadowstrike
+subroutine dropped_burning_soul_orb
+subroutine replace_talent
+subroutine juggernaut_knockback
+subroutine juggernaut_impulse_sound_cd
+subroutine cancel_juggernaut
+subroutine cancel_shop_camera
+subroutine new_reaper_pathfinding
+subroutine dropped_xp_orb
+subroutine break_stealth
+subroutine using_one_of_the_hearthstones
+subroutine stopped_using_hearthstone
+subroutine spawned_with_fireball
 
 #Activated extensions
 
@@ -259,7 +259,7 @@ rule "GENERAL - - - Global Variables":
     createInWorldText(localPlayer if (localPlayer.browsing_shop == true and localPlayer.isHoldingButton(Button.JUMP) == true and localPlayer.replace_replacing_or_cancelled[0] == false and localPlayer.replace_replacing_or_cancelled[1] == false and localPlayer.canVote_hasVoted_canStartVote[1] == true) == true else null, "{0}".format(talent_information_unique[talent_names.index(localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]])]), localPlayer.selected_talent_location + vect(0, -1 * 1 * 1 * 1.5, 0), 1, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.WHITE, SpecVisibility.DEFAULT)
     #Talent Information Expand Mind
     createInWorldText(localPlayer if (localPlayer.browsing_shop == true and localPlayer.isHoldingButton(Button.JUMP) == true and localPlayer.replace_replacing_or_cancelled[0] == false and localPlayer.replace_replacing_or_cancelled[1] == false and localPlayer.canVote_hasVoted_canStartVote[1] == true) == true else null, "{0}".format(talent_information_expand_mind[talent_names.index(localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]])]), localPlayer.selected_talent_location + vect(0, -1 * 1 * 1 * 1.375, 0), 1, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.WHITE, SpecVisibility.DEFAULT)
-    createInWorldText(localPlayer if (localPlayer.browsing_shop == true and localPlayer.replace_replacing_or_cancelled[0] == false and localPlayer.replace_replacing_or_cancelled[1] == false and localPlayer.canVote_hasVoted_canStartVote[1] == true) == true and localPlayer.isHoldingButton(Button.JUMP) == true else null, "Rank {0}: Amount healed: {1}% of the damage you dealt during {2}.".format(localPlayer.bought_and_upgraded_talents[0] + 1, round((100 * (0.187 + ((localPlayer.bought_and_upgraded_talents[0] + 1) * 0.063))) * (2.25 - ((localPlayer.bought_and_upgraded_talents[20] + 1) * 0.25))), talent_names[20]) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[0] else "Rank {0}: Duration: {1} sec, {2}".format(localPlayer.bought_and_upgraded_talents[1] + 1, 3.75 + ((localPlayer.bought_and_upgraded_talents[1] + 1) * 1.25), "Healing Received: {0}%, Cooldown: {1} sec.".format(125 + ((localPlayer.bought_and_upgraded_talents[1] + 1) * 25), 45)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[1] else "Rank {0}: Total Shields: {1}.".format(localPlayer.bought_and_upgraded_talents[2] + 1, 40 * (localPlayer.bought_and_upgraded_talents[1] + 1)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[2] else "Rank {0}: Charge Rate: {1}% of the damage you deal with primary fire, Total Armor Repaired: 100.".format(localPlayer.bought_and_upgraded_talents[3] + 1, round(100 * (0.037 + ((localPlayer.bought_and_upgraded_talents[3] + 1) * 0.013)))) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[3] else "Rank {0}: Damage: {1}, Cooldown without hitting any targets: 20 sec.".format(localPlayer.bought_and_upgraded_talents[4] + 1, round(56.25 + ((localPlayer.bought_and_upgraded_talents[4] + 1) * 18.75))) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[4] else "Rank {0}: Duration: {1} sec, {2}.".format(localPlayer.bought_and_upgraded_talents[5] + 1, round(10 + ((localPlayer.bought_and_upgraded_talents[5] + 1) * 2)), "Cooldown: {0} sec, Anti Healing Duration: 4 sec, Damage: 50.".format(20 - ((localPlayer.bought_and_upgraded_talents[5] + 1) * 4))) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[5] else "Rank {0}: Damage: {1}, Cooldown: 20 sec, Charge Duration: 10 sec, Stun Duration: Charge duration + 1.5 sec.".format(localPlayer.bought_and_upgraded_talents[6] + 1, 125 + ((localPlayer.bought_and_upgraded_talents[6] + 1) * 25)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[6] else "Rank {0}: Damage: {1}, Cooldown: 20 sec.".format(localPlayer.bought_and_upgraded_talents[7] + 1, 125 + ((localPlayer.bought_and_upgraded_talents[7] + 1) * 25)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[7] else "Rank {0}: Slow Amount: {2}%, Slow Duration: {1} sec.".format(localPlayer.bought_and_upgraded_talents[7] + 1, 2 + ((localPlayer.bought_and_upgraded_talents[8] + 1) * 0.2), 50 + ((localPlayer.bought_and_upgraded_talents[8] + 1) * 10)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[8] else "Rank {0}: Damage {1}, Charge Rate: {2}% of the damage you deal with primary fire.".format(localPlayer.bought_and_upgraded_talents[9] + 1, 81.25 + ((localPlayer.bought_and_upgraded_talents[9] + 1) * 18.75), 100 * 0.375) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[9] else "Rank {0}: Cooldown: {1}, Execution range: <25% Health.".format(localPlayer.bought_and_upgraded_talents[10] + 1, 40 - ((localPlayer.bought_and_upgraded_talents[10] + 1) * 6)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[10] else "Rank {0}: Time to deplete fuel from 100-0%: {1} sec, Time to recharge fuel from 0-100%: 10 sec.".format(localPlayer.bought_and_upgraded_talents[11] + 1, 4 + ((localPlayer.bought_and_upgraded_talents[11] + 1) * 1.2)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[11] else "Rank {0}: Healing: {1}% of damage you deal with primary or secondary fire.".format(localPlayer.bought_and_upgraded_talents[12] + 1, (11.2 + ((localPlayer.bought_and_upgraded_talents[12] + 1) * 3.8)) / 100) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[12] else "Rank {0}: Healing: {1}/sec.".format(localPlayer.bought_and_upgraded_talents[13] + 1, 4.5 + ((localPlayer.bought_and_upgraded_talents[13] + 1) * 0.9)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[13] else "Rank {0}: Healing: {1}/potion. Potion Recharge: 15 sec.".format(localPlayer.bought_and_upgraded_talents[14] + 1, 43.75 + ((localPlayer.bought_and_upgraded_talents[14] + 1) * 17.5)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[14] else "Rank {0}: Damage: {1}-{2}. Cooldown: 6 sec.".format(localPlayer.bought_and_upgraded_talents[16] + 1, floor(((localPlayer.bought_and_upgraded_talents[16] + 1) * 0.168) * 40), floor(((localPlayer.bought_and_upgraded_talents[16] + 1) * 0.168) * 120)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[16] else "Rank {0}: Additional Charge Rate: {1}% of the damage you deal with primary fire.".format(localPlayer.bought_and_upgraded_talents[17] + 1, 100 * localPlayer.bought_and_upgraded_talents[17] * 0.075) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[17] else "Rank {0}: Cooldown: {1} sec.".format(localPlayer.bought_and_upgraded_talents[18] + 1, 22.5 - ((localPlayer.bought_and_upgraded_talents[18] + 1) * 2.5)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[18] else "Rank {0}: Damage: {1}, Orb Damage: {2}.".format(localPlayer.bought_and_upgraded_talents[19] + 1, 12 + ((localPlayer.bought_and_upgraded_talents[19] + 1) * 2.4), 75 + ((localPlayer.bought_and_upgraded_talents[19] + 1) * 25)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[19] else "Rank {0}: Duration: {1}, Cooldown: 45 sec, Damage Done: 125%, Damage Taken: 110%.".format(localPlayer.bought_and_upgraded_talents[20] + 1, 3.75 + ((localPlayer.bought_and_upgraded_talents[20] + 1) * 1.25)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[20] else "Rank {0}: Damage: {1}, Cooldown: 12 sec, Radius: 4m.".format(localPlayer.bought_and_upgraded_talents[21] + 1, 75 + ((localPlayer.bought_and_upgraded_talents[21] + 1) * 25)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[21] else "Rank {0}: Damage taken when active: {1}%.".format(localPlayer.bought_and_upgraded_talents[22] + 1, 66.666 - ((localPlayer.bought_and_upgraded_talents[22] + 1) * 6.666)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[22] else "Rank {0}: Healing: {1}.".format(localPlayer.bought_and_upgraded_talents[29] + 1, 150 + ((localPlayer.bought_and_upgraded_talents[29] + 1) * 50)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[29] else "Rank {0}: Healing: {1}.".format(localPlayer.bought_and_upgraded_talents[30] + 1, 75 + ((localPlayer.bought_and_upgraded_talents[21] + 1) * 25)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[30] else "Rank {0}: Damage: {1}/Vial, Vial Recharge: 15 sec, Radius: 3m.".format(localPlayer.bought_and_upgraded_talents[31] + 1, 56.25 + ((localPlayer.bought_and_upgraded_talents[31] + 1) * 18.75)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[31] else "Rank {0}: Cooldown reduced: {1} sec, Chance to get an extra charge when picking up an xp orb: {2}%.".format(localPlayer.bought_and_upgraded_talents[32] + 1, localPlayer.bought_and_upgraded_talents[32] + 1, (localPlayer.bought_and_upgraded_talents[32] + 1) * 20) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[32] else "", localPlayer.selected_talent_location + vect(0, -1 * 1 * 1 * 1.625, 0), 1, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.WHITE, SpecVisibility.DEFAULT)
+    createInWorldText(localPlayer if (localPlayer.browsing_shop == true and localPlayer.replace_replacing_or_cancelled[0] == false and localPlayer.replace_replacing_or_cancelled[1] == false and localPlayer.canVote_hasVoted_canStartVote[1] == true) == true and localPlayer.isHoldingButton(Button.JUMP) == true else null, "Rank {0}: Amount healed: {1}% of the damage you dealt during {2}.".format(localPlayer.talent_ranks[0] + 1, round((100 * (0.187 + ((localPlayer.talent_ranks[0] + 1) * 0.063))) * (2.25 - ((localPlayer.talent_ranks[20] + 1) * 0.25))), talent_names[20]) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[0] else "Rank {0}: Duration: {1} sec, {2}".format(localPlayer.talent_ranks[1] + 1, 3.75 + ((localPlayer.talent_ranks[1] + 1) * 1.25), "Healing Received: {0}%, Cooldown: {1} sec.".format(125 + ((localPlayer.talent_ranks[1] + 1) * 25), 45)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[1] else "Rank {0}: Total Shields: {1}.".format(localPlayer.talent_ranks[2] + 1, 40 * (localPlayer.talent_ranks[1] + 1)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[2] else "Rank {0}: Charge Rate: {1}% of the damage you deal with primary fire, Total Armor Repaired: 100.".format(localPlayer.talent_ranks[3] + 1, round(100 * (0.037 + ((localPlayer.talent_ranks[3] + 1) * 0.013)))) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[3] else "Rank {0}: Damage: {1}, Cooldown without hitting any targets: 20 sec.".format(localPlayer.talent_ranks[4] + 1, round(56.25 + ((localPlayer.talent_ranks[4] + 1) * 18.75))) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[4] else "Rank {0}: Duration: {1} sec, {2}.".format(localPlayer.talent_ranks[5] + 1, round(10 + ((localPlayer.talent_ranks[5] + 1) * 2)), "Cooldown: {0} sec, Anti Healing Duration: 4 sec, Damage: 50.".format(20 - ((localPlayer.talent_ranks[5] + 1) * 4))) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[5] else "Rank {0}: Damage: {1}, Cooldown: 20 sec, Charge Duration: 10 sec, Stun Duration: Charge duration + 1.5 sec.".format(localPlayer.talent_ranks[6] + 1, 125 + ((localPlayer.talent_ranks[6] + 1) * 25)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[6] else "Rank {0}: Damage: {1}, Cooldown: 20 sec.".format(localPlayer.talent_ranks[7] + 1, 125 + ((localPlayer.talent_ranks[7] + 1) * 25)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[7] else "Rank {0}: Slow Amount: {2}%, Slow Duration: {1} sec.".format(localPlayer.talent_ranks[7] + 1, 2 + ((localPlayer.talent_ranks[8] + 1) * 0.2), 50 + ((localPlayer.talent_ranks[8] + 1) * 10)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[8] else "Rank {0}: Damage {1}, Charge Rate: {2}% of the damage you deal with primary fire.".format(localPlayer.talent_ranks[9] + 1, 81.25 + ((localPlayer.talent_ranks[9] + 1) * 18.75), 100 * 0.375) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[9] else "Rank {0}: Cooldown: {1}, Execution range: <25% Health.".format(localPlayer.talent_ranks[10] + 1, 40 - ((localPlayer.talent_ranks[10] + 1) * 6)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[10] else "Rank {0}: Time to deplete fuel from 100-0%: {1} sec, Time to recharge fuel from 0-100%: 10 sec.".format(localPlayer.talent_ranks[11] + 1, 4 + ((localPlayer.talent_ranks[11] + 1) * 1.2)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[11] else "Rank {0}: Healing: {1}% of damage you deal with primary or secondary fire.".format(localPlayer.talent_ranks[12] + 1, (11.2 + ((localPlayer.talent_ranks[12] + 1) * 3.8)) / 100) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[12] else "Rank {0}: Healing: {1}/sec.".format(localPlayer.talent_ranks[13] + 1, 4.5 + ((localPlayer.talent_ranks[13] + 1) * 0.9)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[13] else "Rank {0}: Healing: {1}/potion. Potion Recharge: 15 sec.".format(localPlayer.talent_ranks[14] + 1, 43.75 + ((localPlayer.talent_ranks[14] + 1) * 17.5)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[14] else "Rank {0}: Damage: {1}-{2}. Cooldown: 6 sec.".format(localPlayer.talent_ranks[16] + 1, floor(((localPlayer.talent_ranks[16] + 1) * 0.168) * 40), floor(((localPlayer.talent_ranks[16] + 1) * 0.168) * 120)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[16] else "Rank {0}: Additional Charge Rate: {1}% of the damage you deal with primary fire.".format(localPlayer.talent_ranks[17] + 1, 100 * localPlayer.talent_ranks[17] * 0.075) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[17] else "Rank {0}: Cooldown: {1} sec.".format(localPlayer.talent_ranks[18] + 1, 22.5 - ((localPlayer.talent_ranks[18] + 1) * 2.5)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[18] else "Rank {0}: Damage: {1}, Orb Damage: {2}.".format(localPlayer.talent_ranks[19] + 1, 12 + ((localPlayer.talent_ranks[19] + 1) * 2.4), 75 + ((localPlayer.talent_ranks[19] + 1) * 25)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[19] else "Rank {0}: Duration: {1}, Cooldown: 45 sec, Damage Done: 125%, Damage Taken: 110%.".format(localPlayer.talent_ranks[20] + 1, 3.75 + ((localPlayer.talent_ranks[20] + 1) * 1.25)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[20] else "Rank {0}: Damage: {1}, Cooldown: 12 sec, Radius: 4m.".format(localPlayer.talent_ranks[21] + 1, 75 + ((localPlayer.talent_ranks[21] + 1) * 25)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[21] else "Rank {0}: Damage taken when active: {1}%.".format(localPlayer.talent_ranks[22] + 1, 66.666 - ((localPlayer.talent_ranks[22] + 1) * 6.666)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[22] else "Rank {0}: Healing: {1}.".format(localPlayer.talent_ranks[29] + 1, 150 + ((localPlayer.talent_ranks[29] + 1) * 50)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[29] else "Rank {0}: Healing: {1}.".format(localPlayer.talent_ranks[30] + 1, 75 + ((localPlayer.talent_ranks[21] + 1) * 25)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[30] else "Rank {0}: Damage: {1}/Vial, Vial Recharge: 15 sec, Radius: 3m.".format(localPlayer.talent_ranks[31] + 1, 56.25 + ((localPlayer.talent_ranks[31] + 1) * 18.75)) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[31] else "Rank {0}: Cooldown reduced: {1} sec, Chance to get an extra charge when picking up an xp orb: {2}%.".format(localPlayer.talent_ranks[32] + 1, localPlayer.talent_ranks[32] + 1, (localPlayer.talent_ranks[32] + 1) * 20) if localPlayer.offered_talents_in_shop[localPlayer.selected_talent[0]] == talent_names[32] else "", localPlayer.selected_talent_location + vect(0, -1 * 1 * 1 * 1.625, 0), 1, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.WHITE, SpecVisibility.DEFAULT)
     xp_code = [true, iconString(Icon.ARROW_LEFT), iconString(Icon.ARROW_RIGHT), iconString(Icon.CIRCLE), iconString(Icon.ARROW_LEFT)]
 
 
@@ -292,19 +292,19 @@ rule "GENERAL - - - [EACH PLAYER] INIT":
         eventPlayer.stats = [100, 250, 100, 0, 0, 0.65, 1, 0]
         eventPlayer.setMaxHealth(eventPlayer.stats[1])
         #Upgrade Information (or selected talent of bought talents when replacing talents)
-        createInWorldText(eventPlayer if eventPlayer.browsing_shop == true and ((eventPlayer.bought_and_upgraded_talents[talent_names.index(eventPlayer.offered_talents_in_shop[eventPlayer.selected_talent[0]])] > 0 or eventPlayer.replace_replacing_or_cancelled[1] == true) == true) else null, "{0}".format(eventPlayer.bought_talents[eventPlayer.selected_talent[1]]) if eventPlayer.replace_replacing_or_cancelled[1] == true else "{0}".format(upgrade_information[talent_names.index(eventPlayer.offered_talents_in_shop[eventPlayer.selected_talent[0]])]), eventPlayer.selected_talent_location + vect(0, 0.125, 0) if eventPlayer.replace_replacing_or_cancelled[1] == true else eventPlayer.selected_talent_location + vect(0, -1 * 1 * 1 * 1, 0), 1.25, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.WHITE if eventPlayer.replace_replacing_or_cancelled[1] == true else orb_rarity_colors[eventPlayer.bought_and_upgraded_talents[talent_names.index(eventPlayer.offered_talents_in_shop[eventPlayer.selected_talent[0]])]], SpecVisibility.DEFAULT)
+        createInWorldText(eventPlayer if eventPlayer.browsing_shop == true and ((eventPlayer.talent_ranks[talent_names.index(eventPlayer.offered_talents_in_shop[eventPlayer.selected_talent[0]])] > 0 or eventPlayer.replace_replacing_or_cancelled[1] == true) == true) else null, "{0}".format(eventPlayer.bought_talents[eventPlayer.selected_talent[1]]) if eventPlayer.replace_replacing_or_cancelled[1] == true else "{0}".format(upgrade_information[talent_names.index(eventPlayer.offered_talents_in_shop[eventPlayer.selected_talent[0]])]), eventPlayer.selected_talent_location + vect(0, 0.125, 0) if eventPlayer.replace_replacing_or_cancelled[1] == true else eventPlayer.selected_talent_location + vect(0, -1 * 1 * 1 * 1, 0), 1.25, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.WHITE if eventPlayer.replace_replacing_or_cancelled[1] == true else orb_rarity_colors[eventPlayer.talent_ranks[talent_names.index(eventPlayer.offered_talents_in_shop[eventPlayer.selected_talent[0]])]], SpecVisibility.DEFAULT)
         wait()
         #Talent Descriptions
         createInWorldText(eventPlayer if eventPlayer.browsing_shop == true and eventPlayer.replace_replacing_or_cancelled[0] == false and eventPlayer.replace_replacing_or_cancelled[1] == false else null, "" if endless_mode == true and eventPlayer.canVote_hasVoted_canStartVote[1] == false and someone_is_voting_to_change_map == true else "{0}".format(talent_descriptions[talent_names.index(eventPlayer.offered_talents_in_shop[eventPlayer.selected_talent[0]])]), eventPlayer.selected_talent_location + vect(0, -1 * 1 * 1 * 1.125, 0), 1, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.WHITE, SpecVisibility.DEFAULT)
         wait()
         #Left Orb
-        createEffect(null if (eventPlayer.canVote_hasVoted_canStartVote[1] == false and map_is_changing == false or (((eventPlayer.replace_replacing_or_cancelled[0] == true or eventPlayer.replace_replacing_or_cancelled[1] == true) == true) and eventPlayer.selected_talent[0] != 0)) == true else eventPlayer if eventPlayer.browsing_shop == true else null, Effect.ORB, orb_rarity_colors[eventPlayer.bought_and_upgraded_talents[talent_names.index(eventPlayer.bought_talents[eventPlayer.selected_talent[1]])] - 1] if eventPlayer.replace_replacing_or_cancelled[1] == true else orb_rarity_colors[eventPlayer.bought_and_upgraded_talents[talent_names.index(eventPlayer.offered_talents_in_shop[0])]], shop_talent_left_location, 1, EffectReeval.VISIBILITY_POSITION_RADIUS_AND_COLOR)
+        createEffect(null if (eventPlayer.canVote_hasVoted_canStartVote[1] == false and map_is_changing == false or (((eventPlayer.replace_replacing_or_cancelled[0] == true or eventPlayer.replace_replacing_or_cancelled[1] == true) == true) and eventPlayer.selected_talent[0] != 0)) == true else eventPlayer if eventPlayer.browsing_shop == true else null, Effect.ORB, orb_rarity_colors[eventPlayer.talent_ranks[talent_names.index(eventPlayer.bought_talents[eventPlayer.selected_talent[1]])] - 1] if eventPlayer.replace_replacing_or_cancelled[1] == true else orb_rarity_colors[eventPlayer.talent_ranks[talent_names.index(eventPlayer.offered_talents_in_shop[0])]], shop_talent_left_location, 1, EffectReeval.VISIBILITY_POSITION_RADIUS_AND_COLOR)
         wait()
         #Middle Orb
-        createEffect(null if (endless_mode == true and ((eventPlayer.replace_replacing_or_cancelled[0] == true or eventPlayer.replace_replacing_or_cancelled[1] == true) == true)) and eventPlayer.selected_talent[0] != 1 else eventPlayer if eventPlayer.browsing_shop == true else null, Effect.ORB, Color.WHITE if someone_is_voting_to_change_map == true and eventPlayer.canVote_hasVoted_canStartVote[1] == false else Color.WHITE if eventPlayer.replace_replacing_or_cancelled[0] == true and eventPlayer.replace_replacing_or_cancelled[1] == false else orb_rarity_colors[eventPlayer.bought_and_upgraded_talents[talent_names.index(eventPlayer.bought_talents[eventPlayer.selected_talent[1]])] - 1] if eventPlayer.replace_replacing_or_cancelled[1] == true else orb_rarity_colors[eventPlayer.bought_and_upgraded_talents[talent_names.index(eventPlayer.offered_talents_in_shop[1])]], shop_talent_middle_location, 1, EffectReeval.VISIBILITY_POSITION_RADIUS_AND_COLOR)
+        createEffect(null if (endless_mode == true and ((eventPlayer.replace_replacing_or_cancelled[0] == true or eventPlayer.replace_replacing_or_cancelled[1] == true) == true)) and eventPlayer.selected_talent[0] != 1 else eventPlayer if eventPlayer.browsing_shop == true else null, Effect.ORB, Color.WHITE if someone_is_voting_to_change_map == true and eventPlayer.canVote_hasVoted_canStartVote[1] == false else Color.WHITE if eventPlayer.replace_replacing_or_cancelled[0] == true and eventPlayer.replace_replacing_or_cancelled[1] == false else orb_rarity_colors[eventPlayer.talent_ranks[talent_names.index(eventPlayer.bought_talents[eventPlayer.selected_talent[1]])] - 1] if eventPlayer.replace_replacing_or_cancelled[1] == true else orb_rarity_colors[eventPlayer.talent_ranks[talent_names.index(eventPlayer.offered_talents_in_shop[1])]], shop_talent_middle_location, 1, EffectReeval.VISIBILITY_POSITION_RADIUS_AND_COLOR)
         wait()
         #Right Orb
-        createEffect(null if (eventPlayer.canVote_hasVoted_canStartVote[1] == false and map_is_changing == false or (((eventPlayer.replace_replacing_or_cancelled[0] == true or eventPlayer.replace_replacing_or_cancelled[1] == true) == true) and eventPlayer.selected_talent[0] != 2)) == true else eventPlayer if eventPlayer.browsing_shop == true else null, Effect.ORB, orb_rarity_colors[eventPlayer.bought_and_upgraded_talents[talent_names.index(eventPlayer.bought_talents[eventPlayer.selected_talent[1]])] - 1] if eventPlayer.replace_replacing_or_cancelled[1] == true else orb_rarity_colors[eventPlayer.bought_and_upgraded_talents[talent_names.index(eventPlayer.offered_talents_in_shop[2])]], shop_talent_right_location, 1, EffectReeval.VISIBILITY_POSITION_RADIUS_AND_COLOR)
+        createEffect(null if (eventPlayer.canVote_hasVoted_canStartVote[1] == false and map_is_changing == false or (((eventPlayer.replace_replacing_or_cancelled[0] == true or eventPlayer.replace_replacing_or_cancelled[1] == true) == true) and eventPlayer.selected_talent[0] != 2)) == true else eventPlayer if eventPlayer.browsing_shop == true else null, Effect.ORB, orb_rarity_colors[eventPlayer.talent_ranks[talent_names.index(eventPlayer.bought_talents[eventPlayer.selected_talent[1]])] - 1] if eventPlayer.replace_replacing_or_cancelled[1] == true else orb_rarity_colors[eventPlayer.talent_ranks[talent_names.index(eventPlayer.offered_talents_in_shop[2])]], shop_talent_right_location, 1, EffectReeval.VISIBILITY_POSITION_RADIUS_AND_COLOR)
         wait()
         #Left Talent
         createInWorldText(null if (eventPlayer.canVote_hasVoted_canStartVote[1] == false and map_is_changing == false or (((eventPlayer.replace_replacing_or_cancelled[0] == true or eventPlayer.replace_replacing_or_cancelled[1] == true) == true) and eventPlayer.selected_talent[0] != 0)) == true else eventPlayer if eventPlayer.browsing_shop == true else null, "{0}".format(talent_names[23]) if eventPlayer.replace_replacing_or_cancelled[0] == true else "{0}".format(talent_names[24]) if eventPlayer.replace_replacing_or_cancelled[1] == true else "{0}".format(eventPlayer.offered_talents_in_shop[0]), shop_talent_left_location + vect(0, 0.375, 0), 1.5, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.WHITE, SpecVisibility.DEFAULT)
@@ -322,7 +322,7 @@ rule "GENERAL - - - [EACH PLAYER] INIT":
         eventPlayer.using_hearthstone_timer = 0
         eventPlayer.player_name = "{0}".format(eventPlayer)
         eventPlayer.luck = 70
-        eventPlayer.bought_and_upgraded_talents = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 5, 5, 0, 0, 0, 0]
+        eventPlayer.talent_ranks = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 5, 5, 0, 0, 0, 0]
         eventPlayer.which_unique_talents_unlocked = [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false]
     eventPlayer.disableGamemodeHud()
     eventPlayer.experience_current = 0
@@ -331,7 +331,7 @@ rule "GENERAL - - - [EACH PLAYER] INIT":
     eventPlayer.in_combat = 0
     chase(eventPlayer.in_combat, 0, rate=1, ChaseReeval.DESTINATION_AND_RATE)
     createEffect(getAllPlayers() if eventPlayer.is_using_ability[9] == true or eventPlayer.hit_by_talent[9] != null else null, Effect.WINSTON_TESLA_CANNON_TARGET, Color.TEAM_1, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-    createEffect(eventPlayer if eventPlayer.bought_and_upgraded_talents[9] > 0 and eventPlayer.railgun_charge >= 100 or eventPlayer.hit_by_talent[9] != null else null, Effect.WINSTON_TESLA_CANNON_TARGET_SOUND, Color.TEAM_1, eventPlayer, 50, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+    createEffect(eventPlayer if eventPlayer.talent_ranks[9] > 0 and eventPlayer.railgun_charge >= 100 or eventPlayer.hit_by_talent[9] != null else null, Effect.WINSTON_TESLA_CANNON_TARGET_SOUND, Color.TEAM_1, eventPlayer, 50, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
     eventPlayer.is_electrified = 0
     chase(eventPlayer.is_electrified, 0, rate=1, ChaseReeval.DESTINATION_AND_RATE)
     eventPlayer.predator_effects = null
@@ -555,78 +555,78 @@ def create_talent_hud_texts():
     hudSubheader(localPlayer, "{0}".format("[Skip showdown & Change map? Hold: {0}] [{1} Players voted yes, Need a total of {2}]".format(buttonString(Button.RELOAD), len(players_that_voted_yes), ceil(len(getPlayersOnHero(Hero.SOLDIER, Team.ALL)) * 0.501)) if match_is_in_showdown == true else "[Start a showdown?] [{0} Players voted yes, {1} voted no] {2}".format(len(players_that_voted_yes), len(players_that_voted_no), "[{0} more players can vote] [{1}]".format(((len([player for player in getAllPlayers() if player.canVote_hasVoted_canStartVote[0] == true])) - len(players_that_voted_yes)) - len(players_that_voted_no), ceil(vote_to_change_map_duration))) if endless_mode == true and someone_is_voting_to_change_map == true and vote_to_change_map_duration != null else "" if endless_mode == true and someone_is_voting_to_change_map == false else ""), HudPosition.TOP, 0, Color.RED if match_is_in_showdown == true else Color.YELLOW, HudReeval.VISIBILITY_SORT_ORDER_STRING_AND_COLOR, SpecVisibility.DEFAULT)
     hudSubheader(localPlayer if (endless_mode == true and someone_is_voting_to_change_map == true and vote_to_change_map_duration != null and localPlayer.canVote_hasVoted_canStartVote[1] == false and localPlayer.experience_current < localPlayer.experience_max) == true else null if localPlayer.browsing_shop == true and localPlayer.canVote_hasVoted_canStartVote[1] == false else localPlayer if localPlayer.can_enter_shop == true and localPlayer.replace_replacing_or_cancelled[0] == false and localPlayer.replace_replacing_or_cancelled[1] == false else null, "[Hold: {0} to use Hearthstone]".format(buttonString(Button.RELOAD)) if endless_mode == true and someone_is_voting_to_change_map == true and vote_to_change_map_duration != null and localPlayer.canVote_hasVoted_canStartVote[1] == false and localPlayer.experience_current < localPlayer.experience_max else "[Hold: {0} to use Hearthstone]".format(buttonString(Button.RELOAD)) if localPlayer.browsing_shop == false and localPlayer.amount_of_talents_purchased < 25 else "[Hold: {0} to replace a talent or start a showdown & change map]".format(buttonString(Button.RELOAD)) if endless_mode == true and localPlayer.browsing_shop == false and localPlayer.amount_of_talents_purchased == 25 else "[Hold: {0} to skip a talent, exit shop and get a XP boost]".format(buttonString(Button.RELOAD)) if localPlayer.browsing_shop == true else "", HudPosition.TOP, 2, Color.RED if match_is_in_showdown == true else Color.YELLOW, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
     #Stealth
-    hudText(localPlayer if localPlayer.bought_and_upgraded_talents[5] > 0 else null, "{0}".format(talent_names[5]), "Cooldown: {0}".format(localPlayer.stealth_cooldown) if localPlayer.stealth_cooldown > 0 else "", "[Damage & Stun: {0}]".format(buttonString(Button.MELEE)) if localPlayer.is_using_ability[5] == true else "[Hold: {0} (Out of Combat)]".format(buttonString(Button.CROUCH)), HudPosition.LEFT, 5, talent_rarity_colors[localPlayer.bought_and_upgraded_talents[5]], talent_rarity_colors[localPlayer.bought_and_upgraded_talents[5]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
+    hudText(localPlayer if localPlayer.talent_ranks[5] > 0 else null, "{0}".format(talent_names[5]), "Cooldown: {0}".format(localPlayer.stealth_cooldown) if localPlayer.stealth_cooldown > 0 else "", "[Damage & Stun: {0}]".format(buttonString(Button.MELEE)) if localPlayer.is_using_ability[5] == true else "[Hold: {0} (Out of Combat)]".format(buttonString(Button.CROUCH)), HudPosition.LEFT, 5, talent_rarity_colors[localPlayer.talent_ranks[5]], talent_rarity_colors[localPlayer.talent_ranks[5]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
     #[7] Dive Bomb
-    hudText(localPlayer if localPlayer.bought_and_upgraded_talents[7] > 0 else null, "{0}".format(talent_names[7]), "Cooldown: {0}".format(localPlayer.dive_bomb_cooldown) if localPlayer.dive_bomb_cooldown > 0 else "", "[Press: {0} (In Air)]".format(buttonString(Button.CROUCH)), HudPosition.LEFT, 7, talent_rarity_colors[localPlayer.bought_and_upgraded_talents[7]], talent_rarity_colors[localPlayer.bought_and_upgraded_talents[7]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
+    hudText(localPlayer if localPlayer.talent_ranks[7] > 0 else null, "{0}".format(talent_names[7]), "Cooldown: {0}".format(localPlayer.dive_bomb_cooldown) if localPlayer.dive_bomb_cooldown > 0 else "", "[Press: {0} (In Air)]".format(buttonString(Button.CROUCH)), HudPosition.LEFT, 7, talent_rarity_colors[localPlayer.talent_ranks[7]], talent_rarity_colors[localPlayer.talent_ranks[7]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
     #[8] Cryogenics
-    hudText(localPlayer if localPlayer.bought_and_upgraded_talents[8] > 0 else null, "{0}".format(talent_names[8]), null, "[Press: {0}]".format(buttonString(Button.SECONDARY_FIRE)), HudPosition.LEFT, 8, talent_rarity_colors[localPlayer.bought_and_upgraded_talents[8]], talent_rarity_colors[localPlayer.bought_and_upgraded_talents[8]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
+    hudText(localPlayer if localPlayer.talent_ranks[8] > 0 else null, "{0}".format(talent_names[8]), null, "[Press: {0}]".format(buttonString(Button.SECONDARY_FIRE)), HudPosition.LEFT, 8, talent_rarity_colors[localPlayer.talent_ranks[8]], talent_rarity_colors[localPlayer.talent_ranks[8]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
     #[9] Railgun
-    hudText(localPlayer if localPlayer.bought_and_upgraded_talents[9] > 0 else null, "{0}".format(talent_names[9]), "Charge: {0}".format(localPlayer.railgun_charge), "[Press: {0} (When 100% charged)]".format(buttonString(Button.SECONDARY_FIRE)), HudPosition.LEFT, 9, talent_rarity_colors[localPlayer.bought_and_upgraded_talents[9]], talent_rarity_colors[localPlayer.bought_and_upgraded_talents[9]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
+    hudText(localPlayer if localPlayer.talent_ranks[9] > 0 else null, "{0}".format(talent_names[9]), "Charge: {0}".format(localPlayer.railgun_charge), "[Press: {0} (When 100% charged)]".format(buttonString(Button.SECONDARY_FIRE)), HudPosition.LEFT, 9, talent_rarity_colors[localPlayer.talent_ranks[9]], talent_rarity_colors[localPlayer.talent_ranks[9]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
     #[16] Ignite
-    hudText(localPlayer if localPlayer.bought_and_upgraded_talents[16] > 0 else null, "{0}".format(talent_names[16]), null, "[Shoot Enemies with: {0}]".format(buttonString(Button.SECONDARY_FIRE)), HudPosition.LEFT, 16, talent_rarity_colors[localPlayer.bought_and_upgraded_talents[16]], talent_rarity_colors[localPlayer.bought_and_upgraded_talents[16]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
+    hudText(localPlayer if localPlayer.talent_ranks[16] > 0 else null, "{0}".format(talent_names[16]), null, "[Shoot Enemies with: {0}]".format(buttonString(Button.SECONDARY_FIRE)), HudPosition.LEFT, 16, talent_rarity_colors[localPlayer.talent_ranks[16]], talent_rarity_colors[localPlayer.talent_ranks[16]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
     #Overclock
-    hudText(localPlayer if localPlayer.bought_and_upgraded_talents[17] > 0 else null, "{0}".format(talent_names[17]), null, "[Passive]", HudPosition.LEFT, 17, talent_rarity_colors[localPlayer.bought_and_upgraded_talents[17]], talent_rarity_colors[localPlayer.bought_and_upgraded_talents[17]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
+    hudText(localPlayer if localPlayer.talent_ranks[17] > 0 else null, "{0}".format(talent_names[17]), null, "[Passive]", HudPosition.LEFT, 17, talent_rarity_colors[localPlayer.talent_ranks[17]], talent_rarity_colors[localPlayer.talent_ranks[17]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
     #Berserker
-    hudText(localPlayer if localPlayer.bought_and_upgraded_talents[20] > 0 else null, "{0}".format(talent_names[20]), "Cooldown: {0}".format(localPlayer.berserker_cooldown) if localPlayer.berserker_cooldown > 0 else "", "[Press: {0}]".format(buttonString(Button.ULTIMATE)), HudPosition.LEFT, 20, talent_rarity_colors[localPlayer.bought_and_upgraded_talents[20]], talent_rarity_colors[localPlayer.bought_and_upgraded_talents[20]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
+    hudText(localPlayer if localPlayer.talent_ranks[20] > 0 else null, "{0}".format(talent_names[20]), "Cooldown: {0}".format(localPlayer.berserker_cooldown) if localPlayer.berserker_cooldown > 0 else "", "[Press: {0}]".format(buttonString(Button.ULTIMATE)), HudPosition.LEFT, 20, talent_rarity_colors[localPlayer.talent_ranks[20]], talent_rarity_colors[localPlayer.talent_ranks[20]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
     #[22] Ignore Pain
-    hudText(localPlayer if localPlayer.bought_and_upgraded_talents[22] > 0 else null, "{0}".format(talent_names[22]), null, "[Passive]", HudPosition.LEFT, 22, talent_rarity_colors[localPlayer.bought_and_upgraded_talents[22]], talent_rarity_colors[localPlayer.bought_and_upgraded_talents[22]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
+    hudText(localPlayer if localPlayer.talent_ranks[22] > 0 else null, "{0}".format(talent_names[22]), null, "[Passive]", HudPosition.LEFT, 22, talent_rarity_colors[localPlayer.talent_ranks[22]], talent_rarity_colors[localPlayer.talent_ranks[22]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
     #[19] Burning Soul
-    hudText(localPlayer if localPlayer.bought_and_upgraded_talents[19] > 0 else null, "{0}".format(talent_names[19]), null, "[Passive]", HudPosition.LEFT, 19, talent_rarity_colors[localPlayer.bought_and_upgraded_talents[19]], talent_rarity_colors[localPlayer.bought_and_upgraded_talents[19]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
+    hudText(localPlayer if localPlayer.talent_ranks[19] > 0 else null, "{0}".format(talent_names[19]), null, "[Passive]", HudPosition.LEFT, 19, talent_rarity_colors[localPlayer.talent_ranks[19]], talent_rarity_colors[localPlayer.talent_ranks[19]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
     #[13] Health Regen
-    hudText(localPlayer if localPlayer.bought_and_upgraded_talents[13] > 0 else null, "{0} Call to the void".format(abilityIconString(Hero.ZENYATTA, Button.ULTIMATE)) if localPlayer.is_using_ability[5] == true else talent_names[13], "Health regen healing tripled in stealth" if localPlayer.is_using_ability[5] == true else "", "[Passive]", HudPosition.LEFT, 13, talent_rarity_colors[localPlayer.bought_and_upgraded_talents[13]], talent_rarity_colors[localPlayer.bought_and_upgraded_talents[13]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
+    hudText(localPlayer if localPlayer.talent_ranks[13] > 0 else null, "{0} Call to the void".format(abilityIconString(Hero.ZENYATTA, Button.ULTIMATE)) if localPlayer.is_using_ability[5] == true else talent_names[13], "Health regen healing tripled in stealth" if localPlayer.is_using_ability[5] == true else "", "[Passive]", HudPosition.LEFT, 13, talent_rarity_colors[localPlayer.talent_ranks[13]], talent_rarity_colors[localPlayer.talent_ranks[13]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
     #[12] Lifesteal Ammo
-    hudText(localPlayer if localPlayer.bought_and_upgraded_talents[12] > 0 else null, "{0}".format(talent_names[12]), null, "[Shoot enemies with: {0} or {1}]".format(buttonString(Button.PRIMARY_FIRE), buttonString(Button.SECONDARY_FIRE)), HudPosition.LEFT, 12, talent_rarity_colors[localPlayer.bought_and_upgraded_talents[12]], talent_rarity_colors[localPlayer.bought_and_upgraded_talents[12]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
+    hudText(localPlayer if localPlayer.talent_ranks[12] > 0 else null, "{0}".format(talent_names[12]), null, "[Shoot enemies with: {0} or {1}]".format(buttonString(Button.PRIMARY_FIRE), buttonString(Button.SECONDARY_FIRE)), HudPosition.LEFT, 12, talent_rarity_colors[localPlayer.talent_ranks[12]], talent_rarity_colors[localPlayer.talent_ranks[12]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
     #[14] Health Potions
-    hudText(localPlayer if localPlayer.bought_and_upgraded_talents[14] > 0 else null, "{0}".format(talent_names[14]), "Health Potion Recharge: {0}".format(localPlayer.health_potion_cooldown) if localPlayer.health_potion_cooldown > 0 else "", "[Press: {0}]".format(buttonString(Button.ABILITY_2)), HudPosition.LEFT, 14, talent_rarity_colors[localPlayer.bought_and_upgraded_talents[14]], talent_rarity_colors[localPlayer.bought_and_upgraded_talents[14]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
+    hudText(localPlayer if localPlayer.talent_ranks[14] > 0 else null, "{0}".format(talent_names[14]), "Health Potion Recharge: {0}".format(localPlayer.health_potion_cooldown) if localPlayer.health_potion_cooldown > 0 else "", "[Press: {0}]".format(buttonString(Button.ABILITY_2)), HudPosition.LEFT, 14, talent_rarity_colors[localPlayer.talent_ranks[14]], talent_rarity_colors[localPlayer.talent_ranks[14]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
     #[11] Jetpack
-    hudText(localPlayer if localPlayer.bought_and_upgraded_talents[11] > 0 else null, "{0}".format(talent_names[11]), "Jetpack Fuel: {0}".format(localPlayer.jetpack_fuel), "[Hold: {0}]".format(buttonString(Button.JUMP)), HudPosition.LEFT, 11, talent_rarity_colors[localPlayer.bought_and_upgraded_talents[11]], talent_rarity_colors[localPlayer.bought_and_upgraded_talents[11]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
+    hudText(localPlayer if localPlayer.talent_ranks[11] > 0 else null, "{0}".format(talent_names[11]), "Jetpack Fuel: {0}".format(localPlayer.jetpack_fuel), "[Hold: {0}]".format(buttonString(Button.JUMP)), HudPosition.LEFT, 11, talent_rarity_colors[localPlayer.talent_ranks[11]], talent_rarity_colors[localPlayer.talent_ranks[11]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
     #[10] Predator
-    hudText(localPlayer if localPlayer.bought_and_upgraded_talents[10] > 0 else null, "{0}".format(talent_names[10]), "Cooldown: {0}".format(localPlayer.predator_cooldown) if localPlayer.predator_cooldown > 0 else "", "[Press: {0} (On Low Health Targets)]".format(buttonString(Button.MELEE)), HudPosition.LEFT, 10, talent_rarity_colors[localPlayer.bought_and_upgraded_talents[10]], talent_rarity_colors[localPlayer.bought_and_upgraded_talents[10]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
+    hudText(localPlayer if localPlayer.talent_ranks[10] > 0 else null, "{0}".format(talent_names[10]), "Cooldown: {0}".format(localPlayer.predator_cooldown) if localPlayer.predator_cooldown > 0 else "", "[Press: {0} (On Low Health Targets)]".format(buttonString(Button.MELEE)), HudPosition.LEFT, 10, talent_rarity_colors[localPlayer.talent_ranks[10]], talent_rarity_colors[localPlayer.talent_ranks[10]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
     #[21] Fireball
-    hudText(localPlayer if localPlayer.bought_and_upgraded_talents[21] > 0 else null, "{0}".format(talent_names[21]), "Cooldown: {0}".format(localPlayer.fireball_cooldown) if localPlayer.fireball_cooldown > 0 else "", "[Press: {0}]".format(buttonString(Button.INTERACT)), HudPosition.LEFT, 21, talent_rarity_colors[localPlayer.bought_and_upgraded_talents[21]], talent_rarity_colors[localPlayer.bought_and_upgraded_talents[21]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
+    hudText(localPlayer if localPlayer.talent_ranks[21] > 0 else null, "{0}".format(talent_names[21]), "Cooldown: {0}".format(localPlayer.fireball_cooldown) if localPlayer.fireball_cooldown > 0 else "", "[Press: {0}]".format(buttonString(Button.INTERACT)), HudPosition.LEFT, 21, talent_rarity_colors[localPlayer.talent_ranks[21]], talent_rarity_colors[localPlayer.talent_ranks[21]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
     #[18] Shadowstep
-    hudText(localPlayer if localPlayer.bought_and_upgraded_talents[18] > 0 else null, "{0}".format(talent_names[18]), "Cooldown: {0}".format(localPlayer.shadowstep_cooldown) if localPlayer.shadowstep_cooldown > 0 else "", "[Double Tap: {0}]".format(buttonString(Button.JUMP)), HudPosition.LEFT, 18, talent_rarity_colors[localPlayer.bought_and_upgraded_talents[18]], talent_rarity_colors[localPlayer.bought_and_upgraded_talents[18]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
+    hudText(localPlayer if localPlayer.talent_ranks[18] > 0 else null, "{0}".format(talent_names[18]), "Cooldown: {0}".format(localPlayer.shadowstep_cooldown) if localPlayer.shadowstep_cooldown > 0 else "", "[Double Tap: {0}]".format(buttonString(Button.JUMP)), HudPosition.LEFT, 18, talent_rarity_colors[localPlayer.talent_ranks[18]], talent_rarity_colors[localPlayer.talent_ranks[18]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
     #[29] Soul Siphon
-    hudText(localPlayer if localPlayer.bought_and_upgraded_talents[29] > 0 else null, "{0}".format(talent_names[29]), null, "[Passive]", HudPosition.LEFT, 29, talent_rarity_colors[localPlayer.bought_and_upgraded_talents[29]], talent_rarity_colors[localPlayer.bought_and_upgraded_talents[29]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
+    hudText(localPlayer if localPlayer.talent_ranks[29] > 0 else null, "{0}".format(talent_names[29]), null, "[Passive]", HudPosition.LEFT, 29, talent_rarity_colors[localPlayer.talent_ranks[29]], talent_rarity_colors[localPlayer.talent_ranks[29]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
     #[31] Poison Vials
-    hudText(localPlayer if localPlayer.bought_and_upgraded_talents[31] > 0 else null, "{0}".format(talent_names[31]), "Poison Vial Recharge: {0}".format(localPlayer.health_potion_cooldown) if localPlayer.health_potion_cooldown > 0 else "", "[Press: {0}]".format(buttonString(Button.ABILITY_2)), HudPosition.LEFT, 31, talent_rarity_colors[localPlayer.bought_and_upgraded_talents[31]], talent_rarity_colors[localPlayer.bought_and_upgraded_talents[31]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
+    hudText(localPlayer if localPlayer.talent_ranks[31] > 0 else null, "{0}".format(talent_names[31]), "Poison Vial Recharge: {0}".format(localPlayer.health_potion_cooldown) if localPlayer.health_potion_cooldown > 0 else "", "[Press: {0}]".format(buttonString(Button.ABILITY_2)), HudPosition.LEFT, 31, talent_rarity_colors[localPlayer.talent_ranks[31]], talent_rarity_colors[localPlayer.talent_ranks[31]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
     #[32] Crazy Alchemist
-    hudText(localPlayer if localPlayer.bought_and_upgraded_talents[32] > 0 else null, "{0}".format(talent_names[32]), null, "[Passive]", HudPosition.LEFT, 32, talent_rarity_colors[localPlayer.bought_and_upgraded_talents[32]], talent_rarity_colors[localPlayer.bought_and_upgraded_talents[32]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
+    hudText(localPlayer if localPlayer.talent_ranks[32] > 0 else null, "{0}".format(talent_names[32]), null, "[Passive]", HudPosition.LEFT, 32, talent_rarity_colors[localPlayer.talent_ranks[32]], talent_rarity_colors[localPlayer.talent_ranks[32]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
     #[30] Pyromaniac
-    hudText(localPlayer if localPlayer.bought_and_upgraded_talents[30] > 0 else null, "{0}".format(talent_names[30]), null, "[Passive]", HudPosition.LEFT, 30, talent_rarity_colors[localPlayer.bought_and_upgraded_talents[30]], talent_rarity_colors[localPlayer.bought_and_upgraded_talents[30]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
+    hudText(localPlayer if localPlayer.talent_ranks[30] > 0 else null, "{0}".format(talent_names[30]), null, "[Passive]", HudPosition.LEFT, 30, talent_rarity_colors[localPlayer.talent_ranks[30]], talent_rarity_colors[localPlayer.talent_ranks[30]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
     #[3] Engineer
-    hudText(localPlayer if localPlayer.bought_and_upgraded_talents[3] > 0 else null, "{0}".format(talent_names[3]), "Scrap: {0}%".format(localPlayer.engineer_scrap), "[Press: {0} (When 100% Scrap)]".format(buttonString(Button.RELOAD)), HudPosition.LEFT, 3, talent_rarity_colors[localPlayer.bought_and_upgraded_talents[3]], talent_rarity_colors[localPlayer.bought_and_upgraded_talents[3]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
+    hudText(localPlayer if localPlayer.talent_ranks[3] > 0 else null, "{0}".format(talent_names[3]), "Scrap: {0}%".format(localPlayer.engineer_scrap), "[Press: {0} (When 100% Scrap)]".format(buttonString(Button.RELOAD)), HudPosition.LEFT, 3, talent_rarity_colors[localPlayer.talent_ranks[3]], talent_rarity_colors[localPlayer.talent_ranks[3]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
     #[2] Cybernetics
-    hudText(localPlayer if localPlayer.bought_and_upgraded_talents[2] > 0 else null, "{0}".format(talent_names[2]), null, "[Passive]", HudPosition.LEFT, 2, talent_rarity_colors[localPlayer.bought_and_upgraded_talents[2]], talent_rarity_colors[localPlayer.bought_and_upgraded_talents[2]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
+    hudText(localPlayer if localPlayer.talent_ranks[2] > 0 else null, "{0}".format(talent_names[2]), null, "[Passive]", HudPosition.LEFT, 2, talent_rarity_colors[localPlayer.talent_ranks[2]], talent_rarity_colors[localPlayer.talent_ranks[2]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
     #Bloodthirst
-    hudText(localPlayer if localPlayer.bought_and_upgraded_talents[0] > 0 else null, "{0}".format(talent_names[0]), null, "[Passive]", HudPosition.LEFT, 0, talent_rarity_colors[localPlayer.bought_and_upgraded_talents[0]], talent_rarity_colors[localPlayer.bought_and_upgraded_talents[0]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
+    hudText(localPlayer if localPlayer.talent_ranks[0] > 0 else null, "{0}".format(talent_names[0]), null, "[Passive]", HudPosition.LEFT, 0, talent_rarity_colors[localPlayer.talent_ranks[0]], talent_rarity_colors[localPlayer.talent_ranks[0]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
     #[1] Purity Field
-    hudText(localPlayer if localPlayer.bought_and_upgraded_talents[1] > 0 else null, "{0}".format(talent_names[1]), "Cooldown: {0}".format(localPlayer.purity_field_cooldown) if localPlayer.purity_field_cooldown > 0 else "", "[Press: {0}+{1}]".format(buttonString(Button.CROUCH), buttonString(Button.ABILITY_2)), HudPosition.LEFT, 1, talent_rarity_colors[localPlayer.bought_and_upgraded_talents[1]], talent_rarity_colors[localPlayer.bought_and_upgraded_talents[1]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
+    hudText(localPlayer if localPlayer.talent_ranks[1] > 0 else null, "{0}".format(talent_names[1]), "Cooldown: {0}".format(localPlayer.purity_field_cooldown) if localPlayer.purity_field_cooldown > 0 else "", "[Press: {0}+{1}]".format(buttonString(Button.CROUCH), buttonString(Button.ABILITY_2)), HudPosition.LEFT, 1, talent_rarity_colors[localPlayer.talent_ranks[1]], talent_rarity_colors[localPlayer.talent_ranks[1]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
     #Juggernaut
-    hudText(localPlayer if localPlayer.bought_and_upgraded_talents[6] > 0 else null, "{0}".format(talent_names[6]), ("Cooldown: {0}".format(20 if localPlayer.juggernaut_cooldown > 20 else localPlayer.juggernaut_cooldown)) if localPlayer.juggernaut_cooldown > 0 else "", "[Press: {0}]".format(buttonString(Button.INTERACT)), HudPosition.LEFT, 6, talent_rarity_colors[localPlayer.bought_and_upgraded_talents[6]], talent_rarity_colors[localPlayer.bought_and_upgraded_talents[6]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
+    hudText(localPlayer if localPlayer.talent_ranks[6] > 0 else null, "{0}".format(talent_names[6]), ("Cooldown: {0}".format(20 if localPlayer.juggernaut_cooldown > 20 else localPlayer.juggernaut_cooldown)) if localPlayer.juggernaut_cooldown > 0 else "", "[Press: {0}]".format(buttonString(Button.INTERACT)), HudPosition.LEFT, 6, talent_rarity_colors[localPlayer.talent_ranks[6]], talent_rarity_colors[localPlayer.talent_ranks[6]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
     #[4] Shadowstrike
-    hudText(localPlayer if localPlayer.bought_and_upgraded_talents[4] > 0 else null, "{0}".format(talent_names[4]), "Cooldown: {0}".format(localPlayer.shadowstep_cooldown) if localPlayer.shadowstep_cooldown > 0 else "", "[Double Tap: {0}]".format(buttonString(Button.JUMP)), HudPosition.LEFT, 4, talent_rarity_colors[localPlayer.bought_and_upgraded_talents[4]], talent_rarity_colors[localPlayer.bought_and_upgraded_talents[4]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
+    hudText(localPlayer if localPlayer.talent_ranks[4] > 0 else null, "{0}".format(talent_names[4]), "Cooldown: {0}".format(localPlayer.shadowstep_cooldown) if localPlayer.shadowstep_cooldown > 0 else "", "[Double Tap: {0}]".format(buttonString(Button.JUMP)), HudPosition.LEFT, 4, talent_rarity_colors[localPlayer.talent_ranks[4]], talent_rarity_colors[localPlayer.talent_ranks[4]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.NEVER)
 
 
 def create_talent_helpers():
     @Name "GENERAL - - - [SUBROUTINE] Create Cooldown Ready Icons"
     
     #Health Potions or Poison Vials
-    createInWorldText(localPlayer if ((localPlayer.bought_and_upgraded_talents[14] > 0 or localPlayer.bought_and_upgraded_talents[31] > 0) and localPlayer.browsing_shop == false) and localPlayer.is_using_ability[6] == false else null, "{0}   {1}   {2}".format(abilityIconString(Hero.ROADHOG, Button.ABILITY_2) if localPlayer.amount_of_potions_or_vials >= 1 and localPlayer.bought_and_upgraded_talents[14] > 0 else iconString(Icon.POISON_2) if localPlayer.amount_of_potions_or_vials >= 1 and localPlayer.bought_and_upgraded_talents[31] > 0 else "", abilityIconString(Hero.ROADHOG, Button.ABILITY_2) if localPlayer.amount_of_potions_or_vials >= 2 and localPlayer.bought_and_upgraded_talents[14] > 0 else iconString(Icon.POISON_2) if localPlayer.amount_of_potions_or_vials >= 2 and localPlayer.bought_and_upgraded_talents[31] > 0 else "", abilityIconString(Hero.ROADHOG, Button.ABILITY_2) if localPlayer.amount_of_potions_or_vials == 3 and localPlayer.bought_and_upgraded_talents[14] > 0 else iconString(Icon.POISON_2) if localPlayer.amount_of_potions_or_vials >= 3 and localPlayer.bought_and_upgraded_talents[31] > 0 else ""), updateEveryTick(localPlayer.getEyePosition() + (100 * (0 * worldVector(Vector.RIGHT, localPlayer, Transform.ROTATION) + ((-1 * 1 * 1 * 0.3 - 0.2) * (angleToDirection(horizontalAngleOfDirection(localPlayer.getFacingDirection()), verticalAngleOfDirection(localPlayer.getFacingDirection()) - 90))) + 3 * localPlayer.getFacingDirection()))), 1.5, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.WHITE, SpecVisibility.DEFAULT)
+    createInWorldText(localPlayer if ((localPlayer.talent_ranks[14] > 0 or localPlayer.talent_ranks[31] > 0) and localPlayer.browsing_shop == false) and localPlayer.is_using_ability[6] == false else null, "{0}   {1}   {2}".format(abilityIconString(Hero.ROADHOG, Button.ABILITY_2) if localPlayer.amount_of_potions_or_vials >= 1 and localPlayer.talent_ranks[14] > 0 else iconString(Icon.POISON_2) if localPlayer.amount_of_potions_or_vials >= 1 and localPlayer.talent_ranks[31] > 0 else "", abilityIconString(Hero.ROADHOG, Button.ABILITY_2) if localPlayer.amount_of_potions_or_vials >= 2 and localPlayer.talent_ranks[14] > 0 else iconString(Icon.POISON_2) if localPlayer.amount_of_potions_or_vials >= 2 and localPlayer.talent_ranks[31] > 0 else "", abilityIconString(Hero.ROADHOG, Button.ABILITY_2) if localPlayer.amount_of_potions_or_vials == 3 and localPlayer.talent_ranks[14] > 0 else iconString(Icon.POISON_2) if localPlayer.amount_of_potions_or_vials >= 3 and localPlayer.talent_ranks[31] > 0 else ""), updateEveryTick(localPlayer.getEyePosition() + (100 * (0 * worldVector(Vector.RIGHT, localPlayer, Transform.ROTATION) + ((-1 * 1 * 1 * 0.3 - 0.2) * (angleToDirection(horizontalAngleOfDirection(localPlayer.getFacingDirection()), verticalAngleOfDirection(localPlayer.getFacingDirection()) - 90))) + 3 * localPlayer.getFacingDirection()))), 1.5, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.WHITE, SpecVisibility.DEFAULT)
     #Jetpack
-    createProgressBarInWorldText(localPlayer if localPlayer.jetpack_fuel < 100 and localPlayer.browsing_shop == false and localPlayer.bought_and_upgraded_talents[11] > 0 and localPlayer.is_using_ability[6] == false else null, localPlayer.jetpack_fuel, "LOW FUEL!" if localPlayer.jetpack_fuel < 25 else "FUEL", updateEveryTick(localPlayer.getEyePosition() + (100 * (0 * worldVector(Vector.RIGHT, localPlayer, Transform.ROTATION) + ((-1 * 1 * 1 * 0.5 - 0.2) * (angleToDirection(horizontalAngleOfDirection(localPlayer.getFacingDirection()), verticalAngleOfDirection(localPlayer.getFacingDirection()) - 90))) + 3 * localPlayer.getFacingDirection()))), 0.625, Clip.NONE, Color.RED if localPlayer.jetpack_fuel < 25 else Color.WHITE, Color.RED if localPlayer.jetpack_fuel < 25 else Color.WHITE, ProgressWorldTextReeval.VISIBILITY_POSITION_VALUES_AND_COLOR, SpecVisibility.DEFAULT)
+    createProgressBarInWorldText(localPlayer if localPlayer.jetpack_fuel < 100 and localPlayer.browsing_shop == false and localPlayer.talent_ranks[11] > 0 and localPlayer.is_using_ability[6] == false else null, localPlayer.jetpack_fuel, "LOW FUEL!" if localPlayer.jetpack_fuel < 25 else "FUEL", updateEveryTick(localPlayer.getEyePosition() + (100 * (0 * worldVector(Vector.RIGHT, localPlayer, Transform.ROTATION) + ((-1 * 1 * 1 * 0.5 - 0.2) * (angleToDirection(horizontalAngleOfDirection(localPlayer.getFacingDirection()), verticalAngleOfDirection(localPlayer.getFacingDirection()) - 90))) + 3 * localPlayer.getFacingDirection()))), 0.625, Clip.NONE, Color.RED if localPlayer.jetpack_fuel < 25 else Color.WHITE, Color.RED if localPlayer.jetpack_fuel < 25 else Color.WHITE, ProgressWorldTextReeval.VISIBILITY_POSITION_VALUES_AND_COLOR, SpecVisibility.DEFAULT)
     #Entering Stealth
-    createProgressBarInWorldText(localPlayer if localPlayer.bought_and_upgraded_talents[5] > 0 and localPlayer.browsing_shop == false and (localPlayer.entering_stealth == true or localPlayer.is_using_ability[5] == true) else null, localPlayer.entering_stealth_timer / 1 * 100, "Entering Stealth" if localPlayer.is_using_ability[5] == false else "Stealthed", updateEveryTick(localPlayer.getEyePosition() + (100 * (0 * worldVector(Vector.RIGHT, localPlayer, Transform.ROTATION) + ((-1 * 1 * 1 * 0.75 - 0.2) * (angleToDirection(horizontalAngleOfDirection(localPlayer.getFacingDirection()), verticalAngleOfDirection(localPlayer.getFacingDirection()) - 90))) + 3 * localPlayer.getFacingDirection()))), 0.75, Clip.NONE, Color.VIOLET if localPlayer.is_using_ability[5] == true else Color.WHITE, Color.VIOLET if localPlayer.is_using_ability[5] == true else Color.WHITE, ProgressWorldTextReeval.VISIBILITY_POSITION_VALUES_AND_COLOR, SpecVisibility.NEVER)
+    createProgressBarInWorldText(localPlayer if localPlayer.talent_ranks[5] > 0 and localPlayer.browsing_shop == false and (localPlayer.entering_stealth == true or localPlayer.is_using_ability[5] == true) else null, localPlayer.entering_stealth_timer / 1 * 100, "Entering Stealth" if localPlayer.is_using_ability[5] == false else "Stealthed", updateEveryTick(localPlayer.getEyePosition() + (100 * (0 * worldVector(Vector.RIGHT, localPlayer, Transform.ROTATION) + ((-1 * 1 * 1 * 0.75 - 0.2) * (angleToDirection(horizontalAngleOfDirection(localPlayer.getFacingDirection()), verticalAngleOfDirection(localPlayer.getFacingDirection()) - 90))) + 3 * localPlayer.getFacingDirection()))), 0.75, Clip.NONE, Color.VIOLET if localPlayer.is_using_ability[5] == true else Color.WHITE, Color.VIOLET if localPlayer.is_using_ability[5] == true else Color.WHITE, ProgressWorldTextReeval.VISIBILITY_POSITION_VALUES_AND_COLOR, SpecVisibility.NEVER)
     #Talent Cooldown Icons
-    createInWorldText(localPlayer if localPlayer.browsing_shop == false and localPlayer.getCurrentHero() == Hero.SOLDIER and localPlayer.is_using_ability[6] == false else null, "{0}{1}{2}".format("{0}{1}{2}".format(abilityIconString(Hero.SOMBRA, Button.ABILITY_1) if localPlayer.bought_and_upgraded_talents[5] > 0 and localPlayer.stealth_cooldown == 0 else "", abilityIconString(Hero.REINHARDT, Button.ABILITY_1) if localPlayer.bought_and_upgraded_talents[6] > 0 and localPlayer.juggernaut_cooldown == 0 else "", abilityIconString(Hero.HAMMOND, Button.CROUCH) if localPlayer.bought_and_upgraded_talents[7] > 0 and localPlayer.dive_bomb_cooldown == 0 else ""), "{0}{1}{2}".format(abilityIconString(Hero.WIDOWMAKER, Button.ULTIMATE) if localPlayer.bought_and_upgraded_talents[10] > 0 and localPlayer.predator_cooldown == 0 else "", iconString(Icon.SKULL) if localPlayer.bought_and_upgraded_talents[20] > 0 and localPlayer.berserker_cooldown == 0 else "", abilityIconString(Hero.PHARAH, Button.ABILITY_1) if localPlayer.bought_and_upgraded_talents[21] > 0 and localPlayer.fireball_cooldown == 0 else ""), "{0}{1}{2}".format((abilityIconString(Hero.MOIRA, Button.ABILITY_1) if localPlayer.bought_and_upgraded_talents[18] > 0 else abilityIconString(Hero.GENJI, Button.ABILITY_1)) if ((localPlayer.bought_and_upgraded_talents[18] or localPlayer.bought_and_upgraded_talents[4]) > 0) and localPlayer.shadowstep_cooldown == 0 else "", abilityIconString(Hero.BAPTISTE, Button.ABILITY_2) if localPlayer.bought_and_upgraded_talents[1] > 0 and localPlayer.purity_field_cooldown == 0 else "", abilityIconString(Hero.PHARAH, Button.ABILITY_1) if localPlayer.bought_and_upgraded_talents[0] > 100 and localPlayer.browsing_shop == 100 else "")), updateEveryTick(localPlayer.getEyePosition() + (100 * (0.5 * worldVector(Vector.RIGHT, localPlayer, Transform.ROTATION) + ((0.05 - 0.25) * (angleToDirection(horizontalAngleOfDirection(localPlayer.getFacingDirection()), verticalAngleOfDirection(localPlayer.getFacingDirection()) - 90))) + 3 * localPlayer.getFacingDirection()))), 1.25, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.WHITE, SpecVisibility.NEVER)
+    createInWorldText(localPlayer if localPlayer.browsing_shop == false and localPlayer.getCurrentHero() == Hero.SOLDIER and localPlayer.is_using_ability[6] == false else null, "{0}{1}{2}".format("{0}{1}{2}".format(abilityIconString(Hero.SOMBRA, Button.ABILITY_1) if localPlayer.talent_ranks[5] > 0 and localPlayer.stealth_cooldown == 0 else "", abilityIconString(Hero.REINHARDT, Button.ABILITY_1) if localPlayer.talent_ranks[6] > 0 and localPlayer.juggernaut_cooldown == 0 else "", abilityIconString(Hero.HAMMOND, Button.CROUCH) if localPlayer.talent_ranks[7] > 0 and localPlayer.dive_bomb_cooldown == 0 else ""), "{0}{1}{2}".format(abilityIconString(Hero.WIDOWMAKER, Button.ULTIMATE) if localPlayer.talent_ranks[10] > 0 and localPlayer.predator_cooldown == 0 else "", iconString(Icon.SKULL) if localPlayer.talent_ranks[20] > 0 and localPlayer.berserker_cooldown == 0 else "", abilityIconString(Hero.PHARAH, Button.ABILITY_1) if localPlayer.talent_ranks[21] > 0 and localPlayer.fireball_cooldown == 0 else ""), "{0}{1}{2}".format((abilityIconString(Hero.MOIRA, Button.ABILITY_1) if localPlayer.talent_ranks[18] > 0 else abilityIconString(Hero.GENJI, Button.ABILITY_1)) if ((localPlayer.talent_ranks[18] or localPlayer.talent_ranks[4]) > 0) and localPlayer.shadowstep_cooldown == 0 else "", abilityIconString(Hero.BAPTISTE, Button.ABILITY_2) if localPlayer.talent_ranks[1] > 0 and localPlayer.purity_field_cooldown == 0 else "", abilityIconString(Hero.PHARAH, Button.ABILITY_1) if localPlayer.talent_ranks[0] > 100 and localPlayer.browsing_shop == 100 else "")), updateEveryTick(localPlayer.getEyePosition() + (100 * (0.5 * worldVector(Vector.RIGHT, localPlayer, Transform.ROTATION) + ((0.05 - 0.25) * (angleToDirection(horizontalAngleOfDirection(localPlayer.getFacingDirection()), verticalAngleOfDirection(localPlayer.getFacingDirection()) - 90))) + 3 * localPlayer.getFacingDirection()))), 1.25, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.WHITE, SpecVisibility.NEVER)
     #Hearthstone
     createProgressBarInWorldText(localPlayer if (localPlayer.is_using_hearthstone[0] == true or localPlayer.is_using_hearthstone[1] == true or localPlayer.is_using_hearthstone[2] == true or localPlayer.is_using_hearthstone[3] == true or localPlayer.is_using_hearthstone[4] == true) == true else null, localPlayer.using_hearthstone_timer / 2.75 * 100, "{0} Voting To Skip Showdown".format(iconString(Icon.ARROW_RIGHT)) if localPlayer.browsing_shop == false and match_is_in_showdown == true else "{0} Using Hearthstone".format(iconString(Icon.SPIRAL)) if localPlayer.browsing_shop == false else "{0} YES".format(iconString(Icon.CHECKMARK)) if (localPlayer.browsing_shop == true and localPlayer.isHoldingButton(Button.PRIMARY_FIRE) == true and (someone_is_voting_to_change_map == true and localPlayer.canVote_hasVoted_canStartVote[1] == false or localPlayer.replace_replacing_or_cancelled[0] == true)) == true else "{0} NO".format(iconString(Icon.NO)) if (localPlayer.browsing_shop == true and localPlayer.isHoldingButton(Button.SECONDARY_FIRE) == true and someone_is_voting_to_change_map == true and localPlayer.canVote_hasVoted_canStartVote[1] == false or localPlayer.replace_replacing_or_cancelled[0] == true) == true else "{0} Voting yes to start a showdown & change map".format(iconString(Icon.CHECKMARK)) if localPlayer.browsing_shop == true and endless_mode == true and someone_is_voting_to_change_map == false and localPlayer.canVote_hasVoted_canStartVote[2] == true and localPlayer.isHoldingButton(Button.JUMP) == true else "{0} Skipping Talents For XP Boost".format(iconString(Icon.TRASHCAN)) if localPlayer.browsing_shop == true and localPlayer.isHoldingButton(Button.RELOAD) == true else "", updateEveryTick(localPlayer.getEyePosition() + (100 * (0 * worldVector(Vector.RIGHT, localPlayer, Transform.ROTATION) + ((0.75 - 0.2) * (angleToDirection(horizontalAngleOfDirection(localPlayer.getFacingDirection()), verticalAngleOfDirection(localPlayer.getFacingDirection()) - 90))) + 3 * localPlayer.getFacingDirection()))) if localPlayer.browsing_shop == false else localPlayer.selected_talent_location + Vector.UP, 1, Clip.NONE, Color.WHITE, Color.WHITE, ProgressWorldTextReeval.VISIBILITY_POSITION_VALUES_AND_COLOR, SpecVisibility.NEVER)
     #What button to press in Stealth or Berserker
-    createInWorldText(localPlayer if ((localPlayer.bought_and_upgraded_talents[5] > 0 or localPlayer.bought_and_upgraded_talents[20] > 0) and localPlayer.browsing_shop == false) and localPlayer.is_using_ability[6] == false else null, "{0}".format("{0} {1} = Cancel".format(iconString(Icon.SKULL), buttonString(Button.ULTIMATE)) if localPlayer.is_using_ability[20] == true else "{0} {1} = Damage & Stun".format(abilityIconString(Hero.SOMBRA, Button.ABILITY_1), buttonString(Button.MELEE)) if localPlayer.is_using_ability[5] == true else ""), updateEveryTick(localPlayer.getEyePosition() + (100 * (1.625 * worldVector(Vector.RIGHT, localPlayer, Transform.ROTATION) + ((0.05 - 0.25) * (angleToDirection(horizontalAngleOfDirection(localPlayer.getFacingDirection()), verticalAngleOfDirection(localPlayer.getFacingDirection()) - 90))) + 3 * localPlayer.getFacingDirection()))), 1.25, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.WHITE, SpecVisibility.DEFAULT)
+    createInWorldText(localPlayer if ((localPlayer.talent_ranks[5] > 0 or localPlayer.talent_ranks[20] > 0) and localPlayer.browsing_shop == false) and localPlayer.is_using_ability[6] == false else null, "{0}".format("{0} {1} = Cancel".format(iconString(Icon.SKULL), buttonString(Button.ULTIMATE)) if localPlayer.is_using_ability[20] == true else "{0} {1} = Damage & Stun".format(abilityIconString(Hero.SOMBRA, Button.ABILITY_1), buttonString(Button.MELEE)) if localPlayer.is_using_ability[5] == true else ""), updateEveryTick(localPlayer.getEyePosition() + (100 * (1.625 * worldVector(Vector.RIGHT, localPlayer, Transform.ROTATION) + ((0.05 - 0.25) * (angleToDirection(horizontalAngleOfDirection(localPlayer.getFacingDirection()), verticalAngleOfDirection(localPlayer.getFacingDirection()) - 90))) + 3 * localPlayer.getFacingDirection()))), 1.25, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.WHITE, SpecVisibility.DEFAULT)
     #Railgun charge
-    createInWorldText(localPlayer if localPlayer.bought_and_upgraded_talents[9] > 0 and localPlayer.isCommunicatingEmote() == false and localPlayer.browsing_shop == false and localPlayer.is_using_ability[6] == false else null, "{0} {1}%".format(iconString(Icon.BOLT), localPlayer.railgun_charge if localPlayer.railgun_charge < 100 else 100), updateEveryTick(localPlayer.getEyePosition() + (100 * (1 * worldVector(Vector.RIGHT, localPlayer, Transform.ROTATION) + ((0 - 0.3) * (angleToDirection(horizontalAngleOfDirection(localPlayer.getFacingDirection()), verticalAngleOfDirection(localPlayer.getFacingDirection()) - 90))) + 3 * localPlayer.getFacingDirection()))), 1, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.WHITE if localPlayer.railgun_charge < 100 else Color.SKY_BLUE, SpecVisibility.NEVER)
+    createInWorldText(localPlayer if localPlayer.talent_ranks[9] > 0 and localPlayer.isCommunicatingEmote() == false and localPlayer.browsing_shop == false and localPlayer.is_using_ability[6] == false else null, "{0} {1}%".format(iconString(Icon.BOLT), localPlayer.railgun_charge if localPlayer.railgun_charge < 100 else 100), updateEveryTick(localPlayer.getEyePosition() + (100 * (1 * worldVector(Vector.RIGHT, localPlayer, Transform.ROTATION) + ((0 - 0.3) * (angleToDirection(horizontalAngleOfDirection(localPlayer.getFacingDirection()), verticalAngleOfDirection(localPlayer.getFacingDirection()) - 90))) + 3 * localPlayer.getFacingDirection()))), 1, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.WHITE if localPlayer.railgun_charge < 100 else Color.SKY_BLUE, SpecVisibility.NEVER)
     #Engineer scrap
-    createInWorldText(localPlayer if localPlayer.bought_and_upgraded_talents[3] > 0 and localPlayer.isCommunicatingEmote() == false and localPlayer.browsing_shop == false and localPlayer.is_using_ability[6] == false else null, "{0} {1}%".format(abilityIconString(Hero.BASTION, Button.SECONDARY_FIRE), localPlayer.engineer_scrap if localPlayer.engineer_scrap < 100 else 100), updateEveryTick(localPlayer.getEyePosition() + (100 * (1 * worldVector(Vector.RIGHT, localPlayer, Transform.ROTATION) + ((0 - 0.2) * (angleToDirection(horizontalAngleOfDirection(localPlayer.getFacingDirection()), verticalAngleOfDirection(localPlayer.getFacingDirection()) - 90))) + 3 * localPlayer.getFacingDirection()))), 1, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.WHITE if localPlayer.engineer_scrap < 100 else Color.ORANGE, SpecVisibility.NEVER)
+    createInWorldText(localPlayer if localPlayer.talent_ranks[3] > 0 and localPlayer.isCommunicatingEmote() == false and localPlayer.browsing_shop == false and localPlayer.is_using_ability[6] == false else null, "{0} {1}%".format(abilityIconString(Hero.BASTION, Button.SECONDARY_FIRE), localPlayer.engineer_scrap if localPlayer.engineer_scrap < 100 else 100), updateEveryTick(localPlayer.getEyePosition() + (100 * (1 * worldVector(Vector.RIGHT, localPlayer, Transform.ROTATION) + ((0 - 0.2) * (angleToDirection(horizontalAngleOfDirection(localPlayer.getFacingDirection()), verticalAngleOfDirection(localPlayer.getFacingDirection()) - 90))) + 3 * localPlayer.getFacingDirection()))), 1, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.WHITE if localPlayer.engineer_scrap < 100 else Color.ORANGE, SpecVisibility.NEVER)
     #Cancel Juggernaut
     createInWorldText(localPlayer if localPlayer.is_using_ability[6] == true and localPlayer.has_hit_the_ground == true else null, "{0} {1} = Cancel".format(abilityIconString(Hero.REINHARDT, Button.ABILITY_1), buttonString(Button.INTERACT)), updateEveryTick(localPlayer.getEyePosition()), 1, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.WHITE, SpecVisibility.NEVER)
 
@@ -658,7 +658,7 @@ rule "GENERAL - - - Has Spawned":
     eventPlayer.enableHeroHud()
     eventPlayer.setCrouchEnabled(true)
     eventPlayer.setPrimaryFireEnabled(true)
-    if eventPlayer.bought_and_upgraded_talents[9] == 0:
+    if eventPlayer.talent_ranks[9] == 0:
         eventPlayer.setSecondaryFireEnabled(true)
     eventPlayer.setAbility1Enabled(true)
     eventPlayer.setMeleeEnabled(true)
@@ -707,7 +707,7 @@ rule "GENERAL - - - Player Died":
     if eventPlayer.is_using_ability[5] == true:
         async(break_stealth, AsyncBehavior.NOOP)
     #Burning Soul
-    if eventPlayer.bought_and_upgraded_talents[19] > 0:
+    if eventPlayer.talent_ranks[19] > 0:
         eventPlayer.burning_soul_orb_timer = 4
         wait()
         async(dropped_burning_soul_orb, AsyncBehavior.RESTART)
@@ -732,20 +732,20 @@ rule "GENERAL - - - Player Dealt Damage":
     @Event playerDealtDamage
     @Hero soldier
     
-    if eventPlayer.bought_and_upgraded_talents[0] > 0 and eventPlayer.is_using_ability[20] == true:
-        eventPlayer.bloodthirst_shield[0] += (eventDamage * (0.187 + eventPlayer.bought_and_upgraded_talents[0] * 0.063)) * (2.25 - eventPlayer.bought_and_upgraded_talents[0] * 0.25)
+    if eventPlayer.talent_ranks[0] > 0 and eventPlayer.is_using_ability[20] == true:
+        eventPlayer.bloodthirst_shield[0] += (eventDamage * (0.187 + eventPlayer.talent_ranks[0] * 0.063)) * (2.25 - eventPlayer.talent_ranks[0] * 0.25)
     attacker.using_hearthstone_timer = 0
     if attacker.is_using_ability[1] == false:
         attacker.in_combat = 3
     if eventPlayer.experience_current < eventPlayer.experience_max and attacker != victim:
         eventPlayer.experience_current += eventDamage / 5 * eventPlayer.stats[5]
-    if attacker.bought_and_upgraded_talents[5] > 0 and attacker.is_using_ability[1] == false:
+    if attacker.talent_ranks[5] > 0 and attacker.is_using_ability[1] == false:
         attacker.entering_stealth = false
         stopChasingVariable(attacker.entering_stealth_timer)
         attacker.entering_stealth_timer = 0
     #MELEE
     if eventAbility == Button.MELEE:
-        if eventPlayer.bought_and_upgraded_talents[5] > 0 and eventPlayer.is_using_ability[5] == true:
+        if eventPlayer.talent_ranks[5] > 0 and eventPlayer.is_using_ability[5] == true:
             async(break_stealth, AsyncBehavior.NOOP)
         #Dealt Stealth damage?
         if victim.is_using_ability[1] == false and eventPlayer.is_using_ability[5] == true and eventAbility != null:
@@ -760,43 +760,43 @@ rule "GENERAL - - - Player Dealt Damage":
             playEffect(getAllPlayers(), DynamicEffect.DOOMFIST_RISING_UPPERCUT_IMPACT_SOUND, Color.WHITE, victim.getPosition(), 100)
             playEffect(getAllPlayers(), DynamicEffect.WRECKING_BALL_PILEDRIVER_IMPACT_SOUND, Color.WHITE, eventPlayer.getPosition(), 100)
         #Dealt Predator damage?
-        if eventPlayer.bought_and_upgraded_talents[10] > 0 and eventPlayer.predator_cooldown == 0 and victim.can_be_executed == true and victim.is_using_ability[1] == false and victim.getHealth() <= victim.getMaxHealth() * 0.25 == true and attacker.is_using_ability[1] == false:
+        if eventPlayer.talent_ranks[10] > 0 and eventPlayer.predator_cooldown == 0 and victim.can_be_executed == true and victim.is_using_ability[1] == false and victim.getHealth() <= victim.getMaxHealth() * 0.25 == true and attacker.is_using_ability[1] == false:
             smallMessage(eventPlayer, "{0} Executed {1}!".format(abilityIconString(Hero.WIDOWMAKER, Button.ULTIMATE), victim))
-            if attacker.bought_and_upgraded_talents[29] > 0:
+            if attacker.talent_ranks[29] > 0:
                 victim.hit_by_talent[29] = attacker
             victim.hit_by_talent[10] = attacker
-            attacker.predator_cooldown = 40 - attacker.bought_and_upgraded_talents[10] * 6
+            attacker.predator_cooldown = 40 - attacker.talent_ranks[10] * 6
             playEffect(getAllPlayers(), DynamicEffect.SIGMA_HYPERSPHERE_IMPLOSION_SOUND, Color.WHITE, victim.getPosition() + Vector.UP, 100)
             playEffect(getAllPlayers(), DynamicEffect.SIGMA_HYPERSPHERE_IMPLOSION, Color.WHITE, victim.getPosition() + Vector.UP, 1)
         #PRIMARY FIRE || ULTIMATE
     elif (eventAbility == Button.PRIMARY_FIRE or eventAbility == Button.ULTIMATE) == true:
         #Railgun?
-        if attacker.bought_and_upgraded_talents[9] > 0:
+        if attacker.talent_ranks[9] > 0:
             eventPlayer.railgun_discharge = 6
             if attacker.railgun_charge < 100:
-                attacker.railgun_charge += eventDamage * 0.375 + eventDamage * attacker.bought_and_upgraded_talents[17] * 0.038
+                attacker.railgun_charge += eventDamage * 0.375 + eventDamage * attacker.talent_ranks[17] * 0.038
         #Engineer?
-        if attacker.bought_and_upgraded_talents[3] > 0:
+        if attacker.talent_ranks[3] > 0:
             if attacker.engineer_scrap < 100:
-                attacker.engineer_scrap += eventDamage * (0.037 + attacker.bought_and_upgraded_talents[3] * 0.013)
-        if attacker.bought_and_upgraded_talents[12] > 0 and attacker.getHealthOfType(Health.NORMAL) < attacker.getMaxHealthOfType(Health.NORMAL):
-            heal(attacker, attacker, min(eventDamage * (0.112 + eventPlayer.bought_and_upgraded_talents[12] * 0.038), eventPlayer.getMaxHealthOfType(Health.NORMAL) - eventPlayer.getHealthOfType(Health.NORMAL)))
+                attacker.engineer_scrap += eventDamage * (0.037 + attacker.talent_ranks[3] * 0.013)
+        if attacker.talent_ranks[12] > 0 and attacker.getHealthOfType(Health.NORMAL) < attacker.getMaxHealthOfType(Health.NORMAL):
+            heal(attacker, attacker, min(eventDamage * (0.112 + eventPlayer.talent_ranks[12] * 0.038), eventPlayer.getMaxHealthOfType(Health.NORMAL) - eventPlayer.getHealthOfType(Health.NORMAL)))
             eventPlayer.is_lifestealing = 1.5
             lifesteal_hps()
         #SECONDARY FIRE
     elif eventAbility == Button.SECONDARY_FIRE:
-        if eventPlayer.bought_and_upgraded_talents[8] > 0 and victim.is_using_ability[6] == false and victim.is_using_ability[1] == false and victim.is_using_ability[18] == false:
+        if eventPlayer.talent_ranks[8] > 0 and victim.is_using_ability[6] == false and victim.is_using_ability[1] == false and victim.is_using_ability[18] == false:
             victim.hit_by_talent[8] = attacker
-        if attacker.bought_and_upgraded_talents[16] > 0:
+        if attacker.talent_ranks[16] > 0:
             if victim.is_using_ability[1] == false:
                 victim.setStatusEffect(attacker, Status.BURNING, 3)
-                victim.startDoT(attacker, 3, floor(attacker.bought_and_upgraded_talents[16] * 0.056 * eventDamage))
-        if attacker.bought_and_upgraded_talents[12] > 0:
-            heal(attacker, attacker, min(eventDamage * (0.112 + eventPlayer.bought_and_upgraded_talents[12] * 0.038), eventPlayer.getMaxHealthOfType(Health.NORMAL) - eventPlayer.getHealthOfType(Health.NORMAL)))
+                victim.startDoT(attacker, 3, floor(attacker.talent_ranks[16] * 0.056 * eventDamage))
+        if attacker.talent_ranks[12] > 0:
+            heal(attacker, attacker, min(eventDamage * (0.112 + eventPlayer.talent_ranks[12] * 0.038), eventPlayer.getMaxHealthOfType(Health.NORMAL) - eventPlayer.getHealthOfType(Health.NORMAL)))
             eventPlayer.is_lifestealing = 1.5
             playEffect(getAllPlayers(), DynamicEffect.BRIGITTE_REPAIR_PACK_IMPACT_SOUND, Color.TEAM_1, attacker.getPosition(), 100)
             lifesteal_hps()
-        if attacker.bought_and_upgraded_talents[16] > 0 and attacker.is_using_ability[16] == true:
+        if attacker.talent_ranks[16] > 0 and attacker.is_using_ability[16] == true:
             attacker.is_using_ability[16] = false
 
 
@@ -806,7 +806,7 @@ rule "GENERAL - - - Player Took Damage":
     attacker.using_hearthstone_timer = 0
     if victim.is_using_ability[1] == false:
         victim.in_combat = 3
-    if victim.bought_and_upgraded_talents[5] > 0 and victim.is_using_ability[1] == false:
+    if victim.talent_ranks[5] > 0 and victim.is_using_ability[1] == false:
         stopChasingVariable(victim.entering_stealth_timer)
         victim.entering_stealth_timer = 0
         if eventPlayer.is_using_ability[5] == true:
@@ -862,22 +862,22 @@ rule "GENERAL - - - Picked Up XP Orb":
     if eventPlayer.experience_current < eventPlayer.experience_max:
         eventPlayer.experience_current += eventPlayer.hit_by_talent[33].experience_max * 0.2 * eventPlayer.stats[5]
     #MINE?
-    if eventPlayer.hit_by_talent[33].bought_and_upgraded_talents[19] > 0 and eventPlayer.hit_by_talent[33].burning_soul_orb_timer > 0:
+    if eventPlayer.hit_by_talent[33].talent_ranks[19] > 0 and eventPlayer.hit_by_talent[33].burning_soul_orb_timer > 0:
         eventPlayer.hit_by_talent[33].burning_soul_orb_timer = 0
     eventPlayer.hit_by_talent[33].dropped_xp_orb = false
     wait()
     eventPlayer.hit_by_talent[33] = null
-    if eventPlayer.bought_and_upgraded_talents[32] > 0 and eventPlayer.amount_of_potions_or_vials < 3 and random.randint(0 + eventPlayer.bought_and_upgraded_talents[32] * 13.2, 100) > 66:
+    if eventPlayer.talent_ranks[32] > 0 and eventPlayer.amount_of_potions_or_vials < 3 and random.randint(0 + eventPlayer.talent_ranks[32] * 13.2, 100) > 66:
         eventPlayer.health_potion_cooldown_memory = eventPlayer.health_potion_cooldown
         eventPlayer.health_potion_cooldown = 0
         wait()
         if eventPlayer.amount_of_potions_or_vials < 3:
             eventPlayer.health_potion_cooldown = eventPlayer.health_potion_cooldown_memory
         eventPlayer.health_potion_cooldown_memory = 0
-        smallMessage(eventPlayer, "{0} +1 {1}".format(iconString(Icon.RADIOACTIVE), "Health Potion!" if eventPlayer.bought_and_upgraded_talents[14] > 0 else "Poison Vial!"))
-    if eventPlayer.bought_and_upgraded_talents[18] > 0:
+        smallMessage(eventPlayer, "{0} +1 {1}".format(iconString(Icon.RADIOACTIVE), "Health Potion!" if eventPlayer.talent_ranks[14] > 0 else "Poison Vial!"))
+    if eventPlayer.talent_ranks[18] > 0:
         eventPlayer.shadowstep_cooldown = 0
-    if eventPlayer.bought_and_upgraded_talents[3] > 0 and eventPlayer.engineer_scrap < 100:
+    if eventPlayer.talent_ranks[3] > 0 and eventPlayer.engineer_scrap < 100:
         eventPlayer.engineer_scrap += 25
 
 

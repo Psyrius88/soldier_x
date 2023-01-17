@@ -1,58 +1,58 @@
 #Global variables
 
-globalvar shop_location 0
-globalvar leave_shop_messages 44
-globalvar shop_talent_left_location 1
-globalvar shop_talent_middle_location 2
-globalvar shop_talent_right_location 3
-globalvar max_experience_per_level 26
+globalvar shop_location
+globalvar leave_shop_messages
+globalvar shop_talent_left_location
+globalvar shop_talent_middle_location
+globalvar shop_talent_right_location
+globalvar max_experience_per_level
 
 #Player variables
 
-playervar hearthstone_effects_id 73
-playervar using_hearthstone_timer 61
-playervar selected_talent_location 2
-playervar is_respawning 62
-playervar current_talent_replace_or_buy 56
-playervar selected_talent_will_replace 59
+playervar hearthstone_effects_id
+playervar using_hearthstone_timer
+playervar selected_talent_location
+playervar is_respawning
+playervar current_talent_replace_or_buy
+playervar selected_talent_will_replace
 
 #Subroutine names
 
-subroutine open_shop 0
-subroutine leave_shop_messages 53
-subroutine buy_or_upgrade_talent 6
-subroutine buy_bloodthirst 5
-subroutine buy_purity_field 7
-subroutine buy_cybernetics 10
-subroutine buy_engineer 9
-subroutine buy_shadowstrike 8
-subroutine buy_stealth 2
-subroutine buy_juggernaut 11
-subroutine buy_dive_bomb 15
-subroutine buy_cryogenics 16
-subroutine buy_railgun 18
-subroutine buy_predator 24
-subroutine buy_jetpack 23
-subroutine buy_lifesteal_ammo 21
-subroutine buy_health_regen 20
-subroutine buy_health_potions 22
-subroutine buy_ignite 17
-subroutine buy_overclock 13
-subroutine buy_shadowstep 30
-subroutine buy_fire_aura 19
-subroutine buy_berserker 14
-subroutine buy_fireball 25
-subroutine buy_ignore_pain 12
-subroutine buy_monkey_business 29
-subroutine buy_gluttony 31
-subroutine buy_weird_flex 33
-subroutine buy_for_glory 34
-subroutine buy_mace_to_the_face 35
-subroutine buy_pinball 36
-subroutine buy_soul_siphon 37
-subroutine buy_pyromaniac 39
-subroutine buy_poison_vials 40
-subroutine buy_crazy_alchemist 41
+subroutine open_shop
+subroutine leave_shop_messages
+subroutine buy_or_upgrade_talent
+subroutine buy_bloodthirst
+subroutine buy_purity_field
+subroutine buy_cybernetics
+subroutine buy_engineer
+subroutine buy_shadowstrike
+subroutine buy_stealth
+subroutine buy_juggernaut
+subroutine buy_dive_bomb
+subroutine buy_cryogenics
+subroutine buy_railgun
+subroutine buy_predator
+subroutine buy_jetpack
+subroutine buy_lifesteal_ammo
+subroutine buy_health_regen
+subroutine buy_health_potions
+subroutine buy_ignite
+subroutine buy_overclock
+subroutine buy_shadowstep
+subroutine buy_fire_aura
+subroutine buy_berserker
+subroutine buy_fireball
+subroutine buy_ignore_pain
+subroutine buy_monkey_business
+subroutine buy_gluttony
+subroutine buy_weird_flex
+subroutine buy_for_glory
+subroutine buy_mace_to_the_face
+subroutine buy_pinball
+subroutine buy_soul_siphon
+subroutine buy_pyromaniac
+subroutine buy_poison_vials
+subroutine buy_crazy_alchemist
 
 #Activated extensions
 
@@ -251,7 +251,7 @@ def using_one_of_the_hearthstones():
         eventPlayer.selected_talent_location = shop_talent_middle_location
         eventPlayer.can_enter_shop = false
         eventPlayer.experience_current = 0
-        if eventPlayer.bought_and_upgraded_talents[21] > 0 or eventPlayer.bought_and_upgraded_talents[6] > 0:
+        if eventPlayer.talent_ranks[21] > 0 or eventPlayer.talent_ranks[6] > 0:
             async(spawned_with_fireball, AsyncBehavior.RESTART)
         eventPlayer.is_respawning = true
         eventPlayer.respawn()
@@ -381,9 +381,9 @@ rule "SHOP - - - Buy Talent":
         #Reduce the score by how many times the talent you removed was upgraded
         #return
         #Reduce the amount_of_talents_purchased by how many time the talent you removed was upgraded
-        eventPlayer.amount_of_talents_purchased -= eventPlayer.bought_and_upgraded_talents[talent_names.index(eventPlayer.current_talent_replace_or_buy)]
-        #Remove the talent from bought_and_upgraded_talents
-        eventPlayer.bought_and_upgraded_talents[talent_names.index(eventPlayer.current_talent_replace_or_buy)] = 0
+        eventPlayer.amount_of_talents_purchased -= eventPlayer.talent_ranks[talent_names.index(eventPlayer.current_talent_replace_or_buy)]
+        #Remove the talent from talent_ranks
+        eventPlayer.talent_ranks[talent_names.index(eventPlayer.current_talent_replace_or_buy)] = 0
         #Remove the talent you removed from bought_talents
         eventPlayer.bought_talents = eventPlayer.bought_talents.exclude(eventPlayer.bought_talents[eventPlayer.selected_talent[1]])
         #Put the new talents in bought_talents
@@ -414,10 +414,10 @@ rule "SHOP - - - Buy Talent":
     eventPlayer.browsing_shop = false
     eventPlayer.selected_talent_location = shop_talent_middle_location
     eventPlayer.amount_of_talents_purchased += 1
-    #Add +1 to "bought_and_upgraded_talents" in the correct index
-    eventPlayer.bought_and_upgraded_talents[talent_names.index(eventPlayer.offered_talents_in_shop[eventPlayer.selected_talent[0]])] += 1
+    #Add +1 to "talent_ranks" in the correct index
+    eventPlayer.talent_ranks[talent_names.index(eventPlayer.offered_talents_in_shop[eventPlayer.selected_talent[0]])] += 1
     #If the talent being purchased has reached 5...
-    if eventPlayer.bought_and_upgraded_talents[talent_names.index(eventPlayer.offered_talents_in_shop[eventPlayer.selected_talent[0]])] == 5:
+    if eventPlayer.talent_ranks[talent_names.index(eventPlayer.offered_talents_in_shop[eventPlayer.selected_talent[0]])] == 5:
         #...remove it from possible talents.
         eventPlayer.possible_talents[talent_names.index(eventPlayer.offered_talents_in_shop[eventPlayer.selected_talent[0]])] = null
     eventPlayer.replace_replacing_or_cancelled[1] = false
@@ -429,7 +429,7 @@ rule "SHOP - - - Buy Talent":
     eventPlayer.can_enter_shop = false
     eventPlayer.experience_current = 0
     eventPlayer.experience_max = max_experience_per_level[eventPlayer.amount_of_talents_purchased]
-    if eventPlayer.bought_and_upgraded_talents[21] > 0 or eventPlayer.bought_and_upgraded_talents[6] > 0:
+    if eventPlayer.talent_ranks[21] > 0 or eventPlayer.talent_ranks[6] > 0:
         async(spawned_with_fireball, AsyncBehavior.RESTART)
     eventPlayer.is_respawning = true
     eventPlayer.respawn()
@@ -462,7 +462,7 @@ def open_shop():
     if len(eventPlayer.bought_talents) == 5:
         eventPlayer.talent_counter_or_position_etc[15] = 4
         while eventPlayer.talent_counter_or_position_etc[15] >= 0:
-            if eventPlayer.bought_and_upgraded_talents[talent_names.index(eventPlayer.bought_talents[eventPlayer.talent_counter_or_position_etc[15]])] < 5:
+            if eventPlayer.talent_ranks[talent_names.index(eventPlayer.bought_talents[eventPlayer.talent_counter_or_position_etc[15]])] < 5:
                 eventPlayer.possible_talents[talent_names.index(eventPlayer.bought_talents[eventPlayer.talent_counter_or_position_etc[15]])] = eventPlayer.bought_talents[eventPlayer.talent_counter_or_position_etc[15]]
             eventPlayer.talent_counter_or_position_etc[15] -= 1
     else:
@@ -499,7 +499,7 @@ def open_shop():
         eventPlayer.browsing_shop = false
         eventPlayer.selected_talent_location = shop_talent_middle_location
         eventPlayer.can_enter_shop = false
-        if eventPlayer.bought_and_upgraded_talents[21] > 0 or eventPlayer.bought_and_upgraded_talents[6] > 0:
+        if eventPlayer.talent_ranks[21] > 0 or eventPlayer.talent_ranks[6] > 0:
             async(spawned_with_fireball, AsyncBehavior.RESTART)
         eventPlayer.is_respawning = true
         eventPlayer.respawn()
@@ -581,7 +581,7 @@ def buy_or_upgrade_talent():
     elif eventPlayer.current_talent_replace_or_buy == talent_names[13]:
         buy_health_regen()
     elif eventPlayer.current_talent_replace_or_buy == talent_names[14]:
-        if eventPlayer.bought_and_upgraded_talents[14] == 1:
+        if eventPlayer.talent_ranks[14] == 1:
             eventPlayer.amount_of_potions_or_vials = 3
         buy_health_potions()
     elif eventPlayer.current_talent_replace_or_buy == talent_names[16]:
@@ -615,7 +615,7 @@ def buy_or_upgrade_talent():
     elif eventPlayer.current_talent_replace_or_buy == talent_names[30]:
         buy_pyromaniac()
     elif eventPlayer.current_talent_replace_or_buy == talent_names[31]:
-        if eventPlayer.bought_and_upgraded_talents[31] == 1:
+        if eventPlayer.talent_ranks[31] == 1:
             eventPlayer.amount_of_potions_or_vials = 3
         buy_poison_vials()
     elif eventPlayer.current_talent_replace_or_buy == talent_names[32]:

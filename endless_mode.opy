@@ -1,12 +1,12 @@
 #Global variables
 
-globalvar map_is_changing 24
-globalvar vote_to_change_map_duration 29
-globalvar showdown_duration 47
+globalvar map_is_changing
+globalvar vote_to_change_map_duration
+globalvar showdown_duration
 
 #Player variables
 
-playervar color_chaser 79
+playervar color_chaser
 
 rule "ENDLESS MODE - - - Player Left The Match":
     @Event playerLeft

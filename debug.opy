@@ -40,17 +40,17 @@ rule "DEBUG - - - Abilities [DEFAULT: OFF]":
     #Jetpack
     #return
     #Predator
-    eventPlayer.bought_and_upgraded_talents[10] = 1
+    eventPlayer.talent_ranks[10] = 1
     buy_predator()
-    eventPlayer.bought_and_upgraded_talents[10] = 5
+    eventPlayer.talent_ranks[10] = 5
     #Health Potions
     #return
     #Poison Vials
     #return
     #Soul Siphon
-    eventPlayer.bought_and_upgraded_talents[29] = 1
+    eventPlayer.talent_ranks[29] = 1
     buy_soul_siphon()
-    eventPlayer.bought_and_upgraded_talents[29] = 5
+    eventPlayer.talent_ranks[29] = 5
     #Overclock
     #return
     #Ignore Pain
@@ -87,14 +87,14 @@ rule "DEBUG - - - Host HUD Texts [DEFAULT: OFF]":
 def lifesteal_hps():
     @Name "DEBUG - - - [Talent: Lifesteal] Healing Done In Combat [DEFAULT: OFF]"
     
-    eventPlayer.healing_done_in_combat[12] += eventDamage * (0.112 + eventPlayer.bought_and_upgraded_talents[12] * 0.038)
+    eventPlayer.healing_done_in_combat[12] += eventDamage * (0.112 + eventPlayer.talent_ranks[12] * 0.038)
 */
 
 /*
 def health_potion_hps():
     @Name "DEBUG - - - [Talent: Health Potions] Healing Done In Combat [DEFAULT: OFF]"
     
-    eventPlayer.healing_done_in_combat[14] += 43.75 + eventPlayer.bought_and_upgraded_talents[14] * 17.5
+    eventPlayer.healing_done_in_combat[14] += 43.75 + eventPlayer.talent_ranks[14] * 17.5
 */
 
 /*

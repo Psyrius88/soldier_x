@@ -6,15 +6,15 @@ globalvar spawn_bots
 
 playervar reaper_view_angle
 playervar reaper_turn_speed
-playervar reaper_brain_information 5
-playervar reaper_aggro_list 9
-playervar reaper_has_respawned_once 74
-playervar last_known_position_of_target 10
+playervar reaper_brain_information
+playervar reaper_aggro_list
+playervar reaper_has_respawned_once
+playervar last_known_position_of_target
 
 #Subroutine names
 
-subroutine reaper_has_a_target 54
-subroutine reaper_target_lost 55
+subroutine reaper_has_a_target
+subroutine reaper_target_lost
 
 rule "BOT SYSTEM - - - Bot INIT":
     @Event eachPlayer
