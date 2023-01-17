@@ -86,7 +86,7 @@ subroutine ignore_pain_hps 45
 #!extension kineticExplosionEffects
 
 def buy_bloodthirst():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 0: BLOODTHIRST] [SUBROUTINE] Buy Bloodthirst"
+    @Name "TALENT SYSTEM - - - [TALENT 0: BLOODTHIRST] [SUBROUTINE] Buy Bloodthirst"
     
     if eventPlayer.replace_replacing_or_cancelled[1] == true:
         eventPlayer.talents_you_do_not_have[0] = talent_names[0]
@@ -97,7 +97,7 @@ def buy_bloodthirst():
 
 
 def bloodthirst_effects():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 0: BLOODTHIRST] [SUBROUTINE] Bloodthirst Effects"
+    @Name "TALENT SYSTEM - - - [TALENT 0: BLOODTHIRST] [SUBROUTINE] Bloodthirst Effects"
     
     playEffect(getAllPlayers(), DynamicEffect.BRIGITTE_REPAIR_PACK_IMPACT_SOUND, Color.TEAM_1, eventPlayer.getPosition(), 100)
     createEffect(getAllPlayers(), Effect.HEAL_TARGET, Color.TEAM_1, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
@@ -110,7 +110,7 @@ def bloodthirst_effects():
 
 
 def buy_purity_field():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 1: PURITY FIELD] [SUBROUTINE] Buy Purity Field"
+    @Name "TALENT SYSTEM - - - [TALENT 1: PURITY FIELD] [SUBROUTINE] Buy Purity Field"
     
     if eventPlayer.replace_replacing_or_cancelled[1] == true:
         eventPlayer.talents_you_do_not_have[1] = talent_names[1]
@@ -123,7 +123,7 @@ def buy_purity_field():
         eventPlayer.talents_you_do_not_have[1] = null
 
 
-rule "TALENT S﻿YSTEM - - - [TALENT 1: PURITY FIELD] Use Purity Field":
+rule "TALENT SYSTEM - - - [TALENT 1: PURITY FIELD] Use Purity Field":
     @Event eachPlayer
     @Hero soldier
     @Condition eventPlayer.bought_and_upgraded_talents[1] > 0
@@ -198,7 +198,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 1: PURITY FIELD] Use Purity Field":
 
 
 def purity_field_impulse():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 1: PURITY FIELD] [SUBROUTINE] Purity Field Impulse"
+    @Name "TALENT SYSTEM - - - [TALENT 1: PURITY FIELD] [SUBROUTINE] Purity Field Impulse"
     
     while eventPlayer.is_using_ability[1] == true:
         #Impulse
@@ -206,7 +206,7 @@ def purity_field_impulse():
         wait(0.125)
 
 
-rule "TALENT S﻿YSTEM - - - [TALENT 1: PURITY FIELD] Hit By Purity Field":
+rule "TALENT SYSTEM - - - [TALENT 1: PURITY FIELD] Hit By Purity Field":
     @Event eachPlayer
     @Condition eventPlayer.hit_by_talent[1] != null
     
@@ -216,7 +216,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 1: PURITY FIELD] Hit By Purity Field":
 
 
 def buy_cybernetics():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 2: CYBERNETICS] [SUBROUTINE] Buy Cybernetics (hit_by_ability[2] is borrowed by talent: juggernaut)"
+    @Name "TALENT SYSTEM - - - [TALENT 2: CYBERNETICS] [SUBROUTINE] Buy Cybernetics (hit_by_ability[2] is borrowed by talent: juggernaut)"
     
     if eventPlayer.replace_replacing_or_cancelled[1] == true:
         eventPlayer.talents_you_do_not_have[2] = talent_names[2]
@@ -231,7 +231,7 @@ def buy_cybernetics():
 
 
 def buy_engineer():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 3: ENGINEER] [SUBROUTINE] Buy Engineer"
+    @Name "TALENT SYSTEM - - - [TALENT 3: ENGINEER] [SUBROUTINE] Buy Engineer"
     
     if eventPlayer.replace_replacing_or_cancelled[1] == true:
         eventPlayer.engineer_scrap = 0
@@ -246,7 +246,7 @@ def buy_engineer():
         eventPlayer.talents_you_do_not_have[3] = null
 
 
-rule "TALENT S﻿YSTEM - - - [TALENT 3: ENGINEER] Use Engineer":
+rule "TALENT SYSTEM - - - [TALENT 3: ENGINEER] Use Engineer":
     @Event eachPlayer
     @Hero soldier
     @Condition eventPlayer.bought_and_upgraded_talents[3] > 0
@@ -271,7 +271,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 3: ENGINEER] Use Engineer":
 
 
 def buy_shadowstrike():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 4: SHADOWSTRIKE] [SUBROUTINE] Buy Shadowstrike"
+    @Name "TALENT SYSTEM - - - [TALENT 4: SHADOWSTRIKE] [SUBROUTINE] Buy Shadowstrike"
     
     if eventPlayer.replace_replacing_or_cancelled[1] == true:
         stopChasingVariable(eventPlayer.shadowstep_cooldown)
@@ -287,7 +287,7 @@ def buy_shadowstrike():
 
 
 def shadowstrike():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 4: SHADOWSTRIKE] [SUBROUTINE] Use Shadowstrike (triggers from talent 18: use shadowstep)"
+    @Name "TALENT SYSTEM - - - [TALENT 4: SHADOWSTRIKE] [SUBROUTINE] Use Shadowstrike (triggers from talent 18: use shadowstep)"
     
     createEffect(getAllPlayers(), Effect.ENERGY_SOUND, Color.WHITE, eventPlayer, 100, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
     eventPlayer.player_temp_effects[4] = getLastCreatedEntity()
@@ -318,7 +318,7 @@ def shadowstrike():
 
 
 def buy_stealth():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 5: STEALTH] [SUBROUTINE] Buy Stealth"
+    @Name "TALENT SYSTEM - - - [TALENT 5: STEALTH] [SUBROUTINE] Buy Stealth"
     
     if eventPlayer.replace_replacing_or_cancelled[1] == true:
         break_stealth()
@@ -340,7 +340,7 @@ def buy_stealth():
         eventPlayer.talents_you_do_not_have[5] = null
 
 
-rule "TALENT S﻿YSTEM - - - [TALENT 5: STEALTH] Use Stealth":
+rule "TALENT SYSTEM - - - [TALENT 5: STEALTH] Use Stealth":
     @Event eachPlayer
     @Hero soldier
     @Condition eventPlayer.bought_and_upgraded_talents[5] > 0
@@ -373,7 +373,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 5: STEALTH] Use Stealth":
     break_stealth()
 
 
-rule "TALENT S﻿YSTEM - - - [TALENT 5: STEALTH] Canceled Entering Stealth":
+rule "TALENT SYSTEM - - - [TALENT 5: STEALTH] Canceled Entering Stealth":
     @Event eachPlayer
     @Hero soldier
     @Condition eventPlayer.bought_and_upgraded_talents[5] > 0
@@ -385,7 +385,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 5: STEALTH] Canceled Entering Stealth":
     eventPlayer.entering_stealth_timer = 0
 
 
-rule "TALENT S﻿YSTEM - - - [TALENT 5: STEALTH] Hit By Stealth Melee":
+rule "TALENT SYSTEM - - - [TALENT 5: STEALTH] Hit By Stealth Melee":
     @Event eachPlayer
     @Condition eventPlayer.hit_by_talent[5] != null
     
@@ -402,7 +402,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 5: STEALTH] Hit By Stealth Melee":
     destroyEffect(eventPlayer.player_temp_effects[5])
 
 
-rule "TALENT S﻿YSTEM - - - [TALENT 5: STEALTH] Break Stealth If Being Loud":
+rule "TALENT SYSTEM - - - [TALENT 5: STEALTH] Break Stealth If Being Loud":
     @Event eachPlayer
     @Hero soldier
     @Condition eventPlayer.bought_and_upgraded_talents[5] > 0
@@ -413,7 +413,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 5: STEALTH] Break Stealth If Being Loud":
 
 
 def break_stealth():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 5: STEALTH] [SUBROUTINE] Break Stealth"
+    @Name "TALENT SYSTEM - - - [TALENT 5: STEALTH] [SUBROUTINE] Break Stealth"
     
     eventPlayer.is_using_ability[5] = false
     eventPlayer.setInvisibility(Invis.NONE)
@@ -428,7 +428,7 @@ def break_stealth():
 
 /*
 def buy_juggernaut():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 6: JUGGERNAUT] [SUBROUTINE] Buy Juggernaut [DISABLED: JUGGERNAUT NOT WORKING AS INTENDED]"
+    @Name "TALENT SYSTEM - - - [TALENT 6: JUGGERNAUT] [SUBROUTINE] Buy Juggernaut [DISABLED: JUGGERNAUT NOT WORKING AS INTENDED]"
     
     if eventPlayer.replace_replacing_or_cancelled[1] == true:
         stopChasingVariable(eventPlayer.juggernaut_cooldown)
@@ -449,7 +449,7 @@ def buy_juggernaut():
 */
 
 /*
-rule "TALENT S﻿YSTEM - - - [TALENT 6: JUGGERNAUT] Use Juggernaut [DISABLED: JUGGERNAUT NOT WORKING AS INTENDED]":
+rule "TALENT SYSTEM - - - [TALENT 6: JUGGERNAUT] Use Juggernaut [DISABLED: JUGGERNAUT NOT WORKING AS INTENDED]":
     @Event eachPlayer
     @Hero soldier
     @Condition eventPlayer.bought_and_upgraded_talents[6] > 0
@@ -550,7 +550,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 6: JUGGERNAUT] Use Juggernaut [DISABLED: JU
 
 /*
 def juggernaut_knockback():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 6: JUGGERNAUT] [SUBROUTINE] Juggernaut Knockback Start [DISABLED: JUGGERNAUT NOT WORKING AS INTENDED]"
+    @Name "TALENT SYSTEM - - - [TALENT 6: JUGGERNAUT] [SUBROUTINE] Juggernaut Knockback Start [DISABLED: JUGGERNAUT NOT WORKING AS INTENDED]"
     
     #When doing the juggernaut start jump
     while eventPlayer.isAlive() == true and eventPlayer.is_using_ability[6] == true and eventPlayer.talent_counter_or_position_etc[6] == null and eventPlayer.has_hit_the_ground == false:
@@ -561,7 +561,7 @@ def juggernaut_knockback():
 
 /*
 def juggernaut_effects():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 6: JUGGERNAUT] Juggernaut Effects [DISABLED: JUGGERNAUT NOT WORKING AS INTENDED]"
+    @Name "TALENT SYSTEM - - - [TALENT 6: JUGGERNAUT] Juggernaut Effects [DISABLED: JUGGERNAUT NOT WORKING AS INTENDED]"
     
     eventPlayer.setStatusEffect(null, Status.PHASED_OUT, 9999)
     wait(0.25)
@@ -574,7 +574,7 @@ def juggernaut_effects():
 */
 
 /*
-rule "TALENT S﻿YSTEM - - - [TALENT 6: JUGGERNAUT] Hit By Juggernaut [DISABLED: JUGGERNAUT NOT WORKING AS INTENDED]":
+rule "TALENT SYSTEM - - - [TALENT 6: JUGGERNAUT] Hit By Juggernaut [DISABLED: JUGGERNAUT NOT WORKING AS INTENDED]":
     @Event eachPlayer
     @Condition eventPlayer.hit_by_talent[6] != null
     
@@ -611,7 +611,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 6: JUGGERNAUT] Hit By Juggernaut [DISABLED:
 */
 
 /*
-rule "TALENT S﻿YSTEM - - - [TALENT 6: JUGGERNAUT] Juggernaut Hit By Impulse [DISABLED: JUGGERNAUT NOT WORKING AS INTENDED]":
+rule "TALENT SYSTEM - - - [TALENT 6: JUGGERNAUT] Juggernaut Hit By Impulse [DISABLED: JUGGERNAUT NOT WORKING AS INTENDED]":
     @Event eachPlayer
     @Condition eventPlayer.hit_by_talent[2] != null
     
@@ -623,7 +623,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 6: JUGGERNAUT] Juggernaut Hit By Impulse [D
 
 /*
 def juggernaut_impulse_sound_cd():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 6: JUGGERNAUT] [SUBROUTINE] Juggernaut Impulse Sound Cooldo﻿wn [DISABLED: JUGGERNAUT NOT WORKING AS INTENDED]"
+    @Name "TALENT SYSTEM - - - [TALENT 6: JUGGERNAUT] [SUBROUTINE] Juggernaut Impulse Sound Cooldo﻿wn [DISABLED: JUGGERNAUT NOT WORKING AS INTENDED]"
     
     playEffect(getAllPlayers(), DynamicEffect.BAPTISTE_BIOTIC_LAUNCHER_EXPLOSION_SOUND, Color.WHITE, eventPlayer, 100)
     wait(0.333)
@@ -631,7 +631,7 @@ def juggernaut_impulse_sound_cd():
 
 /*
 def cancel_juggernaut():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 6: JUGGERNAUT] Cancel Juggernaut [DISABLED: JUGGERNAUT NOT WORKING AS INTENDED]"
+    @Name "TALENT SYSTEM - - - [TALENT 6: JUGGERNAUT] Cancel Juggernaut [DISABLED: JUGGERNAUT NOT WORKING AS INTENDED]"
     
     wait(0.5)
     if eventPlayer.isDead() == true:
@@ -650,7 +650,7 @@ def cancel_juggernaut():
 
 /*
 def buy_dive_bomb():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 7: DIVE BOMB] [SUBROUTINE] Buy Dive Bomb [DISABLED: JUGGERNAUT NOT WORKING AS INTENDED]"
+    @Name "TALENT SYSTEM - - - [TALENT 7: DIVE BOMB] [SUBROUTINE] Buy Dive Bomb [DISABLED: JUGGERNAUT NOT WORKING AS INTENDED]"
     
     if eventPlayer.replace_replacing_or_cancelled[1] == true:
         stopChasingVariable(eventPlayer.dive_bomb_cooldown)
@@ -664,7 +664,7 @@ def buy_dive_bomb():
 */
 
 /*
-rule "TALENT S﻿YSTEM - - - [TALENT 7: DIVE BOMB] Use Dive Bomb [DISABLED: JUGGERNAUT NOT WORKING AS INTENDED]":
+rule "TALENT SYSTEM - - - [TALENT 7: DIVE BOMB] Use Dive Bomb [DISABLED: JUGGERNAUT NOT WORKING AS INTENDED]":
     @Event eachPlayer
     @Hero soldier
     @Condition eventPlayer.bought_and_upgraded_talents[7] > 0
@@ -725,7 +725,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 7: DIVE BOMB] Use Dive Bomb [DISABLED: JUGG
 */
 
 /*
-rule "TALENT S﻿YSTEM - - - [TALENT 7: DIVE BOMB] Hit By Dive Bomb [DISABLED: JUGGERNAUT NOT WORKING AS INTENDED]":
+rule "TALENT SYSTEM - - - [TALENT 7: DIVE BOMB] Hit By Dive Bomb [DISABLED: JUGGERNAUT NOT WORKING AS INTENDED]":
     @Event eachPlayer
     @Condition eventPlayer.hit_by_talent[7] != null
     
@@ -744,7 +744,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 7: DIVE BOMB] Hit By Dive Bomb [DISABLED: J
 */
 
 def buy_cryogenics():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 8: CRYOGENICS] [SUBROUTINE] Buy Cryogenics"
+    @Name "TALENT SYSTEM - - - [TALENT 8: CRYOGENICS] [SUBROUTINE] Buy Cryogenics"
     
     if eventPlayer.replace_replacing_or_cancelled[1] == true:
         eventPlayer.talents_you_do_not_have[8] = talent_names[8]
@@ -753,7 +753,7 @@ def buy_cryogenics():
         eventPlayer.talents_you_do_not_have[8] = null
 
 
-rule "TALENT S﻿YSTEM - - - [TALENT 8: CRYOGENICS] Hit By Cryogenics":
+rule "TALENT SYSTEM - - - [TALENT 8: CRYOGENICS] Hit By Cryogenics":
     @Event eachPlayer
     @Condition eventPlayer.hit_by_talent[8] != null
     
@@ -795,7 +795,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 8: CRYOGENICS] Hit By Cryogenics":
 
 
 def buy_railgun():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 9: RAILGUN] [SUBROUTINE] Buy Railgun"
+    @Name "TALENT SYSTEM - - - [TALENT 9: RAILGUN] [SUBROUTINE] Buy Railgun"
     
     if eventPlayer.replace_replacing_or_cancelled[1] == true:
         if eventPlayer.offered_talents_in_shop[eventPlayer.selected_talent[0]] == talent_names[17]:
@@ -831,7 +831,7 @@ def buy_railgun():
         eventPlayer.talents_you_do_not_have[17] = talent_names[17]
 
 
-rule "TALENT S﻿YSTEM - - - [TALENT 9: RAILGUN] Use Railgun":
+rule "TALENT SYSTEM - - - [TALENT 9: RAILGUN] Use Railgun":
     @Event eachPlayer
     @Hero soldier
     @Condition eventPlayer.bought_and_upgraded_talents[9] > 0
@@ -889,7 +889,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 9: RAILGUN] Use Railgun":
     if eventPlayer.getCurrentHero() != Hero.SOLDIER and eventPlayer.getCurrentHero() != Hero.REAPER:
 
 
-rule "TALENT S﻿YSTEM - - - [TALENT 9: RAILGUN] Railgun Discharge":
+rule "TALENT SYSTEM - - - [TALENT 9: RAILGUN] Railgun Discharge":
     @Event eachPlayer
     @Condition eventPlayer.bought_and_upgraded_talents[9] > 0
     @Condition eventPlayer.railgun_discharge == 0
@@ -900,7 +900,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 9: RAILGUN] Railgun Discharge":
 
 
 def railgun_projectile_is_in_air():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 9: RAILGUN] [SUBROUTINE] Railgun Projectile Is In Air"
+    @Name "TALENT SYSTEM - - - [TALENT 9: RAILGUN] [SUBROUTINE] Railgun Projectile Is In Air"
     
     createBeam(getAllPlayers() if eventPlayer.railgun_projectile_is_in_air == true else null, Beam.BAD, evalOnce(eventPlayer.getPosition() + worldVector(vect(-1 * 1 * 1 * 0.25, 1.375, 0), eventPlayer, Transform.ROTATION) if eventPlayer.isCrouching() == false else eventPlayer.getPosition() + worldVector(vect(-1 * 1 * 1 * 0.25, 0.875, 0), eventPlayer, Transform.ROTATION)), (((sorted([player for player in eventPlayer.railgun_projectile_player_hit if player != null and (player.getCurrentHero() == Hero.SOLDIER or player.getCurrentHero() == Hero.REAPER)], lambda i: distance(eventPlayer.getPosition(), i)))[0]).getPosition()) + Vector.UP if any([player != null for player in eventPlayer.railgun_projectile_player_hit]) else eventPlayer.railgun_projectile_destination, Color.SKY_BLUE, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
     playEffect(getAllPlayers(), DynamicEffect.DOOMFIST_RISING_UPPERCUT_IMPACT_SOUND, Color.WHITE, eventPlayer, 100)
@@ -917,7 +917,7 @@ def railgun_projectile_is_in_air():
 
 
 def buy_predator():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 10: PREDATOR] [SUBROUTINE] Buy Predator"
+    @Name "TALENT SYSTEM - - - [TALENT 10: PREDATOR] [SUBROUTINE] Buy Predator"
     
     if eventPlayer.replace_replacing_or_cancelled[1] == true:
         #If you are trying to replace predator with soul siphon
@@ -945,7 +945,7 @@ def buy_predator():
         eventPlayer.talents_you_do_not_have[29] = talent_names[29]
 
 
-rule "TALENT S﻿YSTEM - - - [TALENT 10: PREDATOR] Predator":
+rule "TALENT SYSTEM - - - [TALENT 10: PREDATOR] Predator":
     @Event eachPlayer
     @Condition eventPlayer.hit_by_talent[10] != null
     
@@ -975,7 +975,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 10: PREDATOR] Predator":
     wait(3)
 
 
-rule "TALENT S﻿YSTEM - - - [TALENT 10: PREDATOR] Create Predator Effect On Myself":
+rule "TALENT SYSTEM - - - [TALENT 10: PREDATOR] Create Predator Effect On Myself":
     @Event eachPlayer
     @Condition any([player.bought_and_upgraded_talents[10] > 0 for player in getAllPlayers()]) == true
     #when my health is <25%
@@ -991,7 +991,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 10: PREDATOR] Create Predator Effect On Mys
     eventPlayer.can_be_executed = true
 
 
-rule "TALENT S﻿YSTEM - - - [TALENT 10: PREDATOR] Remove Predator Effect On Myself":
+rule "TALENT SYSTEM - - - [TALENT 10: PREDATOR] Remove Predator Effect On Myself":
     @Event eachPlayer
     #when my health is >=25%
     @Condition eventPlayer.getHealth() >= eventPlayer.getMaxHealth() * 0.25
@@ -1006,7 +1006,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 10: PREDATOR] Remove Predator Effect On Mys
 
 
 def buy_jetpack():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 11: JETPACK] [SUBROUTINE] Buy Jetpack"
+    @Name "TALENT SYSTEM - - - [TALENT 11: JETPACK] [SUBROUTINE] Buy Jetpack"
     
     if eventPlayer.replace_replacing_or_cancelled[1] == true:
         eventPlayer.stopAcceleration()
@@ -1024,7 +1024,7 @@ def buy_jetpack():
         eventPlayer.talents_you_do_not_have[11] = null
 
 
-rule "TALENT S﻿YSTEM - - - [TALENT 11: JETPACK] Use Jetpack":
+rule "TALENT SYSTEM - - - [TALENT 11: JETPACK] Use Jetpack":
     @Event eachPlayer
     @Condition eventPlayer.bought_and_upgraded_talents[11] > 0
     @Condition eventPlayer.browsing_shop == false
@@ -1054,7 +1054,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 11: JETPACK] Use Jetpack":
             eventPlayer.setAbility1Enabled(true)
 
 
-rule "TALENT S﻿YSTEM - - - [TALENT 11: JETPACK] Jetpack Effects":
+rule "TALENT SYSTEM - - - [TALENT 11: JETPACK] Jetpack Effects":
     @Event eachPlayer
     @Condition eventPlayer.is_using_ability[11] == true
     @Condition (eventPlayer.getCurrentHero() == Hero.SOLDIER or eventPlayer.getCurrentHero() == Hero.BRIGITTE) == true
@@ -1065,7 +1065,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 11: JETPACK] Jetpack Effects":
         goto RULE_START
 
 
-rule "TALENT S﻿YSTEM - - - [TALENT 11: JETPACK] Jetpack Will Have a Delay":
+rule "TALENT SYSTEM - - - [TALENT 11: JETPACK] Jetpack Will Have a Delay":
     @Event eachPlayer
     @Condition eventPlayer.bought_and_upgraded_talents[11] > 0
     @Condition eventPlayer.isOnGround() == true
@@ -1075,7 +1075,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 11: JETPACK] Jetpack Will Have a Delay":
 
 
 def buy_lifesteal_ammo():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 12: LIFESTEAL AMMO] [SUBROUTINE] Buy Lifesteal Ammo"
+    @Name "TALENT SYSTEM - - - [TALENT 12: LIFESTEAL AMMO] [SUBROUTINE] Buy Lifesteal Ammo"
     
     if eventPlayer.replace_replacing_or_cancelled[1] == true:
         stopChasingVariable(eventPlayer.is_lifestealing)
@@ -1098,7 +1098,7 @@ def buy_lifesteal_ammo():
 
 
 def buy_health_regen():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 13: HEALTH REGEN] [SUBROUTINE] Buy Health Regen"
+    @Name "TALENT SYSTEM - - - [TALENT 13: HEALTH REGEN] [SUBROUTINE] Buy Health Regen"
     
     if eventPlayer.replace_replacing_or_cancelled[1] == true:
         eventPlayer.talents_you_do_not_have[13] = talent_names[13]
@@ -1116,7 +1116,7 @@ def buy_health_regen():
 
 
 def health_regen_heal_over_time():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 13: HEALTH REGEN] [SUBROUTINE] Health Regen Heal Over Time"
+    @Name "TALENT SYSTEM - - - [TALENT 13: HEALTH REGEN] [SUBROUTINE] Health Regen Heal Over Time"
     
     while eventPlayer.bought_and_upgraded_talents[13] > 0:
         waitUntil(eventPlayer.getHealthOfType(Health.NORMAL) < eventPlayer.getMaxHealthOfType(Health.NORMAL) and eventPlayer.is_using_ability[31] == false or eventPlayer.bought_and_upgraded_talents[13] == 0 == true, 99999)
@@ -1127,7 +1127,7 @@ def health_regen_heal_over_time():
 
 
 def buy_health_potions():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 14: HEALTH POTIONS] [SUBROUTINE] Buy Health Potions"
+    @Name "TALENT SYSTEM - - - [TALENT 14: HEALTH POTIONS] [SUBROUTINE] Buy Health Potions"
     
     if eventPlayer.replace_replacing_or_cancelled[1] == true:
         if eventPlayer.offered_talents_in_shop[eventPlayer.selected_talent[0]] == talent_names[32]:
@@ -1157,7 +1157,7 @@ def buy_health_potions():
         chase(eventPlayer.health_potion_cooldown, 0, rate=1, ChaseReeval.DESTINATION_AND_RATE)
 
 
-rule "TALENT S﻿YSTEM - - - [TALENT 14/31: HEALTH POTIONS/POISON VIAL] Use Health Potion or Poison Vial":
+rule "TALENT SYSTEM - - - [TALENT 14/31: HEALTH POTIONS/POISON VIAL] Use Health Potion or Poison Vial":
     @Event eachPlayer
     @Hero soldier
     @Condition (eventPlayer.bought_and_upgraded_talents[14] > 0 or eventPlayer.bought_and_upgraded_talents[31] > 0) == true
@@ -1210,7 +1210,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 14/31: HEALTH POTIONS/POISON VIAL] Use Heal
     eventPlayer.is_using_ability[14] = false
 
 
-rule "TALENT S﻿YSTEM - - - [TALENT 14/31: HEALTH POTIONS/POISON VIAL] Health Potion or Poison Vial Recharge":
+rule "TALENT SYSTEM - - - [TALENT 14/31: HEALTH POTIONS/POISON VIAL] Health Potion or Poison Vial Recharge":
     @Event eachPlayer
     @Hero soldier
     @Condition (eventPlayer.bought_and_upgraded_talents[14] > 0 or eventPlayer.bought_and_upgraded_talents[31] > 0) == true
@@ -1225,7 +1225,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 14/31: HEALTH POTIONS/POISON VIAL] Health P
 
 
 def health_potion_heal_over_time():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 14: HEALTH POTIONS] [SUBROUTINE] Health Potions Stop Heal Over Time"
+    @Name "TALENT SYSTEM - - - [TALENT 14: HEALTH POTIONS] [SUBROUTINE] Health Potions Stop Heal Over Time"
     
     waitUntil(eventPlayer.isDead() == true or eventPlayer.getMaxHealthOfType(Health.NORMAL) == eventPlayer.getHealthOfType(Health.NORMAL), 2)
     removeHealthPool(eventPlayer.health_pool_id_or_hot_id[4])
@@ -1234,7 +1234,7 @@ def health_potion_heal_over_time():
 
 
 def already_at_full_health():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 14: HEALTH POTIONS] [SUBROUTINE] Health Potion Already At Full Health!"
+    @Name "TALENT SYSTEM - - - [TALENT 14: HEALTH POTIONS] [SUBROUTINE] Health Potion Already At Full Health!"
     
     smallMessage(eventPlayer, "Already at full health!")
     playEffect(eventPlayer, DynamicEffect.DEBUFF_IMPACT_SOUND, Color.WHITE, eventPlayer, 75)
@@ -1242,7 +1242,7 @@ def already_at_full_health():
 
 
 def buy_ignite():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 16: IGNITE] [SUBROUTINE] Buy Ignite"
+    @Name "TALENT SYSTEM - - - [TALENT 16: IGNITE] [SUBROUTINE] Buy Ignite"
     
     if eventPlayer.replace_replacing_or_cancelled[1] == true:
         eventPlayer.ignite_position = eventPlayer.getEyePosition()
@@ -1252,7 +1252,7 @@ def buy_ignite():
         eventPlayer.talents_you_do_not_have[16] = null
 
 
-rule "TALENT S﻿YSTEM - - - [TALENT 16: IGNITE] Ignite Effects":
+rule "TALENT SYSTEM - - - [TALENT 16: IGNITE] Ignite Effects":
     @Event eachPlayer
     @Hero soldier
     @Condition eventPlayer.isFiringSecondaryFire() == true
@@ -1276,7 +1276,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 16: IGNITE] Ignite Effects":
 
 
 def buy_overclock():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 17: OVERCLOCK] [SUBROUTINE] Buy Overclock"
+    @Name "TALENT SYSTEM - - - [TALENT 17: OVERCLOCK] [SUBROUTINE] Buy Overclock"
     
     if eventPlayer.replace_replacing_or_cancelled[1] == true:
         eventPlayer.talents_you_do_not_have[17] = talent_names[17]
@@ -1286,7 +1286,7 @@ def buy_overclock():
 
 
 def buy_shadowstep():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 18: SHADOWSTEP] [SUBROUTINE] Buy Shadowstep"
+    @Name "TALENT SYSTEM - - - [TALENT 18: SHADOWSTEP] [SUBROUTINE] Buy Shadowstep"
     
     if eventPlayer.replace_replacing_or_cancelled[1] == true:
         stopChasingVariable(eventPlayer.shadowstep_cooldown)
@@ -1301,7 +1301,7 @@ def buy_shadowstep():
         eventPlayer.talents_you_do_not_have[4] = null
 
 
-rule "TALENT S﻿YSTEM - - - [TALENT 18/4: SHADOWSTEP/SHADOWSTRIKE] Use Shadowstep or Shadowstrike":
+rule "TALENT SYSTEM - - - [TALENT 18/4: SHADOWSTEP/SHADOWSTRIKE] Use Shadowstep or Shadowstrike":
     @Event eachPlayer
     @Hero soldier
     @Condition (eventPlayer.bought_and_upgraded_talents[18] > 0 or eventPlayer.bought_and_upgraded_talents[4] > 0) == true
@@ -1366,7 +1366,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 18/4: SHADOWSTEP/SHADOWSTRIKE] Use Shadowst
 
 
 def buy_fire_aura():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 19: BURNING SOUL] [SUBROUTINE] Buy Burning Soul"
+    @Name "TALENT SYSTEM - - - [TALENT 19: BURNING SOUL] [SUBROUTINE] Buy Burning Soul"
     
     if eventPlayer.replace_replacing_or_cancelled[1] == true:
         stopChasingVariable(eventPlayer.burning_soul_orb_timer)
@@ -1383,7 +1383,7 @@ def buy_fire_aura():
         eventPlayer.talents_you_do_not_have[19] = null
 
 
-rule "TALENT S﻿YSTEM - - - [TALENT 19: BURNING SOUL] Burning Soul":
+rule "TALENT SYSTEM - - - [TALENT 19: BURNING SOUL] Burning Soul":
     @Event eachPlayer
     @Hero soldier
     @Condition eventPlayer.bought_and_upgraded_talents[19] > 0
@@ -1401,7 +1401,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 19: BURNING SOUL] Burning Soul":
         goto RULE_START
 
 
-rule "TALENT S﻿YSTEM - - - [TALENT 19: BURNING SOUL] Hit By Burning Soul Orb Explosion":
+rule "TALENT SYSTEM - - - [TALENT 19: BURNING SOUL] Hit By Burning Soul Orb Explosion":
     @Event eachPlayer
     @Condition eventPlayer.hit_by_talent[19] != null
     
@@ -1412,7 +1412,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 19: BURNING SOUL] Hit By Burning Soul Orb E
 
 
 def dropped_burning_soul_orb():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 19: BURNING SOUL] Dropped Burning Soul Orb"
+    @Name "TALENT SYSTEM - - - [TALENT 19: BURNING SOUL] Dropped Burning Soul Orb"
     
     waitUntil(eventPlayer.burning_soul_orb_timer == 0, 4)
     (([player for player in (getPlayersInRadius(eventPlayer.getPosition() + Vector.UP * 0.25 if eventPlayer.is_using_ability[33] == true else eventPlayer.xp_orb_location + Vector.UP * 0.25, 3, Team.ALL, LosCheck.SURFACES_AND_ENEMY_BARRIERS)) if player != eventPlayer]).hit_by_talent)[19] = eventPlayer
@@ -1422,7 +1422,7 @@ def dropped_burning_soul_orb():
 
 
 def buy_berserker():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 20: BERSERKER] [SUBROUTINE] Buy Berserker"
+    @Name "TALENT SYSTEM - - - [TALENT 20: BERSERKER] [SUBROUTINE] Buy Berserker"
     
     if eventPlayer.replace_replacing_or_cancelled[1] == true:
         if eventPlayer.offered_talents_in_shop[eventPlayer.selected_talent[0]] == talent_names[0]:
@@ -1457,7 +1457,7 @@ def buy_berserker():
         eventPlayer.talents_you_do_not_have[20] = null
 
 
-rule "TALENT S﻿YSTEM - - - [TALENT 20: BERSERKER] Use Berserker":
+rule "TALENT SYSTEM - - - [TALENT 20: BERSERKER] Use Berserker":
     @Event eachPlayer
     @Hero soldier
     @Condition eventPlayer.bought_and_upgraded_talents[20] > 0
@@ -1510,7 +1510,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 20: BERSERKER] Use Berserker":
 
 
 def buy_fireball():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 21: FIREBALL] [SUBROUTINE] Buy Fireball"
+    @Name "TALENT SYSTEM - - - [TALENT 21: FIREBALL] [SUBROUTINE] Buy Fireball"
     
     if eventPlayer.replace_replacing_or_cancelled[1] == true:
         if eventPlayer.offered_talents_in_shop[1] == talent_names[30]:
@@ -1540,14 +1540,14 @@ def buy_fireball():
 
 
 def spawned_with_fireball():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 21: FIREBALL] [SUBROUTINE] Spawned With Fireball"
+    @Name "TALENT SYSTEM - - - [TALENT 21: FIREBALL] [SUBROUTINE] Spawned With Fireball"
     
     eventPlayer.disallowButton(Button.INTERACT)
     wait(2)
     eventPlayer.allowButton(Button.INTERACT)
 
 
-rule "TALENT S﻿YSTEM - - - [TALENT 21: FIREBALL] Use Fireball":
+rule "TALENT SYSTEM - - - [TALENT 21: FIREBALL] Use Fireball":
     @Event eachPlayer
     @Hero soldier
     @Condition eventPlayer.bought_and_upgraded_talents[21] > 0
@@ -1576,7 +1576,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 21: FIREBALL] Use Fireball":
 
 
 def fireball_casted():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 21: FIREBALL] [SUBROUTINE] Fireball Casted"
+    @Name "TALENT SYSTEM - - - [TALENT 21: FIREBALL] [SUBROUTINE] Fireball Casted"
     
     eventPlayer.fireball_in_air = true
     playEffect(getAllPlayers(), DynamicEffect.DOOMFIST_RISING_UPPERCUT_IMPACT_SOUND, Color.WHITE, eventPlayer, 100)
@@ -1604,7 +1604,7 @@ def fireball_casted():
     destroyEffect(eventPlayer.player_temp_effects[29])
 
 
-rule "TALENT S﻿YSTEM - - - [TALENT 21: FIREBALL] Fireball Hit Something":
+rule "TALENT SYSTEM - - - [TALENT 21: FIREBALL] Fireball Hit Something":
     @Event eachPlayer
     @Hero soldier
     @Condition eventPlayer.bought_and_upgraded_talents[21] > 0
@@ -1643,7 +1643,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 21: FIREBALL] Fireball Hit Something":
     eventPlayer.fireball_in_air = false
 
 
-rule "TALENT S﻿YSTEM - - - [TALENT 21: FIREBALL] Hit By Fireball":
+rule "TALENT SYSTEM - - - [TALENT 21: FIREBALL] Hit By Fireball":
     @Event eachPlayer
     @Condition eventPlayer.hit_by_talent[21] != null
     
@@ -1652,7 +1652,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 21: FIREBALL] Hit By Fireball":
 
 
 def buy_ignore_pain():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 22: IGNORE PAIN] [SUBROUTINE] Buy Ignore Pain"
+    @Name "TALENT SYSTEM - - - [TALENT 22: IGNORE PAIN] [SUBROUTINE] Buy Ignore Pain"
     
     if eventPlayer.replace_replacing_or_cancelled[1] == true:
         eventPlayer.ignore_pain_damage_resisted = 0
@@ -1673,7 +1673,7 @@ def buy_ignore_pain():
         eventPlayer.player_temp_effects[56] = getLastCreatedEntity()
 
 
-rule "TALENT S﻿YSTEM - - - [TALENT 22: IGNORE PAIN] Ignore Pain Activated":
+rule "TALENT SYSTEM - - - [TALENT 22: IGNORE PAIN] Ignore Pain Activated":
     @Event eachPlayer
     @Hero soldier
     @Condition eventPlayer.bought_and_upgraded_talents[22] > 0
@@ -1692,7 +1692,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 22: IGNORE PAIN] Ignore Pain Activated":
     eventPlayer.is_using_ability[22] = false
 
 
-rule "TALENT S﻿YSTEM - - - [TALENT 22: IGNORE PAIN] Start Timer When Entering Combat":
+rule "TALENT SYSTEM - - - [TALENT 22: IGNORE PAIN] Start Timer When Entering Combat":
     @Event eachPlayer
     @Hero soldier
     @Condition eventPlayer.bought_and_upgraded_talents[22] > 0
@@ -1701,7 +1701,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 22: IGNORE PAIN] Start Timer When Entering 
     chase(eventPlayer.total_time_in_combat, 9999, rate=1, ChaseReeval.DESTINATION_AND_RATE)
 
 
-rule "TALENT S﻿YSTEM - - - [TALENT 22: IGNORE PAIN] How Much Damage Was Resisted Inside Combat?":
+rule "TALENT SYSTEM - - - [TALENT 22: IGNORE PAIN] How Much Damage Was Resisted Inside Combat?":
     @Event eachPlayer
     @Hero soldier
     @Condition eventPlayer.bought_and_upgraded_talents[22] > 0
@@ -1741,7 +1741,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 22: IGNORE PAIN] How Much Damage Was Resist
 
 
 def ignore_pain_volume():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 22: IGNORE PAIN] [SUBROUTINE] Ignore Pain Volume"
+    @Name "TALENT SYSTEM - - - [TALENT 22: IGNORE PAIN] [SUBROUTINE] Ignore Pain Volume"
     
     eventPlayer.ignore_pain_volume = 0
     wait(0.064, Wait.RESTART_WHEN_TRUE)
@@ -1749,7 +1749,7 @@ def ignore_pain_volume():
 
 
 /*
-rule "TALENT S﻿YSTEM - - - [TALENT 23: JAVELIN] Use Javelin [DISABLED: WORK IN PROGRESS]":
+rule "TALENT SYSTEM - - - [TALENT 23: JAVELIN] Use Javelin [DISABLED: WORK IN PROGRESS]":
     @Event eachPlayer
     @Hero soldier
     @Condition eventPlayer.isHoldingButton(Button.MELEE) == true
@@ -1779,7 +1779,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 23: JAVELIN] Use Javelin [DISABLED: WORK IN
 */
 
 /*
-rule "TALENT S﻿YSTEM - - - [TALENT 23: JAVELIN] Hit By Javelin [DISABLED: WORK IN PROGRESS]":
+rule "TALENT SYSTEM - - - [TALENT 23: JAVELIN] Hit By Javelin [DISABLED: WORK IN PROGRESS]":
     @Event eachPlayer
     @Condition eventPlayer.hit_by_talent[23] != null
     
@@ -1817,7 +1817,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 23: JAVELIN] Hit By Javelin [DISABLED: WORK
 */
 
 /*
-rule "TALENT S﻿YSTEM - - - [TALENT 23: JAVELIN] Stop Using Javelin [DISABLED: WORK IN PROGRESS]":
+rule "TALENT SYSTEM - - - [TALENT 23: JAVELIN] Stop Using Javelin [DISABLED: WORK IN PROGRESS]":
     @Event eachPlayer
     @Hero soldier
     @Condition eventPlayer.is_using_ability[23] == false
@@ -1829,7 +1829,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 23: JAVELIN] Stop Using Javelin [DISABLED: 
 */
 
 def buy_soul_siphon():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 29: SOUL SIPHON] [SUBROUTINE] Buy Soul Siphon"
+    @Name "TALENT SYSTEM - - - [TALENT 29: SOUL SIPHON] [SUBROUTINE] Buy Soul Siphon"
     
     if eventPlayer.replace_replacing_or_cancelled[1] == true:
         stopChasingVariable(eventPlayer.soul_siphon_duration)
@@ -1842,7 +1842,7 @@ def buy_soul_siphon():
         eventPlayer.talents_you_do_not_have[29] = null
 
 
-rule "TALENT S﻿YSTEM - - - [TALENT 29: SOUL SIPHON] Hit By Soul Siphon":
+rule "TALENT SYSTEM - - - [TALENT 29: SOUL SIPHON] Hit By Soul Siphon":
     @Event eachPlayer
     @Condition eventPlayer.hit_by_talent[29] != null
     
@@ -1876,7 +1876,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 29: SOUL SIPHON] Hit By Soul Siphon":
     destroyEffect(eventPlayer.player_temp_effects[28])
 
 
-rule "TALENT S﻿YSTEM - - - [TALENT 29: SOUL SIPHON] Used Soul Siphon":
+rule "TALENT SYSTEM - - - [TALENT 29: SOUL SIPHON] Used Soul Siphon":
     @Event eachPlayer
     @Hero soldier
     @Condition eventPlayer.used_soul_siphon_on != null
@@ -1894,7 +1894,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 29: SOUL SIPHON] Used Soul Siphon":
 
 
 def buy_pyromaniac():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 30: PYROMANIAC] [SUBROUTINE] Buy Pyromaniac"
+    @Name "TALENT SYSTEM - - - [TALENT 30: PYROMANIAC] [SUBROUTINE] Buy Pyromaniac"
     
     if eventPlayer.replace_replacing_or_cancelled[1] == true:
         stopChasingVariable(eventPlayer.pyromaniac_heal_duration)
@@ -1908,7 +1908,7 @@ def buy_pyromaniac():
 
 
 def pyromaniac_heal_over_time():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 30: PYROMANIAC] [SUBROUTINE] Pyromaniac Stop Healing Over Time"
+    @Name "TALENT SYSTEM - - - [TALENT 30: PYROMANIAC] [SUBROUTINE] Pyromaniac Stop Healing Over Time"
     
     eventPlayer.pyromaniac_heal_duration = 5
     heal(eventPlayer, eventPlayer, min(37.5 + eventPlayer.bought_and_upgraded_talents[30] * 12.5, eventPlayer.getMaxHealthOfType(Health.NORMAL) - eventPlayer.getHealthOfType(Health.NORMAL)))
@@ -1926,7 +1926,7 @@ def pyromaniac_heal_over_time():
 
 /*
 def buy_poison_vials():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 31: POISON VIALS] [SUBROUTINE] Buy Poison Vials [DISABLED: POISON VIALS NOT WORKING AS INTENDED]"
+    @Name "TALENT SYSTEM - - - [TALENT 31: POISON VIALS] [SUBROUTINE] Buy Poison Vials [DISABLED: POISON VIALS NOT WORKING AS INTENDED]"
     
     if eventPlayer.replace_replacing_or_cancelled[1] == true:
         if eventPlayer.offered_talents_in_shop[eventPlayer.selected_talent[0]] == talent_names[32]:
@@ -1965,12 +1965,12 @@ def buy_poison_vials():
 */
 
 /*
-rule "TALENT S﻿YSTEM - - - [TALENT 31: POISON VIALS] accurateTime [DISABLED: POISON VIALS NOT WORKING AS INTENDED]":
+rule "TALENT SYSTEM - - - [TALENT 31: POISON VIALS] accurateTime [DISABLED: POISON VIALS NOT WORKING AS INTENDED]":
     chase(accurateTime, accurateTime + true, rate=true, ChaseReeval.DESTINATION_AND_RATE)
 */
 
 /*
-rule "TALENT S﻿YSTEM - - - [TALENT 31: POISON VIALS] Setup [DISABLED: POISON VIALS NOT WORKING AS INTENDED]":
+rule "TALENT SYSTEM - - - [TALENT 31: POISON VIALS] Setup [DISABLED: POISON VIALS NOT WORKING AS INTENDED]":
     @Event eachPlayer
     @Hero soldier
     
@@ -1990,7 +1990,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 31: POISON VIALS] Setup [DISABLED: POISON V
 */
 
 /*
-rule "TALENT S﻿YSTEM - - - [TALENT 31: POISON VIALS] projCollision [DISABLED: POISON VIALS NOT WORKING AS INTENDED]":
+rule "TALENT SYSTEM - - - [TALENT 31: POISON VIALS] projCollision [DISABLED: POISON VIALS NOT WORKING AS INTENDED]":
     @Event eachPlayer
     @Hero soldier
     @Condition eventPlayer.bought_and_upgraded_talents[31] > 0
@@ -2020,7 +2020,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 31: POISON VIALS] projCollision [DISABLED: 
 */
 
 /*
-rule "TALENT S﻿YSTEM - - - [TALENT 31: POISON VIALS] projTimeout [DISABLED: POISON VIALS NOT WORKING AS INTENDED]":
+rule "TALENT SYSTEM - - - [TALENT 31: POISON VIALS] projTimeout [DISABLED: POISON VIALS NOT WORKING AS INTENDED]":
     @Event eachPlayer
     @Hero soldier
     @Condition eventPlayer.bought_and_upgraded_talents[31] > 0
@@ -2035,7 +2035,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 31: POISON VIALS] projTimeout [DISABLED: PO
 */
 
 /*
-rule "TALENT S﻿YSTEM - - - [TALENT 31: POISON VIALS] Hit By Poison Vials [DISABLED: POISON VIALS NOT WORKING AS INTENDED]":
+rule "TALENT SYSTEM - - - [TALENT 31: POISON VIALS] Hit By Poison Vials [DISABLED: POISON VIALS NOT WORKING AS INTENDED]":
     @Event eachPlayer
     @Condition eventPlayer.hit_by_talent[31] != null
     
@@ -2054,7 +2054,7 @@ rule "TALENT S﻿YSTEM - - - [TALENT 31: POISON VIALS] Hit By Poison Vials [DISA
 */
 
 def buy_crazy_alchemist():
-    @Name "TALENT S﻿YSTEM - - - [TALENT 32: CRAZY ALCHEMIST] [SUBROUTINE] Buy Crazy Alchemist"
+    @Name "TALENT SYSTEM - - - [TALENT 32: CRAZY ALCHEMIST] [SUBROUTINE] Buy Crazy Alchemist"
     
     if eventPlayer.replace_replacing_or_cancelled[1] == true:
         eventPlayer.talents_you_do_not_have[32] = talent_names[32]

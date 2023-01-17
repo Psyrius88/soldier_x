@@ -16,7 +16,7 @@ playervar last_known_position_of_target 10
 subroutine reaper_has_a_target 54
 subroutine reaper_target_lost 55
 
-rule "BOT S﻿YSTEM - - - Bot INIT":
+rule "BOT SYSTEM - - - Bot INIT":
     @Event eachPlayer
     @Hero reaper
     @Condition spawn_bots == true
@@ -35,7 +35,7 @@ rule "BOT S﻿YSTEM - - - Bot INIT":
     chase(eventPlayer.stealth_cooldown, 0, rate=1, ChaseReeval.DESTINATION_AND_RATE)
 
 
-rule "BOT S﻿YSTEM - - - Add Player To Aggro List":
+rule "BOT SYSTEM - - - Add Player To Aggro List":
     @Event playerTookDamage
     @Hero reaper
     @Condition spawn_bots == true
@@ -48,7 +48,7 @@ rule "BOT S﻿YSTEM - - - Add Player To Aggro List":
         eventPlayer.reaper_aggro_list = eventPlayer.reaper_aggro_list.concat(attacker)
 
 
-rule "BOT S﻿YSTEM - - - Bot Got Aggro":
+rule "BOT SYSTEM - - - Bot Got Aggro":
     @Event eachPlayer
     @Hero reaper
     @Condition spawn_bots == true
@@ -61,7 +61,7 @@ rule "BOT S﻿YSTEM - - - Bot Got Aggro":
     async(reaper_has_a_target, AsyncBehavior.NOOP)
 
 
-rule "BOT S﻿YSTEM - - - Bot Brain - What to do next?":
+rule "BOT SYSTEM - - - Bot Brain - What to do next?":
     @Event eachPlayer
     @Hero reaper
     @Condition spawn_bots == true
@@ -82,7 +82,7 @@ rule "BOT S﻿YSTEM - - - Bot Brain - What to do next?":
 
 
 def reaper_has_a_target():
-    @Name "BOT S﻿YSTEM - - - [SUBROUTINE] Bot Has a Target"
+    @Name "BOT SYSTEM - - - [SUBROUTINE] Bot Has a Target"
     
     eventPlayer.random_integer_between_0_to_5 = random.randint(0, 9)
     if eventPlayer.random_integer_between_0_to_5 <= 1 and eventPlayer.stealth_cooldown == 0:
@@ -125,7 +125,7 @@ def reaper_has_a_target():
 
 
 def reaper_target_lost():
-    @Name "BOT S﻿YSTEM - - - [SUBROUTINE] Bot Lost the Target"
+    @Name "BOT SYSTEM - - - [SUBROUTINE] Bot Lost the Target"
     
     eventPlayer.last_known_position_of_target[0] = null
     eventPlayer.last_known_position_of_target[1] = null
@@ -138,7 +138,7 @@ def reaper_target_lost():
     eventPlayer.reaper_brain_information[1] = false
 
 
-rule "BOT S﻿YSTEM - - - Bot Moving - Towards Target / Searching For Target":
+rule "BOT SYSTEM - - - Bot Moving - Towards Target / Searching For Target":
     @Event eachPlayer
     @Hero reaper
     @Condition spawn_bots == true
@@ -154,7 +154,7 @@ rule "BOT S﻿YSTEM - - - Bot Moving - Towards Target / Searching For Target":
         goto RULE_START
 
 
-rule "BOT S﻿YSTEM - - - Bot Start Shooting":
+rule "BOT SYSTEM - - - Bot Start Shooting":
     @Event eachPlayer
     @Hero reaper
     @Condition spawn_bots == true
@@ -170,7 +170,7 @@ rule "BOT S﻿YSTEM - - - Bot Start Shooting":
         goto RULE_START
 
 
-rule "BOT S﻿YSTEM - - - Bot Respawn Once":
+rule "BOT SYSTEM - - - Bot Respawn Once":
     @Event eachPlayer
     @Hero reaper
     @Condition spawn_bots == true
@@ -186,7 +186,7 @@ rule "BOT S﻿YSTEM - - - Bot Respawn Once":
     heal(eventPlayer, null, eventPlayer.getMaxHealth())
 
 
-rule "BOT S﻿YSTEM - - - Bot Died":
+rule "BOT SYSTEM - - - Bot Died":
     @Event playerDied
     @Hero reaper
     @Condition spawn_bots == true
@@ -202,7 +202,7 @@ rule "BOT S﻿YSTEM - - - Bot Died":
     eventPlayer.setGravity(50)
 
 
-rule "BOT S﻿YSTEM - - - Bot Use Teleport":
+rule "BOT SYSTEM - - - Bot Use Teleport":
     @Event eachPlayer
     @Hero reaper
     @Condition spawn_bots == true
@@ -222,7 +222,7 @@ rule "BOT S﻿YSTEM - - - Bot Use Teleport":
 
 /*
 def start_pathfinding():
-    @Name "BOT S﻿YSTEM - - - [SUBROUTINE] Start Pathfinding [DEFAULT: OFF]"
+    @Name "BOT SYSTEM - - - [SUBROUTINE] Start Pathfinding [DEFAULT: OFF]"
     
     eventPlayer.reaper_brain_information[3] = true
     eventPlayer.stopFacing()
@@ -261,7 +261,7 @@ def start_pathfinding():
 */
 
 /*
-rule "BOT S﻿YSTEM - - - Bot Dealt Damage [DEFAULT: OFF]":
+rule "BOT SYSTEM - - - Bot Dealt Damage [DEFAULT: OFF]":
     @Event playerDealtDamage
     @Hero reaper
     @Condition spawn_bots == true
@@ -270,7 +270,7 @@ rule "BOT S﻿YSTEM - - - Bot Dealt Damage [DEFAULT: OFF]":
 */
 
 /*
-rule "BOT S﻿YSTEM - - - Bot Melee & Jump [DEFAULT: OFF]":
+rule "BOT SYSTEM - - - Bot Melee & Jump [DEFAULT: OFF]":
     @Event eachPlayer
     @Hero reaper
     @Condition spawn_bots == true

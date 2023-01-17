@@ -134,7 +134,7 @@ rule "ENDLESS MODE - - - Waiting For Players To Vote":
         eventPlayer.canVote_hasVoted_canStartVote[1] = false
 
 
-rule "ENDLESS MODE - - - Start Showdo﻿wn?":
+rule "ENDLESS MODE - - - Start Showdown?":
     @Event eachPlayer
     @Hero soldier
     @Condition endless_mode == true
@@ -161,7 +161,7 @@ rule "ENDLESS MODE - - - Player Dealt Final Bl0w":
     eventPlayer.addToScore(-1 * 1 * 1 * 1)
 
 
-rule "ENDLESS MODE - - - Canceled Start Showdo﻿wn & Change Map":
+rule "ENDLESS MODE - - - Canceled Start Showdown & Change Map":
     @Event eachPlayer
     @Hero soldier
     @Condition endless_mode == true
@@ -172,7 +172,7 @@ rule "ENDLESS MODE - - - Canceled Start Showdo﻿wn & Change Map":
     stopped_using_hearthstone()
 
 
-rule "ENDLESS MODE - - - End Showdo﻿wn & Change Map":
+rule "ENDLESS MODE - - - End Showdown & Change Map":
     @Event eachPlayer
     @Hero soldier
     @Condition match_is_in_showdown == true

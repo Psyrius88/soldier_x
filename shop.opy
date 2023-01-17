@@ -103,7 +103,7 @@ rule "SHOP - - - Skip Talents & Exit Shop":
     using_one_of_the_hearthstones()
 
 
-rule "SHOP - - - Canceled Skip Talent & Exit Shop or Skip Showdo﻿wn":
+rule "SHOP - - - Canceled Skip Talent & Exit Shop or Skip Showdown":
     @Event eachPlayer
     @Hero soldier
     @Condition eventPlayer.is_using_hearthstone[2] == true

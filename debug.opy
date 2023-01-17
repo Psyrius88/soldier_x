@@ -1,5 +1,5 @@
 /*
-rule "DEBUG - - - Hold Rel﻿oad For XP [DEFAULT: OFF]":
+rule "DEBUG - - - Hold Reload For XP [DEFAULT: OFF]":
     @Event eachPlayer
     @Condition eventPlayer.isHoldingButton(Button.RELOAD) == true
     @Condition eventPlayer.can_enter_shop == false
@@ -181,7 +181,7 @@ def new_reaper_pathfinding():
 */
 
 /*
-rule "DEBUG - - - Activate Inspector Recording When Server L﻿oad Average Is Above 110 [DEFAULT: OFF]":
+rule "DEBUG - - - Activate Inspector Recording When Server Load Average Is Above 110 [DEFAULT: OFF]":
     @Condition getAverageServerLoad() > 110
     
     enableInspector()
@@ -190,7 +190,7 @@ rule "DEBUG - - - Activate Inspector Recording When Server L﻿oad Average Is Ab
 */
 
 /*
-rule "DEBUG - - - Reset [Talent: Juggernaut] Cooldo﻿wn With Rel﻿oad [DEFAULT: OFF]":
+rule "DEBUG - - - Reset [Talent: Juggernaut] Cooldown With Reload [DEFAULT: OFF]":
     @Event eachPlayer
     @Hero soldier
     @Condition eventPlayer.isHoldingButton(Button.RELOAD) == true
