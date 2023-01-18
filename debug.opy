@@ -1,4 +1,3 @@
-/*
 rule "DEBUG - - - Hold Reload For XP [DEFAULT: OFF]":
     @Event eachPlayer
     @Condition eventPlayer.isHoldingButton(Button.RELOAD) == true

@@ -1,6 +1,6 @@
 #Global variables
 
-globalvar map_is_changing
+globalvar map_is_changing = false
 globalvar vote_to_change_map_duration
 globalvar showdown_duration
 

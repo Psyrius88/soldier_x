@@ -1,6 +1,6 @@
 #Global variables
 
-globalvar spawn_bots
+globalvar spawn_bots = createWorkshopSetting(bool, "Bots", "Spawn bots (Recommended)", true, 0)
 
 #Player variables
 
@@ -73,7 +73,7 @@ rule "BOT SYSTEM - - - Bot Brain - What to do next?":
     eventPlayer.stopFacing()
     eventPlayer.startFacing(directionTowards(eventPlayer.getEyePosition(), eventPlayer.last_known_position_of_target[1] + Vector.UP) if eventPlayer.last_known_position_of_target[1] != null else eventPlayer.getFacingDirection(), 100, Relativity.TO_WORLD, FacingReeval.DIRECTION_AND_TURN_RATE)
     #If there is a player in sight, set the player as the current target
-    if ([player for player in eventPlayer.getPlayersInViewAngle(Team.ALL, 90) if player.getCurrentHero() == Hero.SOLDIER and distance(eventPlayer.getPosition(), player.getPosition()) <= 20 and player.isAlive() == true and player.browsing_shop == false and isInLoS(eventPlayer.getEyePosition(), player.getEyePosition(), BarrierLos.PASS_THROUGH_BARRIERS) == true and player.is_using_ability[5] == false]) != []:
+    if ([player for player in eventPlayer.getPlayersInViewAngle(Team.ALL, 90) if player.getCurrentHero() == Hero.SOLDIER and distance(eventPlayer.getPosition(), player.getPosition()) <= 20 and player.isAlive() == true and player.browsing_shop == false and isInLoS(eventPlayer.getEyePosition(), player.getEyePosition(), BarrierLos.PASS_THROUGH_BARRIERS) == true and player.is_using_ability[Talent.STEALTH] == false]) != []:
         reaper_has_a_target()
     wait(1)
     if RULE_CONDITION:
@@ -93,26 +93,26 @@ def reaper_has_a_target():
     eventPlayer.startFacing(directionTowards(eventPlayer.getEyePosition(), eventPlayer.reaper_brain_information[0].getPosition() + Vector.UP) if eventPlayer.reaper_brain_information[0] != null and eventPlayer.reaper_brain_information[1] == false else directionTowards(eventPlayer.getEyePosition(), eventPlayer.last_known_position_of_target[0]) if eventPlayer.reaper_brain_information[0] != null and eventPlayer.reaper_brain_information[1] == true else directionTowards(eventPlayer.getEyePosition(), eventPlayer.last_known_position_of_target[1] + Vector.UP) if eventPlayer.reaper_brain_information[0] == null and eventPlayer.reaper_brain_information[1] == false else 0, 1000 if eventPlayer.reaper_brain_information[2] == true else 150, Relativity.TO_WORLD, FacingReeval.DIRECTION_AND_TURN_RATE)
     if eventPlayer.reaper_aggro_list == []:
         #If there is a player in sight, set the player as the current target
-        eventPlayer.reaper_brain_information[0] = (sorted([player for player in eventPlayer.getPlayersInViewAngle(Team.ALL, 90) if player.getCurrentHero() == Hero.SOLDIER and distance(eventPlayer.getPosition(), player.getPosition()) <= 30 and player.isAlive() == true and player.browsing_shop == false and isInLoS(eventPlayer.getEyePosition(), player.getEyePosition(), BarrierLos.PASS_THROUGH_BARRIERS) == true and player.is_using_ability[5] == false], lambda i: distance(eventPlayer.getPosition(), i.getPosition())))[0]
+        eventPlayer.reaper_brain_information[0] = (sorted([player for player in eventPlayer.getPlayersInViewAngle(Team.ALL, 90) if player.getCurrentHero() == Hero.SOLDIER and distance(eventPlayer.getPosition(), player.getPosition()) <= 30 and player.isAlive() == true and player.browsing_shop == false and isInLoS(eventPlayer.getEyePosition(), player.getEyePosition(), BarrierLos.PASS_THROUGH_BARRIERS) == true and player.is_using_ability[Talent.STEALTH] == false], lambda i: distance(eventPlayer.getPosition(), i.getPosition())))[0]
     else:
         #Set the player on top of the aggro list as the current target
         eventPlayer.reaper_brain_information[0] = eventPlayer.reaper_aggro_list[0]
-    waitUntil(isInLoS(eventPlayer.getEyePosition(), eventPlayer.reaper_brain_information[0].getEyePosition(), BarrierLos.PASS_THROUGH_BARRIERS) == false or eventPlayer.reaper_brain_information[0].getCurrentHero() != Hero.SOLDIER or eventPlayer.isDead() == true or eventPlayer.reaper_brain_information[0].browsing_shop == true or eventPlayer.reaper_brain_information[0].isDead() == true or eventPlayer.reaper_brain_information[0].is_using_ability[5] == true, 99999)
-    if eventPlayer.reaper_brain_information[0].getCurrentHero() != Hero.SOLDIER or eventPlayer.isDead() == true or eventPlayer.reaper_brain_information[0].browsing_shop == true or eventPlayer.reaper_brain_information[0].isDead() == true or eventPlayer.reaper_brain_information[0].is_using_ability[5] == true:
+    waitUntil(isInLoS(eventPlayer.getEyePosition(), eventPlayer.reaper_brain_information[0].getEyePosition(), BarrierLos.PASS_THROUGH_BARRIERS) == false or eventPlayer.reaper_brain_information[0].getCurrentHero() != Hero.SOLDIER or eventPlayer.isDead() == true or eventPlayer.reaper_brain_information[0].browsing_shop == true or eventPlayer.reaper_brain_information[0].isDead() == true or eventPlayer.reaper_brain_information[0].is_using_ability[Talent.STEALTH] == true, 99999)
+    if eventPlayer.reaper_brain_information[0].getCurrentHero() != Hero.SOLDIER or eventPlayer.isDead() == true or eventPlayer.reaper_brain_information[0].browsing_shop == true or eventPlayer.reaper_brain_information[0].isDead() == true or eventPlayer.reaper_brain_information[0].is_using_ability[Talent.STEALTH] == true:
         eventPlayer.reaper_aggro_list = []
         eventPlayer.reaper_brain_information[0] = null
         return
     #If Current Target Can't Be Seen
-    if isInLoS(eventPlayer.getEyePosition(), eventPlayer.reaper_brain_information[0].getEyePosition(), BarrierLos.PASS_THROUGH_BARRIERS) == false and eventPlayer.isDead() == false and eventPlayer.reaper_brain_information[0].isDead() == false or eventPlayer.reaper_brain_information[0].is_using_ability[5] == true:
+    if isInLoS(eventPlayer.getEyePosition(), eventPlayer.reaper_brain_information[0].getEyePosition(), BarrierLos.PASS_THROUGH_BARRIERS) == false and eventPlayer.isDead() == false and eventPlayer.reaper_brain_information[0].isDead() == false or eventPlayer.reaper_brain_information[0].is_using_ability[Talent.STEALTH] == true:
         reaper_target_lost()
     #If Current Target Is Found Again
-    if isInLoS(eventPlayer.getEyePosition(), eventPlayer.reaper_brain_information[0].getEyePosition(), BarrierLos.PASS_THROUGH_BARRIERS) == true and eventPlayer.isDead() == false and eventPlayer.reaper_brain_information[0].isDead() == false and eventPlayer.reaper_brain_information[0].is_using_ability[5] == false and eventPlayer.reaper_brain_information[0].browsing_shop == false:
+    if isInLoS(eventPlayer.getEyePosition(), eventPlayer.reaper_brain_information[0].getEyePosition(), BarrierLos.PASS_THROUGH_BARRIERS) == true and eventPlayer.isDead() == false and eventPlayer.reaper_brain_information[0].isDead() == false and eventPlayer.reaper_brain_information[0].is_using_ability[Talent.STEALTH] == false and eventPlayer.reaper_brain_information[0].browsing_shop == false:
         wait()
         goto RULE_START
     #If Reaper Died
     #return
     #If current target is out of sight or dead
-    if eventPlayer.reaper_brain_information[0].isDead() == true or eventPlayer.reaper_brain_information[0].browsing_shop == true or eventPlayer.reaper_brain_information[0].getCurrentHero() != Hero.SOLDIER or isInLoS(eventPlayer.getEyePosition(), eventPlayer.reaper_brain_information[0].getEyePosition(), BarrierLos.PASS_THROUGH_BARRIERS) == false or eventPlayer.reaper_brain_information[0].is_using_ability[5] == true:
+    if eventPlayer.reaper_brain_information[0].isDead() == true or eventPlayer.reaper_brain_information[0].browsing_shop == true or eventPlayer.reaper_brain_information[0].getCurrentHero() != Hero.SOLDIER or isInLoS(eventPlayer.getEyePosition(), eventPlayer.reaper_brain_information[0].getEyePosition(), BarrierLos.PASS_THROUGH_BARRIERS) == false or eventPlayer.reaper_brain_information[0].is_using_ability[Talent.STEALTH] == true:
         eventPlayer.reaper_aggro_list = eventPlayer.reaper_aggro_list.exclude(eventPlayer.reaper_brain_information[0])
         #Current target is out of sight or dead, is there more aggroed players in sight?
         #return
@@ -134,7 +134,7 @@ def reaper_target_lost():
     eventPlayer.last_known_position_of_target[0] = eventPlayer.reaper_brain_information[0].getPosition() + vectorTowards(eventPlayer.reaper_brain_information[0], eventPlayer.last_known_position_of_target[0]) * 12
     eventPlayer.last_known_position_of_target[1] = eventPlayer.reaper_brain_information[0].getPosition()
     eventPlayer.reaper_brain_information[1] = true
-    waitUntil(isInLoS(eventPlayer.getEyePosition(), eventPlayer.reaper_brain_information[0].getEyePosition(), BarrierLos.PASS_THROUGH_BARRIERS) == true and eventPlayer.reaper_brain_information[0].is_using_ability[5] == false or eventPlayer.reaper_brain_information[0].isDead() == true or eventPlayer.isDead() == true or distance(eventPlayer.getPosition() + Vector.UP, eventPlayer.last_known_position_of_target[0] + Vector.UP) < 1, 5)
+    waitUntil(isInLoS(eventPlayer.getEyePosition(), eventPlayer.reaper_brain_information[0].getEyePosition(), BarrierLos.PASS_THROUGH_BARRIERS) == true and eventPlayer.reaper_brain_information[0].is_using_ability[Talent.STEALTH] == false or eventPlayer.reaper_brain_information[0].isDead() == true or eventPlayer.isDead() == true or distance(eventPlayer.getPosition() + Vector.UP, eventPlayer.last_known_position_of_target[0] + Vector.UP) < 1, 5)
     eventPlayer.reaper_brain_information[1] = false
 
 
@@ -253,7 +253,7 @@ def start_pathfinding():
         if eventPlayer.reaper_brain_information[3] == false:
             return
         #If there is a player in sight, set the player as the current target
-        if ([player for player in eventPlayer.getPlayersInViewAngle(Team.ALL, 90) if player.getCurrentHero() == Hero.SOLDIER and distance(eventPlayer.getPosition(), player.getPosition()) <= 30 and player.isAlive() == true and isInLoS(eventPlayer.getEyePosition(), player.getEyePosition(), BarrierLos.PASS_THROUGH_BARRIERS) == true and player.is_using_ability[5] == false]) != []:
+        if ([player for player in eventPlayer.getPlayersInViewAngle(Team.ALL, 90) if player.getCurrentHero() == Hero.SOLDIER and distance(eventPlayer.getPosition(), player.getPosition()) <= 30 and player.isAlive() == true and isInLoS(eventPlayer.getEyePosition(), player.getEyePosition(), BarrierLos.PASS_THROUGH_BARRIERS) == true and player.is_using_ability[Talent.STEALTH] == false]) != []:
             reaper_has_a_target()
             return
         eventPlayer.pathfinding_pos_pre_current_next[0] = eventPlayer.pathfinding_pos_pre_current_next[1]

@@ -1,11 +1,11 @@
 #Global variables
 
 globalvar shop_location
-globalvar leave_shop_messages
+globalvar leave_shop_messages = ["Latest patch notes at: workshop.codes/ZEKK3", "Got any feedback? Join the Discord!", "Got an idea for a new talent? Join the Discord!", "Want to show your support? Click the {0} at: workshop.codes/ZEKK3".format(iconString(Icon.HEART)), "Found a bug? Join the Discord!", "Want to help the community grow? Join the Discord!"]
 globalvar shop_talent_left_location
 globalvar shop_talent_middle_location
 globalvar shop_talent_right_location
-globalvar max_experience_per_level
+globalvar max_experience_per_level = [250, 275, 303, 333, 366, 403, 443, 487, 536, 589, 648, 713, 785, 863, 949, 1044, 1149, 1264, 1390, 1529, 1682, 1850, 2035, 2239, 2462, 2709]
 
 #Player variables
 
@@ -70,7 +70,7 @@ rule "SHOP - - - Using Hearthstone":
     @Condition eventPlayer.isAlive() == true
     @Condition eventPlayer.in_combat == 0
     @Condition eventPlayer.isHoldingButton(Button.RELOAD) == true
-    @Condition eventPlayer.is_using_ability[6] == false
+    @Condition eventPlayer.is_using_ability[Talent.JUGGERNAUT] == false
     
     wait(0.125, Wait.ABORT_WHEN_FALSE)
     eventPlayer.is_using_hearthstone[0] = true
@@ -119,7 +119,7 @@ def using_one_of_the_hearthstones():
         eventPlayer.setMoveSpeed(eventPlayer.stats[2] * 0.25)
         createEffect(getAllPlayers(), Effect.GOOD_AURA_SOUND, Color.WHITE, eventPlayer.getPosition() + Vector.UP, 100, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
         eventPlayer.hearthstone_effects_id[0] = getLastCreatedEntity()
-        createEffect(getAllPlayers() if eventPlayer.is_using_ability[5] == false else null, Effect.GOOD_AURA, Color.GREEN, updateEveryTick(eventPlayer.getPosition() + Vector.UP), 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+        createEffect(getAllPlayers() if eventPlayer.is_using_ability[Talent.STEALTH] == false else null, Effect.GOOD_AURA, Color.GREEN, updateEveryTick(eventPlayer.getPosition() + Vector.UP), 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
         eventPlayer.hearthstone_effects_id[1] = getLastCreatedEntity()
     elif eventPlayer.is_using_hearthstone[1] == true:
         if eventPlayer.time_since_joined_match < 900:
@@ -147,7 +147,7 @@ def using_one_of_the_hearthstones():
     if eventPlayer.is_using_hearthstone[0] == true:
         playEffect(getAllPlayers(), DynamicEffect.ORISA_HALT_IMPLOSION, Color.TEAM_1, eventPlayer.getPosition() + Vector.UP, 1)
         playEffect(getAllPlayers(), DynamicEffect.TRACER_RECALL_DISAPPEAR_SOUND, Color.TEAM_2, eventPlayer.getPosition(), 100)
-        if eventPlayer.is_using_ability[5] == true:
+        if eventPlayer.is_using_ability[Talent.STEALTH] == true:
             break_stealth()
         eventPlayer.setInvisibility(Invis.ALL)
         eventPlayer.setStatusEffect(null, Status.PHASED_OUT, 9999)
@@ -275,7 +275,7 @@ def stopped_using_hearthstone():
     eventPlayer.is_using_hearthstone[4] = false
     stopChasingVariable(eventPlayer.using_hearthstone_timer)
     eventPlayer.using_hearthstone_timer = 0
-    if eventPlayer.is_using_ability[8] == false:
+    if eventPlayer.is_using_ability[Talent.CRYOGENICS] == false:
         eventPlayer.setMoveSpeed(eventPlayer.stats[2])
     destroyEffect(eventPlayer.hearthstone_effects_id[0])
     destroyEffect(eventPlayer.hearthstone_effects_id[1])
@@ -552,53 +552,53 @@ def open_shop():
 def buy_or_upgrade_talent():
     @Name "SHOP - - - [SUBROUTINE] Buy Or Upgrade Talent"
     
-    if eventPlayer.current_talent_replace_or_buy == talent_names[0]:
+    if eventPlayer.current_talent_replace_or_buy == talent_names[Talent.BLOODTHIRST]:
         buy_bloodthirst()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[1]:
+    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.PURITY_FIELD]:
         buy_purity_field()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[2]:
+    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.CYBERNETICS]:
         buy_cybernetics()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[3]:
+    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.ENGINEER]:
         buy_engineer()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[4]:
+    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.SHADOWSTRIKE]:
         buy_shadowstrike()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[5]:
+    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.STEALTH]:
         buy_stealth()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[6]:
+    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.JUGGERNAUT]:
         buy_juggernaut()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[7]:
+    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.DIVE_BOMB]:
         buy_dive_bomb()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[8]:
+    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.CRYOGENICS]:
         buy_cryogenics()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[9]:
+    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.RAILGUN]:
         buy_railgun()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[10]:
+    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.PREDATOR]:
         buy_predator()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[11]:
+    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.JETPACK]:
         buy_jetpack()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[12]:
+    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.LIFESTEAL_AMMO]:
         buy_lifesteal_ammo()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[13]:
+    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.HEALTH_REGEN]:
         buy_health_regen()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[14]:
+    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.HEALTH_POTIONS]:
         if eventPlayer.talent_ranks[14] == 1:
             eventPlayer.amount_of_potions_or_vials = 3
         buy_health_potions()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[16]:
+    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.IGNITE]:
         buy_ignite()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[17]:
+    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.OVERCLOCK]:
         buy_overclock()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[18]:
+    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.SHADOWSTEP]:
         buy_shadowstep()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[19]:
+    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.BURNING_SOUL]:
         buy_fire_aura()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[20]:
+    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.BERSERKER]:
         buy_berserker()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[21]:
+    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.FIREBALL]:
         buy_fireball()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[22]:
+    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.IGNORE_PAIN]:
         buy_ignore_pain()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[23]:
+    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.JAVELIN]:
         buy_monkey_business()
     elif eventPlayer.current_talent_replace_or_buy == talent_names[24]:
         buy_gluttony()
@@ -610,15 +610,15 @@ def buy_or_upgrade_talent():
         buy_mace_to_the_face()
     elif eventPlayer.current_talent_replace_or_buy == talent_names[28]:
         buy_pinball()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[29]:
+    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.SOUL_SIPHON]:
         buy_soul_siphon()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[30]:
+    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.PYROMANIAC]:
         buy_pyromaniac()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[31]:
+    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.POISON_VIALS]:
         if eventPlayer.talent_ranks[31] == 1:
             eventPlayer.amount_of_potions_or_vials = 3
         buy_poison_vials()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[32]:
+    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.CRAZY_ALCHEMIST]:
         buy_crazy_alchemist()
 
 
