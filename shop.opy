@@ -251,7 +251,7 @@ def using_one_of_the_hearthstones():
         eventPlayer.selected_talent_location = shop_talent_middle_location
         eventPlayer.can_enter_shop = false
         eventPlayer.experience_current = 0
-        if eventPlayer.talent_ranks[21] > 0 or eventPlayer.talent_ranks[6] > 0:
+        if eventPlayer.talent_ranks[Talent.FIREBALL] > 0 or eventPlayer.talent_ranks[Talent.JUGGERNAUT] > 0:
             async(spawned_with_fireball, AsyncBehavior.RESTART)
         eventPlayer.is_respawning = true
         eventPlayer.respawn()
@@ -429,7 +429,7 @@ rule "SHOP - - - Buy Talent":
     eventPlayer.can_enter_shop = false
     eventPlayer.experience_current = 0
     eventPlayer.experience_max = max_experience_per_level[eventPlayer.amount_of_talents_purchased]
-    if eventPlayer.talent_ranks[21] > 0 or eventPlayer.talent_ranks[6] > 0:
+    if eventPlayer.talent_ranks[Talent.FIREBALL] > 0 or eventPlayer.talent_ranks[Talent.JUGGERNAUT] > 0:
         async(spawned_with_fireball, AsyncBehavior.RESTART)
     eventPlayer.is_respawning = true
     eventPlayer.respawn()
@@ -499,7 +499,7 @@ def open_shop():
         eventPlayer.browsing_shop = false
         eventPlayer.selected_talent_location = shop_talent_middle_location
         eventPlayer.can_enter_shop = false
-        if eventPlayer.talent_ranks[21] > 0 or eventPlayer.talent_ranks[6] > 0:
+        if eventPlayer.talent_ranks[Talent.FIREBALL] > 0 or eventPlayer.talent_ranks[Talent.JUGGERNAUT] > 0:
             async(spawned_with_fireball, AsyncBehavior.RESTART)
         eventPlayer.is_respawning = true
         eventPlayer.respawn()
@@ -581,7 +581,7 @@ def buy_or_upgrade_talent():
     elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.HEALTH_REGEN]:
         buy_health_regen()
     elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.HEALTH_POTIONS]:
-        if eventPlayer.talent_ranks[14] == 1:
+        if eventPlayer.talent_ranks[Talent.HEALTH_POTIONS] == 1:
             eventPlayer.amount_of_potions_or_vials = 3
         buy_health_potions()
     elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.IGNITE]:
@@ -615,7 +615,7 @@ def buy_or_upgrade_talent():
     elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.PYROMANIAC]:
         buy_pyromaniac()
     elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.POISON_VIALS]:
-        if eventPlayer.talent_ranks[31] == 1:
+        if eventPlayer.talent_ranks[Talent.POISON_VIALS] == 1:
             eventPlayer.amount_of_potions_or_vials = 3
         buy_poison_vials()
     elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.CRAZY_ALCHEMIST]:

@@ -62,6 +62,11 @@ playervar total_time_in_combat
 playervar soul_siphon_duration
 playervar used_soul_siphon_on
 playervar pyromaniac_heal_duration
+playervar talent_1_cooldown = 0
+playervar talent_2_cooldown = 0
+playervar talent_3_cooldown = 0
+playervar talent_4_cooldown = 0
+playervar talent_5_cooldown = 0
 
 #Subroutine names
 

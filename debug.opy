@@ -39,17 +39,17 @@ rule "DEBUG - - - Abilities [DEFAULT: OFF]":
     #Jetpack
     #return
     #Predator
-    eventPlayer.talent_ranks[10] = 1
+    eventPlayer.talent_ranks[Talent.PREDATOR] = 1
     buy_predator()
-    eventPlayer.talent_ranks[10] = 5
+    eventPlayer.talent_ranks[Talent.PREDATOR] = 5
     #Health Potions
     #return
     #Poison Vials
     #return
     #Soul Siphon
-    eventPlayer.talent_ranks[29] = 1
+    eventPlayer.talent_ranks[Talent.SOUL_SIPHON] = 1
     buy_soul_siphon()
-    eventPlayer.talent_ranks[29] = 5
+    eventPlayer.talent_ranks[Talent.SOUL_SIPHON] = 5
     #Overclock
     #return
     #Ignore Pain
@@ -73,9 +73,9 @@ rule "DEBUG - - - Abilities [DEFAULT: OFF]":
     #Cybernetics
     #return
 */
-
-/*
 rule "DEBUG - - - Host HUD Texts [DEFAULT: OFF]":
+    hudText(hostPlayer, "Amount of texts: {0}".format(getNumberOfTextIds()), "", "", HudPosition.RIGHT, 100, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
+    /*
     hudText(hostPlayer, "Lifesteal Ammo:", "In Combat Avg: {0} {1}".format("[Rank 1: {0}] [Rank 2: {1}] [Rank 3: {2}]".format(lifesteal_total_healing[1] / lifesteal_time_in_combat[1], lifesteal_total_healing[2] / lifesteal_time_in_combat[2], lifesteal_total_healing[3] / lifesteal_time_in_combat[3]), "[Rank 4: {0}] [Rank 5: {1}]".format(lifesteal_total_healing[4] / lifesteal_time_in_combat[4], lifesteal_total_healing[5] / lifesteal_time_in_combat[5])), null, HudPosition.LEFT, 100, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
     hudText(hostPlayer, "Health Regen:", "In Combat Avg: {0} {1}".format("[Rank 1: {0}] [Rank 2: {1}] [Rank 3: {2}]".format(health_regen_total_healing[1] / health_regen_time_in_combat[1], health_regen_total_healing[2] / health_regen_time_in_combat[2], health_regen_total_healing[3] / health_regen_time_in_combat[3]), "[Rank 4: {0}] [Rank 5: {1}]".format(health_regen_total_healing[4] / health_regen_time_in_combat[4], health_regen_total_healing[5] / health_regen_time_in_combat[5])), null, HudPosition.LEFT, 101, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
     hudText(hostPlayer, "Health Potions:", "In Combat Avg: {0} {1}".format("[Rank 1: {0}] [Rank 2: {1}] [Rank 3: {2}]".format(health_potions_total_healing[1] / health_potions_time_in_combat[1], health_potions_total_healing[2] / health_potions_time_in_combat[2], health_potions_total_healing[3] / health_potions_time_in_combat[3]), "[Rank 4: {0}] [Rank 5: {1}]".format(health_potions_total_healing[4] / health_potions_time_in_combat[4], health_potions_total_healing[5] / health_potions_time_in_combat[5])), null, HudPosition.LEFT, 102, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
@@ -86,14 +86,14 @@ rule "DEBUG - - - Host HUD Texts [DEFAULT: OFF]":
 def lifesteal_hps():
     @Name "DEBUG - - - [Talent: Lifesteal] Healing Done In Combat [DEFAULT: OFF]"
     
-    eventPlayer.healing_done_in_combat[12] += eventDamage * (0.112 + eventPlayer.talent_ranks[12] * 0.038)
+    eventPlayer.healing_done_in_combat[12] += eventDamage * (0.112 + eventPlayer.talent_ranks[Talent.LIFESTEAL_AMMO] * 0.038)
 */
 
 /*
 def health_potion_hps():
     @Name "DEBUG - - - [Talent: Health Potions] Healing Done In Combat [DEFAULT: OFF]"
     
-    eventPlayer.healing_done_in_combat[14] += 43.75 + eventPlayer.talent_ranks[14] * 17.5
+    eventPlayer.healing_done_in_combat[14] += 43.75 + eventPlayer.talent_ranks[Talent.HEALTH_POTIONS] * 17.5
 */
 
 /*
@@ -196,4 +196,3 @@ rule "DEBUG - - - Reset [Talent: Juggernaut] Cooldown With Reload [DEFAULT: OFF]
     
     eventPlayer.juggernaut_cooldown = 0
 */
-
