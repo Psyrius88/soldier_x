@@ -1,7 +1,7 @@
 rule "XP SYSTEM - - - Level 0 or 25? Activate XP Boost":
     @Event eachPlayer
     @Hero soldier
-    @Condition (eventPlayer.amount_of_talents_purchased == 0 or endless_mode == true and eventPlayer.amount_of_talents_purchased == 25) == true
+    @Condition eventPlayer.amount_of_talents_purchased == 0
     @Condition eventPlayer.hasSpawned() == true
     @Condition eventPlayer.isAlive() == true
     
@@ -11,7 +11,7 @@ rule "XP SYSTEM - - - Level 0 or 25? Activate XP Boost":
 rule "XP SYSTEM - - - Too Far Behind? Activate XP Boost":
     @Event eachPlayer
     @Hero soldier
-    @Condition (endless_mode == false and eventPlayer.amount_of_talents_purchased <= sorted(getAllPlayers(), lambda player: player.getScore()).last().amount_of_talents_purchased - 5) == true
+    @Condition eventPlayer.amount_of_talents_purchased <= sorted(getAllPlayers(), lambda player: player.getScore()).last().amount_of_talents_purchased - 5
     @Condition eventPlayer.amount_of_talents_purchased > 0
     
     eventPlayer.xp_boost_is_active = true
@@ -35,7 +35,7 @@ rule "XP SYSTEM - - - Deactivate XP Boost":
     @Hero soldier
     @Condition eventPlayer.amount_of_talents_purchased > 0
     @Condition eventPlayer.skipped_a_talent == false
-    @Condition (endless_mode == true or endless_mode == false and eventPlayer.amount_of_talents_purchased > sorted(getAllPlayers(), lambda player: player.getScore()).last().amount_of_talents_purchased - 5) == true
+    @Condition eventPlayer.amount_of_talents_purchased > sorted(getAllPlayers(), lambda player: player.getScore()).last().amount_of_talents_purchased - 5
     
     eventPlayer.xp_boost_is_active = false
     stopChasingVariable(eventPlayer.experience_current)
@@ -44,7 +44,6 @@ rule "XP SYSTEM - - - Deactivate XP Boost":
 rule "XP SYSTEM - - - Level Up":
     @Event eachPlayer
     @Hero soldier
-    @Condition match_is_in_showdown == false
     @Condition eventPlayer.experience_current >= eventPlayer.experience_max
     
     eventPlayer.can_enter_shop = true
@@ -59,5 +58,3 @@ rule "XP SYSTEM - - - Earned Elimination":
     
     if eventPlayer.experience_current < eventPlayer.experience_max:
         eventPlayer.experience_current += victim.experience_max * 0.075 * eventPlayer.stats[5]
-    if match_is_in_showdown == true:
-        eventPlayer.addToScore(1)

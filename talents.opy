@@ -4,69 +4,69 @@ globalvar accurateTime
 
 #Player variables
 
+playervar berserker_cooldown
 playervar bloodthirst_shield
-playervar purity_field_cooldown
-playervar has_hit_the_ground
-playervar hit_by_talent
-playervar health_pool_id_or_hot_id
+playervar burning_soul_orb_timer
+playervar can_be_executed
+playervar created_predator_effects_on_self
+playervar effectMemory
 playervar engineer_scrap
-playervar shadowstep_cooldown
-playervar shadowstrike_enemies_hit
 playervar entering_stealth
 playervar entering_stealth_timer
+playervar exitSpeed
+playervar fire_soul_loop
+playervar fireball_cooldown
+playervar fireball_destination
+playervar fireball_effects
+playervar fireball_in_air
+playervar fireball_loop
+playervar fireball_position
+playervar gravity
+playervar has_hit_the_ground = true
+playervar health_pool_id_or_hot_id
+playervar health_potion_cooldown
 playervar health_regen_in_stealth_id
-playervar time_since_freezing_rocket
-playervar slow_duration
-playervar slow_amount
-playervar refresh_slow
-playervar railgun_discharge
-playervar railgun_charge
-playervar railgun_projectile_start
-playervar railgun_projectile_player_hit
-playervar railgun_hit_someone
-playervar railgun_raycasts_counter
-playervar railgun_projectile_destination
-playervar railgun_projectile_is_in_air
+playervar hit_by_talent
+playervar ignite_position
+playervar ignore_pain_damage_resistance
+playervar ignore_pain_damage_resisted
+playervar ignore_pain_volume
+playervar in_execution_range_effects
 playervar is_lifestealing
+playervar jetpack_fuel
+playervar jetpack_will_have_a_delay
 playervar predator_cooldown
 playervar predator_effect_position_1
 playervar predator_effect_position_2
-playervar predator_effects
-playervar created_predator_effects_on_self
-playervar in_execution_range_effects
-playervar can_be_executed
-playervar jetpack_fuel
-playervar jetpack_will_have_a_delay
-playervar health_potion_cooldown
-playervar effectMemory
-playervar exitSpeed
-playervar gravity
+playervar predator_effects = null
 playervar projData
-playervar ignite_position
-playervar burning_soul_orb_timer
-playervar victims_in_fire_aura_radius
-playervar fire_soul_loop
-playervar xp_orb_location
-playervar berserker_cooldown
-playervar fireball_cooldown
-playervar fireball_position
-playervar fireball_in_air
-playervar fireball_effects
-playervar fireball_destination
-playervar victims_in_fireball_radius
-playervar fireball_loop
-playervar ignore_pain_damage_resisted
-playervar ignore_pain_volume
-playervar ignore_pain_damage_resistance
-playervar total_time_in_combat
-playervar soul_siphon_duration
-playervar used_soul_siphon_on
+playervar purity_field_cooldown
 playervar pyromaniac_heal_duration
+playervar railgun_charge
+playervar railgun_discharge
+playervar railgun_hit_someone
+playervar railgun_projectile_destination
+playervar railgun_projectile_is_in_air
+playervar railgun_projectile_player_hit
+playervar railgun_projectile_start
+playervar railgun_raycasts_counter
+playervar refresh_slow
+playervar shadowstep_cooldown
+playervar shadowstrike_enemies_hit
+playervar slow_amount = 100
+playervar slow_duration = 0
+playervar soul_siphon_duration
 playervar talent_1_cooldown = 0
 playervar talent_2_cooldown = 0
 playervar talent_3_cooldown = 0
 playervar talent_4_cooldown = 0
 playervar talent_5_cooldown = 0
+playervar time_since_freezing_rocket
+playervar total_time_in_combat
+playervar used_soul_siphon_on
+playervar victims_in_fire_aura_radius
+playervar victims_in_fireball_radius
+playervar xp_orb_location
 
 #Subroutine names
 
@@ -1986,7 +1986,7 @@ rule "TALENT SYSTEM - - - [TALENT 31: POISON VIALS] Setup [DISABLED: POISON VIAL
     #return
     #////////////////////////////////
     eventPlayer.projData = []
-    eventPlayer.cloudData = []
+    eventPlayer.poison_vials_cloudData = []
     while true:
         #Customizable (who should be affected? updates when players join):
         eventPlayer.interactablePlayers = getAllPlayers().exclude(eventPlayer)
@@ -2002,19 +2002,19 @@ rule "TALENT SYSTEM - - - [TALENT 31: POISON VIALS] projCollision [DISABLED: POI
     @Condition any([player[true] + (eventPlayer.exitSpeed * player[2] * (accurateTime + 0.032 - player[0])) + (eventPlayer.gravity / 2 * Vector.DOWN * ((accurateTime + 0.032 - player[0]) ** 2)) != raycast(player[true] + (eventPlayer.exitSpeed * player[2] * (accurateTime - player[0])) + (eventPlayer.gravity / 2 * Vector.DOWN * ((accurateTime - player[0]) ** 2)), player[true] + (eventPlayer.exitSpeed * player[2] * (accurateTime + 0.032 - player[0])) + (eventPlayer.gravity / 2 * Vector.DOWN * ((accurateTime + 0.032 - player[0]) ** 2)), eventPlayer.interactablePlayers, [], true).getHitPosition() for player in eventPlayer.projData]) == true
     
     eventPlayer.indexMemory = ((([i for i in [[player, i + true] for player, i in eventPlayer.projData] if i[0][true] + (eventPlayer.exitSpeed * i[0][2] * (accurateTime + 0.032 - i[0][0])) + (eventPlayer.gravity / 2 * Vector.DOWN * ((accurateTime + 0.032 - i[0][0]) ** 2)) != raycast(i[0][true] + (eventPlayer.exitSpeed * i[0][2] * (accurateTime - i[0][0])) + (eventPlayer.gravity / 2 * Vector.DOWN * ((accurateTime - i[0][0]) ** 2)), i[0][true] + (eventPlayer.exitSpeed * i[0][2] * (accurateTime + 0.032 - i[0][0])) + (eventPlayer.gravity / 2 * Vector.DOWN * ((accurateTime + 0.032 - i[0][0]) ** 2)), eventPlayer.interactablePlayers, [], true).getHitPosition()])[0]).last()) - true
-    eventPlayer.projPos = eventPlayer.projData[eventPlayer.indexMemory][true] + (eventPlayer.exitSpeed * eventPlayer.projData[eventPlayer.indexMemory][2] * (accurateTime - eventPlayer.projData[eventPlayer.indexMemory][0])) + (eventPlayer.gravity / 2 * Vector.DOWN * ((accurateTime - eventPlayer.projData[eventPlayer.indexMemory][0]) ** 2))
-    eventPlayer.projPosIn0032 = eventPlayer.projData[eventPlayer.indexMemory][true] + (eventPlayer.exitSpeed * eventPlayer.projData[eventPlayer.indexMemory][2] * (accurateTime + 0.032 - eventPlayer.projData[eventPlayer.indexMemory][0])) + (eventPlayer.gravity / 2 * Vector.DOWN * ((accurateTime + 0.032 - eventPlayer.projData[eventPlayer.indexMemory][0]) ** 2))
+    eventPlayer.poison_vials_projPos = eventPlayer.projData[eventPlayer.indexMemory][true] + (eventPlayer.exitSpeed * eventPlayer.projData[eventPlayer.indexMemory][2] * (accurateTime - eventPlayer.projData[eventPlayer.indexMemory][0])) + (eventPlayer.gravity / 2 * Vector.DOWN * ((accurateTime - eventPlayer.projData[eventPlayer.indexMemory][0]) ** 2))
+    eventPlayer.poison_vials_projPosIn0032 = eventPlayer.projData[eventPlayer.indexMemory][true] + (eventPlayer.exitSpeed * eventPlayer.projData[eventPlayer.indexMemory][2] * (accurateTime + 0.032 - eventPlayer.projData[eventPlayer.indexMemory][0])) + (eventPlayer.gravity / 2 * Vector.DOWN * ((accurateTime + 0.032 - eventPlayer.projData[eventPlayer.indexMemory][0]) ** 2))
     #Customizable:
-    playEffect(getAllPlayers(), DynamicEffect.BAD_EXPLOSION, Color.LIME_GREEN, eventPlayer.projPos, 3)
-    playEffect(getAllPlayers(), DynamicEffect.ANA_BIOTIC_GRENADE_EXPLOSION, Color.TEAM_2, eventPlayer.projPos, 1)
-    playEffect(getAllPlayers(), DynamicEffect.DVA_MICRO_MISSILES_EXPLOSION, Color.TEAM_1, eventPlayer.projPos, 1)
-    playEffect(getAllPlayers(), DynamicEffect.ANA_BIOTIC_GRENADE_EXPLOSION_SOUND, Color.TEAM_2, eventPlayer.projPos, 100)
-    playEffect(getAllPlayers(), DynamicEffect.DVA_MICRO_MISSILES_EXPLOSION_SOUND, Color.TEAM_2, eventPlayer.projPos, 100)
-    playEffect(getAllPlayers(), DynamicEffect.WIDOWMAKER_VENOM_MINE_EXPLOSION, Color.TEAM_1, eventPlayer.projPos, 1)
-    playEffect(getAllPlayers(), DynamicEffect.WIDOWMAKER_VENOM_MINE_EXPLOSION_SOUND, Color.TEAM_1, eventPlayer.projPos, 100)
-    damage([player for player in getPlayersInRadius(eventPlayer.projPos, 3, Team.ALL, LosCheck.SURFACES_AND_ENEMY_BARRIERS) if player != eventPlayer and player == eventPlayer.isAlive() and player.browsing_shop == false and player.is_using_ability[Talent.PURITY_FIELD] == false], eventPlayer, 28.125 + eventPlayer.talent_ranks[Talent.POISON_VIALS] * 9.375)
-    ([player for player in getPlayersInRadius(eventPlayer.projPos, 3, Team.ALL, LosCheck.SURFACES_AND_ENEMY_BARRIERS) if player != eventPlayer and player == eventPlayer.isAlive() and player.browsing_shop == false and player.is_using_ability[Talent.PURITY_FIELD] == false]).startDoT(eventPlayer, 5, floor(5.6 + eventPlayer.talent_ranks[Talent.POISON_VIALS] * 1.9))
-    (([player for player in getPlayersInRadius(eventPlayer.projPos, 3, Team.ALL, LosCheck.SURFACES_AND_ENEMY_BARRIERS) if player != eventPlayer and player == eventPlayer.isAlive() and player.browsing_shop == false and player.is_using_ability[Talent.PURITY_FIELD] == false]).hit_by_talent)[31] = eventPlayer
+    playEffect(getAllPlayers(), DynamicEffect.BAD_EXPLOSION, Color.LIME_GREEN, eventPlayer.poison_vials_projPos, 3)
+    playEffect(getAllPlayers(), DynamicEffect.ANA_BIOTIC_GRENADE_EXPLOSION, Color.TEAM_2, eventPlayer.poison_vials_projPos, 1)
+    playEffect(getAllPlayers(), DynamicEffect.DVA_MICRO_MISSILES_EXPLOSION, Color.TEAM_1, eventPlayer.poison_vials_projPos, 1)
+    playEffect(getAllPlayers(), DynamicEffect.ANA_BIOTIC_GRENADE_EXPLOSION_SOUND, Color.TEAM_2, eventPlayer.poison_vials_projPos, 100)
+    playEffect(getAllPlayers(), DynamicEffect.DVA_MICRO_MISSILES_EXPLOSION_SOUND, Color.TEAM_2, eventPlayer.poison_vials_projPos, 100)
+    playEffect(getAllPlayers(), DynamicEffect.WIDOWMAKER_VENOM_MINE_EXPLOSION, Color.TEAM_1, eventPlayer.poison_vials_projPos, 1)
+    playEffect(getAllPlayers(), DynamicEffect.WIDOWMAKER_VENOM_MINE_EXPLOSION_SOUND, Color.TEAM_1, eventPlayer.poison_vials_projPos, 100)
+    damage([player for player in getPlayersInRadius(eventPlayer.poison_vials_projPos, 3, Team.ALL, LosCheck.SURFACES_AND_ENEMY_BARRIERS) if player != eventPlayer and player == eventPlayer.isAlive() and player.browsing_shop == false and player.is_using_ability[Talent.PURITY_FIELD] == false], eventPlayer, 28.125 + eventPlayer.talent_ranks[Talent.POISON_VIALS] * 9.375)
+    ([player for player in getPlayersInRadius(eventPlayer.poison_vials_projPos, 3, Team.ALL, LosCheck.SURFACES_AND_ENEMY_BARRIERS) if player != eventPlayer and player == eventPlayer.isAlive() and player.browsing_shop == false and player.is_using_ability[Talent.PURITY_FIELD] == false]).startDoT(eventPlayer, 5, floor(5.6 + eventPlayer.talent_ranks[Talent.POISON_VIALS] * 1.9))
+    (([player for player in getPlayersInRadius(eventPlayer.poison_vials_projPos, 3, Team.ALL, LosCheck.SURFACES_AND_ENEMY_BARRIERS) if player != eventPlayer and player == eventPlayer.isAlive() and player.browsing_shop == false and player.is_using_ability[Talent.PURITY_FIELD] == false]).hit_by_talent)[31] = eventPlayer
     eventPlayer.effectMemory = []
     #////////////////////////////////
     destroyEffect(eventPlayer.projData[eventPlayer.indexMemory].last())

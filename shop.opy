@@ -9,12 +9,12 @@ globalvar max_experience_per_level = [250, 275, 303, 333, 366, 403, 443, 487, 53
 
 #Player variables
 
-playervar hearthstone_effects_id
-playervar using_hearthstone_timer
-playervar selected_talent_location
-playervar is_respawning
 playervar current_talent_replace_or_buy
+playervar hearthstone_effects_id
+playervar is_respawning = false
+playervar selected_talent_location = shop_talent_middle_location
 playervar selected_talent_will_replace
+playervar using_hearthstone_timer = 0
 
 #Subroutine names
 
@@ -43,12 +43,6 @@ subroutine buy_fire_aura
 subroutine buy_berserker
 subroutine buy_fireball
 subroutine buy_ignore_pain
-subroutine buy_monkey_business
-subroutine buy_gluttony
-subroutine buy_weird_flex
-subroutine buy_for_glory
-subroutine buy_mace_to_the_face
-subroutine buy_pinball
 subroutine buy_soul_siphon
 subroutine buy_pyromaniac
 subroutine buy_poison_vials
@@ -66,7 +60,6 @@ rule "SHOP - - - Using Hearthstone":
     @Condition eventPlayer.browsing_shop == false
     @Condition eventPlayer.can_enter_shop == true
     @Condition eventPlayer.using_one_of_the_hearthstones == false
-    @Condition match_is_in_showdown == false
     @Condition eventPlayer.isAlive() == true
     @Condition eventPlayer.in_combat == 0
     @Condition eventPlayer.isHoldingButton(Button.RELOAD) == true
@@ -85,33 +78,6 @@ rule "SHOP - - - Canceled Hearthstone":
     
     stopped_using_hearthstone()
 
-
-rule "SHOP - - - Skip Talents & Exit Shop":
-    @Event eachPlayer
-    @Hero soldier
-    @Condition eventPlayer.browsing_shop == true
-    @Condition eventPlayer.replace_replacing_or_cancelled[1] == false
-    @Condition eventPlayer.replace_replacing_or_cancelled[0] == false
-    @Condition eventPlayer.canVote_hasVoted_canStartVote[1] == true
-    @Condition eventPlayer.using_one_of_the_hearthstones == false
-    @Condition eventPlayer.isHoldingButton(Button.RELOAD) == true
-    @Condition eventPlayer.isHoldingButton(Button.INTERACT) == false
-    @Condition (eventPlayer.browsing_shop == true and eventPlayer.replace_replacing_or_cancelled[1] == false and eventPlayer.replace_replacing_or_cancelled[0] == false and eventPlayer.canVote_hasVoted_canStartVote[1] == true or eventPlayer.browsing_shop == false and eventPlayer.canVote_hasVoted_canStartVote[1] == false and match_is_in_showdown == true) == true
-    
-    wait(0.75, Wait.ABORT_WHEN_FALSE)
-    eventPlayer.is_using_hearthstone[2] = true
-    using_one_of_the_hearthstones()
-
-
-rule "SHOP - - - Canceled Skip Talent & Exit Shop or Skip Showdown":
-    @Event eachPlayer
-    @Hero soldier
-    @Condition eventPlayer.is_using_hearthstone[2] == true
-    @Condition eventPlayer.isHoldingButton(Button.RELOAD) == false
-    
-    stopped_using_hearthstone()
-
-
 def using_one_of_the_hearthstones():
     @Name "SHOP - - - [SUBROUTINE] Using One of the Hearthstones"
     
@@ -121,26 +87,10 @@ def using_one_of_the_hearthstones():
         eventPlayer.hearthstone_effects_id[0] = getLastCreatedEntity()
         createEffect(getAllPlayers() if eventPlayer.is_using_ability[Talent.STEALTH] == false else null, Effect.GOOD_AURA, Color.GREEN, updateEveryTick(eventPlayer.getPosition() + Vector.UP), 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
         eventPlayer.hearthstone_effects_id[1] = getLastCreatedEntity()
-    elif eventPlayer.is_using_hearthstone[1] == true:
-        if eventPlayer.time_since_joined_match < 900:
-            playEffect(eventPlayer, DynamicEffect.DEBUFF_IMPACT_SOUND, Color.WHITE, eventPlayer, 100)
-            smallMessage(eventPlayer, "{0} You can not start a vote yet! You can do it in {1} second(s).".format(iconString(Icon.STOP), ceil(900 - eventPlayer.time_since_joined_match)))
-            async(stopped_using_hearthstone, AsyncBehavior.RESTART)
-            wait(5)
-            return
-    elif eventPlayer.is_using_hearthstone[2] == true:
-        if match_is_in_showdown == true and eventPlayer.canVote_hasVoted_canStartVote[1] == true:
-            smallMessage(eventPlayer, "{0} You have already voted yes to skip the Showdown!".format(iconString(Icon.CHECKMARK)))
-            playEffect(eventPlayer, DynamicEffect.DEBUFF_IMPACT_SOUND, Color.WHITE, eventPlayer, 100)
-            async(stopped_using_hearthstone, AsyncBehavior.RESTART)
-            wait(5)
-            return
-    if eventPlayer.is_using_hearthstone[1] == true or eventPlayer.is_using_hearthstone[2] == true or eventPlayer.is_using_hearthstone[3] == true or eventPlayer.is_using_hearthstone[4] == true:
+    if eventPlayer.is_using_hearthstone[1] == true:
         createEffect(eventPlayer, Effect.SOMBRA_HACKING_SOUND, Color.WHITE, shop_location if eventPlayer.browsing_shop == true else eventPlayer.getPosition(), 100, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
         eventPlayer.hearthstone_effects_id[0] = getLastCreatedEntity()
     chase(eventPlayer.using_hearthstone_timer, 2.75, rate=1, ChaseReeval.DESTINATION_AND_RATE)
-    if eventPlayer.is_using_hearthstone[3] == true or eventPlayer.is_using_hearthstone[4] == true:
-        goto lbl_0
     wait(2.75, Wait.ABORT_WHEN_FALSE)
     lbl_0:
     eventPlayer.using_one_of_the_hearthstones = true
@@ -154,114 +104,7 @@ def using_one_of_the_hearthstones():
         eventPlayer.is_using_hearthstone[0] = false
         async(open_shop, AsyncBehavior.NOOP)
         eventPlayer.browsing_shop = true
-    elif eventPlayer.is_using_hearthstone[1] == true:
-        player_who_started_vote = eventPlayer
-        wait()
-        eventPlayer.time_since_joined_match = 720
-        eventPlayer.canVote_hasVoted_canStartVote[2] = false
-        eventPlayer.canVote_hasVoted_canStartVote[1] = true
-        players_that_voted_yes = players_that_voted_yes.concat(eventPlayer)
-        someone_is_voting_to_change_map = true
-        smallMessage(eventPlayer, "{0} The vote will start when you exit the shop!".format(iconString(Icon.CHECKMARK)))
-        eventPlayer.is_using_hearthstone[1] = false
-    elif eventPlayer.is_using_hearthstone[2] == true:
-        eventPlayer.is_using_hearthstone[2] = false
-        if match_is_in_showdown == true:
-            smallMessage(eventPlayer, "{0} You voted yes to skip the Showdown!".format(iconString(Icon.CHECKMARK)))
-            playEffect(eventPlayer, DynamicEffect.RING_EXPLOSION_SOUND, Color.WHITE, eventPlayer, 100)
-            eventPlayer.canVote_hasVoted_canStartVote[1] = true
-            players_that_voted_yes = players_that_voted_yes.concat(eventPlayer)
-            async(stopped_using_hearthstone, AsyncBehavior.RESTART)
-            return
-        goto lbl_1
-    elif eventPlayer.is_using_hearthstone[3] == true:
-        waitUntil(eventPlayer.isHoldingButton(Button.PRIMARY_FIRE) == false or eventPlayer.isHoldingButton(Button.SECONDARY_FIRE) == true, 2.75)
-        if eventPlayer.isHoldingButton(Button.PRIMARY_FIRE) == false or eventPlayer.isHoldingButton(Button.SECONDARY_FIRE) == true:
-            goto lbl_2
-        if eventPlayer.replace_replacing_or_cancelled[0] == true:
-            eventPlayer.replace_replacing_or_cancelled[1] = true
-            goto lbl_3
-        smallMessage(eventPlayer, "{0} Voted Yes!".format(iconString(Icon.CHECKMARK)))
-        eventPlayer.canVote_hasVoted_canStartVote[1] = true
-        players_that_voted_yes = players_that_voted_yes.concat(eventPlayer)
-        playEffect(eventPlayer, DynamicEffect.RING_EXPLOSION_SOUND, Color.WHITE, shop_location, 100)
-        lbl_2:
-        lbl_3:
-        async(stopped_using_hearthstone, AsyncBehavior.RESTART)
-        return
-    elif eventPlayer.is_using_hearthstone[4] == true:
-        waitUntil(eventPlayer.isHoldingButton(Button.SECONDARY_FIRE) == false or eventPlayer.isHoldingButton(Button.PRIMARY_FIRE) == true, 2.75)
-        if eventPlayer.isHoldingButton(Button.SECONDARY_FIRE) == false or eventPlayer.isHoldingButton(Button.PRIMARY_FIRE) == true:
-            goto lbl_4
-        if eventPlayer.replace_replacing_or_cancelled[0] == true:
-            eventPlayer.replace_replacing_or_cancelled[2] = true
-            goto lbl_5
-        smallMessage(eventPlayer, "{0} Voted No!".format(iconString(Icon.NO)))
-        eventPlayer.canVote_hasVoted_canStartVote[1] = true
-        players_that_voted_no = players_that_voted_no.concat(eventPlayer)
-        playEffect(eventPlayer, DynamicEffect.DEBUFF_IMPACT_SOUND, Color.WHITE, shop_location, 100)
-        lbl_4:
-        lbl_5:
-        async(stopped_using_hearthstone, AsyncBehavior.RESTART)
-        return
     async(stopped_using_hearthstone, AsyncBehavior.RESTART)
-    if player_who_started_vote == eventPlayer and eventPlayer.time_since_joined_match < 725:
-        waitUntil(eventPlayer.browsing_shop == false, 30)
-        if eventPlayer.browsing_shop == false:
-            return
-        if eventPlayer.browsing_shop == true:
-            playEffect(eventPlayer, DynamicEffect.DEBUFF_IMPACT_SOUND, Color.WHITE, eventPlayer, 100)
-            smallMessage(eventPlayer, "{0} You have 30 seconds to leave the shop, or you will respawn automatically!".format(iconString(Icon.WARNING)))
-        waitUntil(eventPlayer.browsing_shop == false, 10)
-        if eventPlayer.browsing_shop == false:
-            return
-        if eventPlayer.browsing_shop == true:
-            playEffect(eventPlayer, DynamicEffect.DEBUFF_IMPACT_SOUND, Color.WHITE, eventPlayer, 100)
-            smallMessage(eventPlayer, "{0} You have 20 seconds to leave the shop, or you will respawn automatically!".format(iconString(Icon.WARNING)))
-        waitUntil(eventPlayer.browsing_shop == false, 10)
-        if eventPlayer.browsing_shop == false:
-            return
-        if eventPlayer.browsing_shop == true:
-            playEffect(eventPlayer, DynamicEffect.DEBUFF_IMPACT_SOUND, Color.WHITE, eventPlayer, 100)
-            smallMessage(eventPlayer, "{0} You have 10 seconds to leave the shop, or you will respawn automatically!".format(iconString(Icon.WARNING)))
-        waitUntil(eventPlayer.browsing_shop == false, 7)
-        if eventPlayer.browsing_shop == false:
-            return
-        if eventPlayer.browsing_shop == true:
-            playEffect(eventPlayer, DynamicEffect.DEBUFF_IMPACT_SOUND, Color.WHITE, eventPlayer, 100)
-            smallMessage(eventPlayer, "{0} 3".format(iconString(Icon.WARNING)))
-        waitUntil(eventPlayer.browsing_shop == false, 1)
-        if eventPlayer.browsing_shop == false:
-            return
-        if eventPlayer.browsing_shop == true:
-            playEffect(eventPlayer, DynamicEffect.DEBUFF_IMPACT_SOUND, Color.WHITE, eventPlayer, 100)
-            smallMessage(eventPlayer, "{0} 2".format(iconString(Icon.WARNING)))
-        waitUntil(eventPlayer.browsing_shop == false, 1)
-        if eventPlayer.browsing_shop == false:
-            return
-        if eventPlayer.browsing_shop == true:
-            playEffect(eventPlayer, DynamicEffect.DEBUFF_IMPACT_SOUND, Color.WHITE, eventPlayer, 100)
-            smallMessage(eventPlayer, "{0} 1".format(iconString(Icon.WARNING)))
-        waitUntil(eventPlayer.browsing_shop == false, 1)
-        if eventPlayer.browsing_shop == false:
-            return
-        #Act as skipped a talent because the player didn't exit in time
-        lbl_1:
-        eventPlayer.browsing_shop = false
-        eventPlayer.selected_talent_location = shop_talent_middle_location
-        eventPlayer.can_enter_shop = false
-        eventPlayer.experience_current = 0
-        if eventPlayer.talent_ranks[Talent.FIREBALL] > 0 or eventPlayer.talent_ranks[Talent.JUGGERNAUT] > 0:
-            async(spawned_with_fireball, AsyncBehavior.RESTART)
-        eventPlayer.is_respawning = true
-        eventPlayer.respawn()
-        #Reset selection of a talent to the middle
-        eventPlayer.selected_talent[0] = 1
-        eventPlayer.skipped_a_talent = true
-        eventPlayer.xp_boost_is_active = true
-        if random.randint(1, 100) <= 10 and eventPlayer.amount_of_talents_purchased > 4:
-            async(leave_shop_messages, AsyncBehavior.NOOP)
-        async(stopped_using_hearthstone, AsyncBehavior.RESTART)
 
 
 def stopped_using_hearthstone():
@@ -270,9 +113,6 @@ def stopped_using_hearthstone():
     eventPlayer.using_one_of_the_hearthstones = false
     eventPlayer.is_using_hearthstone[0] = false
     eventPlayer.is_using_hearthstone[1] = false
-    eventPlayer.is_using_hearthstone[2] = false
-    eventPlayer.is_using_hearthstone[3] = false
-    eventPlayer.is_using_hearthstone[4] = false
     stopChasingVariable(eventPlayer.using_hearthstone_timer)
     eventPlayer.using_hearthstone_timer = 0
     if eventPlayer.is_using_ability[Talent.CRYOGENICS] == false:
@@ -280,25 +120,90 @@ def stopped_using_hearthstone():
     destroyEffect(eventPlayer.hearthstone_effects_id[0])
     destroyEffect(eventPlayer.hearthstone_effects_id[1])
 
-
-def replace_talent():
-    @Name "SHOP - - - [SUBROUTINE] Replace Talent"
-    
-    eventPlayer.replace_replacing_or_cancelled[0] = true
-    eventPlayer.startCamera(shop_location, eventPlayer.selected_talent_location, 12)
-    playEffect(eventPlayer, DynamicEffect.RING_EXPLOSION_SOUND, Color.WHITE, shop_location, 100)
-    waitUntil(eventPlayer.replace_replacing_or_cancelled[1] == true or eventPlayer.replace_replacing_or_cancelled[2] == true, 99999)
-
-
-def leave_shop_messages():
-    @Name "SHOP - - - [SUBROUTINE] Exit Shop Messages"
-    
-    eventPlayer.random_integer_between_0_to_5 = random.randint(0, 5)
-    createInWorldText(eventPlayer, "{0}".format(leave_shop_messages[eventPlayer.random_integer_between_0_to_5]), updateEveryTick(eventPlayer.getEyePosition() + (100 * (0 * worldVector(Vector.RIGHT, eventPlayer, Transform.ROTATION) + ((0 - 1) * (angleToDirection(horizontalAngleOfDirection(eventPlayer.getFacingDirection()), verticalAngleOfDirection(eventPlayer.getFacingDirection()) - 90))) + 3 * eventPlayer.getFacingDirection()))), 1.75, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.ORANGE, SpecVisibility.DEFAULT)
-    eventPlayer.player_temp_effects[43] = getLastCreatedText()
-    wait(5)
-    destroyInWorldText(eventPlayer.player_temp_effects[43])
-
+def open_shop():
+    @Name "SHOP - - - [SUBROUTINE] Open Shop"
+    #EMPTY POSSIBLE_TALENTS
+    eventPlayer.possible_talents = []
+    #THIS FILLS POSSIBLE_TALENTS WITH ONLY TALENTS THAT ARE NOT RANK 5 YET.
+    if len(eventPlayer.bought_talents) == 5:
+        #Set while counter variable to 4
+        eventPlayer.talent_counter_or_position_etc[15] = 4
+        while eventPlayer.talent_counter_or_position_etc[15] >= 0:
+            #If the current talent considered by the counter variable have not reached maximum rank yet
+            if eventPlayer.talent_ranks[eventPlayer.bought_talents[eventPlayer.talent_counter_or_position_etc[15]]] < 5:
+                #FILL POSSIBLE_TALENTS with the current talent considered by the counter variable
+                eventPlayer.possible_talents[talent_names.index(eventPlayer.bought_talents[eventPlayer.talent_counter_or_position_etc[15]])] =eventPlayer.bought_talents[eventPlayer.talent_counter_or_position_etc[15]]
+            eventPlayer.talent_counter_or_position_etc[15] -= 1
+    else:
+        #Set while counter variable to the length of bought_talents (-1 because array starts at 0)
+        eventPlayer.talent_counter_or_position_etc[15] = len(eventPlayer.bought_talents) - 1
+        while eventPlayer.talent_counter_or_position_etc[15] >= 0:
+            #If the current talent considered in bought_talents by the counter variable has something in it
+            if eventPlayer.bought_talents[eventPlayer.talent_counter_or_position_etc[15]] != null:
+                #FILL POSSIBLE_TALENTS with the current talent considered by the counter variable
+                eventPlayer.possible_talents[talent_names.index(eventPlayer.bought_talents[eventPlayer.talent_counter_or_position_etc[15]])] =eventPlayer.bought_talents[eventPlayer.talent_counter_or_position_etc[15]]
+            eventPlayer.talent_counter_or_position_etc[15] -= 1
+        #Set while counter variable to the length of talents_you_do_not_have
+        eventPlayer.talent_counter_or_position_etc[15] = len(eventPlayer.talents_you_do_not_have)
+        while eventPlayer.talent_counter_or_position_etc[15] >= 0:
+            #If the current talent considered in talents_you_do_not_have by the counter variable has something in it
+            if eventPlayer.talents_you_do_not_have[eventPlayer.talent_counter_or_position_etc[15]] != null:
+                #FILL POSSIBLE_TALENTS with the current talent considered by the counter variable
+                eventPlayer.possible_talents[talent_names.index(eventPlayer.talents_you_do_not_have[eventPlayer.talent_counter_or_position_etc[15]])] = eventPlayer.talents_you_do_not_have[eventPlayer.talent_counter_or_position_etc[15]]
+            eventPlayer.talent_counter_or_position_etc[15] -= 1
+    eventPlayer.is_using_hearthstone[0] = false
+    eventPlayer.skipped_a_talent = false
+    eventPlayer.disableHeroHUD()
+    eventPlayer.setMoveSpeed(0)
+    eventPlayer.setCrouchEnabled(false)
+    eventPlayer.setPrimaryFireEnabled(false)
+    eventPlayer.setSecondaryFireEnabled(false)
+    eventPlayer.setAbility1Enabled(false)
+    eventPlayer.setMeleeEnabled(false)
+    eventPlayer.setStatusEffect(null, Status.ROOTED, 9999)
+    eventPlayer.setStatusEffect(null, Status.PHASED_OUT, 99999)
+    eventPlayer.setInvisibility(Invis.ALL)
+    eventPlayer.disallowButton(Button.JUMP)
+    eventPlayer.browsing_shop = true
+    #Will the left talent replace a talent if taken?
+    #return
+    if len(eventPlayer.bought_talents) == 5 and len([player for player in eventPlayer.possible_talents if player != null]) == 0:
+        eventPlayer.selected_talent_will_replace[0] = true
+    else:
+        eventPlayer.selected_talent_will_replace[0] = false
+    #Set the left talent
+    #return
+    eventPlayer.offered_talents_in_shop[0] = random.choice([player for player in eventPlayer.talents_you_do_not_have if player != null]) if eventPlayer.selected_talent_will_replace[0] == true else random.choice([player for player in eventPlayer.possible_talents if player != null])
+    #Remove the left talent
+    if len([player for player in eventPlayer.possible_talents if player != null]) > 2:
+        eventPlayer.possible_talents[talent_names.index(eventPlayer.offered_talents_in_shop[0])] = null
+    else:
+        eventPlayer.possible_talents[talent_names.index(eventPlayer.offered_talents_in_shop[0])] = null
+    #Will the middle talent replace a talent if taken?
+    #return
+    if len(eventPlayer.bought_talents) == 5:
+        eventPlayer.selected_talent_will_replace[1] = true
+    else:
+        eventPlayer.selected_talent_will_replace[1] = false
+    #Set the middle talent
+    #return
+    eventPlayer.offered_talents_in_shop[1] = random.choice([player for player in eventPlayer.talents_you_do_not_have if player != null and player!= eventPlayer.offered_talents_in_shop[0]]) if eventPlayer.selected_talent_will_replace[1] == true else random.choice([player for player in eventPlayer.possible_talents if player != null])
+    #Remove the middle talent
+    if len([player for player in eventPlayer.possible_talents if player != null]) > 1:
+        eventPlayer.possible_talents[talent_names.index(eventPlayer.offered_talents_in_shop[1])] = null
+    else:
+        eventPlayer.possible_talents[talent_names.index(eventPlayer.offered_talents_in_shop[1])] = null
+    #Will the right talent replace a talent if taken?
+    #return
+    if len(eventPlayer.bought_talents) == 5 and len([player for player in eventPlayer.possible_talents if player != null]) == 0:
+        eventPlayer.selected_talent_will_replace[2] = true
+    else:
+        eventPlayer.selected_talent_will_replace[2] = false
+    #Set the right talent
+    #return
+    eventPlayer.offered_talents_in_shop[2] = random.choice([player for player in eventPlayer.talents_you_do_not_have if player != null and player!= eventPlayer.offered_talents_in_shop[0] and player != eventPlayer.offered_talents_in_shop[1]]) if eventPlayer.selected_talent_will_replace[2]== true else random.choice([player for player in eventPlayer.possible_talents if player != null])
+    eventPlayer.startCamera(shop_location, shop_talent_middle_location, 0.5)
+    playEffect(eventPlayer, DynamicEffect.SYMMETRA_TELEPORTER_REAPPEAR_SOUND, Color.TEAM_1, shop_location.getPosition(), 100)
 
 rule "SHOP - - - Shop Left":
     @Event eachPlayer
@@ -351,13 +256,11 @@ rule "SHOP - - - Shop Right":
             eventPlayer.selected_talent[0] = 1
             eventPlayer.startCamera(shop_location, shop_talent_middle_location, 15)
 
-
 rule "SHOP - - - Buy Talent":
     @Event eachPlayer
     @Hero soldier
     @Condition eventPlayer.browsing_shop == true
     @Condition eventPlayer.using_one_of_the_hearthstones == false
-    @Condition eventPlayer.canVote_hasVoted_canStartVote[1] == true
     @Condition eventPlayer.replace_replacing_or_cancelled[0] == false
     @Condition eventPlayer.isHoldingButton(Button.INTERACT) == true
     
@@ -424,8 +327,6 @@ rule "SHOP - - - Buy Talent":
     eventPlayer.current_talent_replace_or_buy = eventPlayer.offered_talents_in_shop[eventPlayer.selected_talent[0]]
     eventPlayer.possible_talents[talent_names.index(eventPlayer.current_talent_replace_or_buy)] = talent_names[talent_names.index(eventPlayer.current_talent_replace_or_buy)]
     buy_or_upgrade_talent()
-    if endless_mode == true and match_is_in_showdown == false:
-        eventPlayer.setScore(eventPlayer.amount_of_talents_purchased)
     eventPlayer.can_enter_shop = false
     eventPlayer.experience_current = 0
     eventPlayer.experience_max = max_experience_per_level[eventPlayer.amount_of_talents_purchased]
@@ -438,13 +339,20 @@ rule "SHOP - - - Buy Talent":
     if random.randint(1, 100) <= 10 and eventPlayer.amount_of_talents_purchased > 4:
         async(leave_shop_messages, AsyncBehavior.NOOP)
 
+def replace_talent():
+    @Name "SHOP - - - [SUBROUTINE] Replace Talent"
+    
+    eventPlayer.replace_replacing_or_cancelled[0] = true
+    eventPlayer.startCamera(shop_location, eventPlayer.selected_talent_location, 12)
+    playEffect(eventPlayer, DynamicEffect.RING_EXPLOSION_SOUND, Color.WHITE, shop_location, 100)
+    waitUntil(eventPlayer.replace_replacing_or_cancelled[1] == true or eventPlayer.replace_replacing_or_cancelled[2] == true, 99999)
 
 rule "SHOP - - - Reset Shop Camera":
     @Event eachPlayer
     @Hero soldier
     @Condition eventPlayer.browsing_shop == true
     @Condition eventPlayer.isHoldingButton(Button.INTERACT) == false
-    @Condition (eventPlayer.is_using_hearthstone[2] == true or eventPlayer.isHoldingButton(Button.INTERACT) == false) == true
+    @Condition (eventPlayer.is_using_hearthstone[1] == true or eventPlayer.isHoldingButton(Button.INTERACT) == false) == true
     
     eventPlayer.startCamera(shop_location, eventPlayer.selected_talent_location, 12)
 
@@ -453,101 +361,6 @@ def cancel_shop_camera():
     @Name "SHOP - - - [SUBROUTINE] Cancel Shop Camera"
     
     eventPlayer.startCamera(shop_location, eventPlayer.selected_talent_location, 12)
-
-
-def open_shop():
-    @Name "SHOP - - - [SUBROUTINE] Open Shop"
-    
-    eventPlayer.possible_talents = []
-    if len(eventPlayer.bought_talents) == 5:
-        eventPlayer.talent_counter_or_position_etc[15] = 4
-        while eventPlayer.talent_counter_or_position_etc[15] >= 0:
-            if eventPlayer.talent_ranks[talent_names.index(eventPlayer.bought_talents[eventPlayer.talent_counter_or_position_etc[15]])] < 5:
-                eventPlayer.possible_talents[talent_names.index(eventPlayer.bought_talents[eventPlayer.talent_counter_or_position_etc[15]])] = eventPlayer.bought_talents[eventPlayer.talent_counter_or_position_etc[15]]
-            eventPlayer.talent_counter_or_position_etc[15] -= 1
-    else:
-        eventPlayer.talent_counter_or_position_etc[15] = len(eventPlayer.bought_talents) - 1
-        while eventPlayer.talent_counter_or_position_etc[15] >= 0:
-            if eventPlayer.bought_talents[eventPlayer.talent_counter_or_position_etc[15]] != null:
-                eventPlayer.possible_talents[talent_names.index(eventPlayer.bought_talents[eventPlayer.talent_counter_or_position_etc[15]])] = eventPlayer.bought_talents[eventPlayer.talent_counter_or_position_etc[15]]
-            eventPlayer.talent_counter_or_position_etc[15] -= 1
-        eventPlayer.talent_counter_or_position_etc[15] = len(eventPlayer.talents_you_do_not_have)
-        while eventPlayer.talent_counter_or_position_etc[15] >= 0:
-            if eventPlayer.talents_you_do_not_have[eventPlayer.talent_counter_or_position_etc[15]] != null:
-                eventPlayer.possible_talents[talent_names.index(eventPlayer.talents_you_do_not_have[eventPlayer.talent_counter_or_position_etc[15]])] = eventPlayer.talents_you_do_not_have[eventPlayer.talent_counter_or_position_etc[15]]
-            eventPlayer.talent_counter_or_position_etc[15] -= 1
-    eventPlayer.is_using_hearthstone[0] = false
-    eventPlayer.skipped_a_talent = false
-    eventPlayer.disableHeroHUD()
-    eventPlayer.setMoveSpeed(0)
-    eventPlayer.setCrouchEnabled(false)
-    eventPlayer.setPrimaryFireEnabled(false)
-    eventPlayer.setSecondaryFireEnabled(false)
-    eventPlayer.setAbility1Enabled(false)
-    eventPlayer.setMeleeEnabled(false)
-    eventPlayer.setStatusEffect(null, Status.ROOTED, 9999)
-    eventPlayer.setStatusEffect(null, Status.PHASED_OUT, 99999)
-    eventPlayer.setInvisibility(Invis.ALL)
-    eventPlayer.disallowButton(Button.JUMP)
-    eventPlayer.browsing_shop = true
-    #Someone has started a vote and you have not voted yet
-    if endless_mode == true and someone_is_voting_to_change_map == true and eventPlayer.canVote_hasVoted_canStartVote[0] == true and eventPlayer.canVote_hasVoted_canStartVote[1] == false:
-        playEffect(eventPlayer, DynamicEffect.SYMMETRA_TELEPORTER_REAPPEAR_SOUND, Color.TEAM_1, shop_location.getPosition(), 100)
-        eventPlayer.offered_talents_in_shop[1] = talent_names[15]
-        waitUntil(eventPlayer.canVote_hasVoted_canStartVote[1] == true, 99999)
-    if eventPlayer.experience_current < eventPlayer.experience_max:
-        eventPlayer.browsing_shop = false
-        eventPlayer.selected_talent_location = shop_talent_middle_location
-        eventPlayer.can_enter_shop = false
-        if eventPlayer.talent_ranks[Talent.FIREBALL] > 0 or eventPlayer.talent_ranks[Talent.JUGGERNAUT] > 0:
-            async(spawned_with_fireball, AsyncBehavior.RESTART)
-        eventPlayer.is_respawning = true
-        eventPlayer.respawn()
-        #Reset selection of a talent to the middle
-        eventPlayer.selected_talent[0] = 1
-        if random.randint(1, 100) <= 10 and eventPlayer.amount_of_talents_purchased > 4:
-            async(leave_shop_messages, AsyncBehavior.NOOP)
-        return
-    #Will the left talent replace a talent if taken?
-    #return
-    if len(eventPlayer.bought_talents) == 5 and len([player for player in eventPlayer.possible_talents if player != null]) == 0:
-        eventPlayer.selected_talent_will_replace[0] = true
-    else:
-        eventPlayer.selected_talent_will_replace[0] = false
-    #Set the left talent
-    #return
-    eventPlayer.offered_talents_in_shop[0] = random.choice([player for player in eventPlayer.talents_you_do_not_have if player != null]) if eventPlayer.selected_talent_will_replace[0] == true else random.choice([player for player in eventPlayer.possible_talents if player != null])
-    #Remove the left talent
-    if endless_mode == false and len([player for player in eventPlayer.possible_talents if player != null]) > 2:
-        eventPlayer.possible_talents[talent_names.index(eventPlayer.offered_talents_in_shop[0])] = null
-    else:
-        eventPlayer.possible_talents[talent_names.index(eventPlayer.offered_talents_in_shop[0])] = null
-    #Will the middle talent replace a talent if taken?
-    #return
-    if len(eventPlayer.bought_talents) == 5:
-        eventPlayer.selected_talent_will_replace[1] = true
-    else:
-        eventPlayer.selected_talent_will_replace[1] = false
-    #Set the middle talent
-    #return
-    eventPlayer.offered_talents_in_shop[1] = random.choice([player for player in eventPlayer.talents_you_do_not_have if player != null and player != eventPlayer.offered_talents_in_shop[0]]) if eventPlayer.selected_talent_will_replace[1] == true else random.choice([player for player in eventPlayer.possible_talents if player != null])
-    #Remove the middle talent
-    if endless_mode == false and len([player for player in eventPlayer.possible_talents if player != null]) > 1:
-        eventPlayer.possible_talents[talent_names.index(eventPlayer.offered_talents_in_shop[1])] = null
-    else:
-        eventPlayer.possible_talents[talent_names.index(eventPlayer.offered_talents_in_shop[1])] = null
-    #Will the right talent replace a talent if taken?
-    #return
-    if len(eventPlayer.bought_talents) == 5 and len([player for player in eventPlayer.possible_talents if player != null]) == 0:
-        eventPlayer.selected_talent_will_replace[2] = true
-    else:
-        eventPlayer.selected_talent_will_replace[2] = false
-    #Set the right talent
-    #return
-    eventPlayer.offered_talents_in_shop[2] = random.choice([player for player in eventPlayer.talents_you_do_not_have if player != null and player != eventPlayer.offered_talents_in_shop[0] and player != eventPlayer.offered_talents_in_shop[1]]) if eventPlayer.selected_talent_will_replace[2] == true else random.choice([player for player in eventPlayer.possible_talents if player != null])
-    eventPlayer.startCamera(shop_location, shop_talent_middle_location, 0.5)
-    playEffect(eventPlayer, DynamicEffect.SYMMETRA_TELEPORTER_REAPPEAR_SOUND, Color.TEAM_1, shop_location.getPosition(), 100)
-
 
 def buy_or_upgrade_talent():
     @Name "SHOP - - - [SUBROUTINE] Buy Or Upgrade Talent"
@@ -599,17 +412,7 @@ def buy_or_upgrade_talent():
     elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.IGNORE_PAIN]:
         buy_ignore_pain()
     elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.JAVELIN]:
-        buy_monkey_business()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[24]:
-        buy_gluttony()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[25]:
-        buy_weird_flex()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[26]:
-        buy_for_glory()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[27]:
-        buy_mace_to_the_face()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[28]:
-        buy_pinball()
+        return
     elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.SOUL_SIPHON]:
         buy_soul_siphon()
     elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.PYROMANIAC]:
@@ -621,49 +424,34 @@ def buy_or_upgrade_talent():
     elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.CRAZY_ALCHEMIST]:
         buy_crazy_alchemist()
 
-
-/*
-rule "SHOP - - - XP Code [DISABLED: NOT HAPPY WITH CURRENT IMPLEMENTATION]":
+rule "SHOP - - - Skip Talents & Exit Shop":
     @Event eachPlayer
     @Hero soldier
     @Condition eventPlayer.browsing_shop == true
-    @Condition eventPlayer.isHoldingButton(Button.CROUCH) == true
-    @Condition eventPlayer.typing_in_xp_code[0] == false
-    @Condition eventPlayer.stats[5] == 0.65
-    @Condition eventPlayer.code_cooldown == 0
+    @Condition eventPlayer.replace_replacing_or_cancelled[1] == false
+    @Condition eventPlayer.replace_replacing_or_cancelled[0] == false
+    @Condition eventPlayer.using_one_of_the_hearthstones == false
+    @Condition eventPlayer.isHoldingButton(Button.RELOAD) == true
+    @Condition eventPlayer.isHoldingButton(Button.INTERACT) == false
+    @Condition (eventPlayer.browsing_shop == true and eventPlayer.replace_replacing_or_cancelled[1] == false and eventPlayer.replace_replacing_or_cancelled[0] == false) == true
     
-    eventPlayer.typing_in_xp_code[0] = true
-    waitUntil(eventPlayer.isHoldingButton(Button.CROUCH) == false or eventPlayer.isHoldingButton(Button.PRIMARY_FIRE) == true or eventPlayer.isHoldingButton(Button.SECONDARY_FIRE) == true or eventPlayer.isHoldingButton(Button.JUMP) == true or eventPlayer.browsing_shop == false, 99999)
-    if eventPlayer.browsing_shop == false or eventPlayer.isHoldingButton(Button.CROUCH) == false:
-        eventPlayer.typing_in_xp_code = [false]
-        eventPlayer.typing_in_xp_code[0] = false
-        return
-    if eventPlayer.isHoldingButton(Button.CROUCH) == true and eventPlayer.isHoldingButton(Button.PRIMARY_FIRE) == true:
-        eventPlayer.typing_in_xp_code = eventPlayer.typing_in_xp_code.concat(iconString(Icon.ARROW_LEFT))
-        playEffect(eventPlayer, DynamicEffect.BUFF_EXPLOSION_SOUND, Color.WHITE, shop_location, 100)
-        waitUntil(eventPlayer.isHoldingButton(Button.PRIMARY_FIRE) == false or eventPlayer.isHoldingButton(Button.CROUCH) == false, 99999)
-    elif eventPlayer.isHoldingButton(Button.CROUCH) == true and eventPlayer.isHoldingButton(Button.SECONDARY_FIRE) == true:
-        eventPlayer.typing_in_xp_code = eventPlayer.typing_in_xp_code.concat(iconString(Icon.ARROW_RIGHT))
-        playEffect(eventPlayer, DynamicEffect.BUFF_EXPLOSION_SOUND, Color.WHITE, shop_location, 100)
-        waitUntil(eventPlayer.isHoldingButton(Button.SECONDARY_FIRE) == false or eventPlayer.isHoldingButton(Button.CROUCH) == false, 99999)
-    elif eventPlayer.isHoldingButton(Button.CROUCH) == true and eventPlayer.isHoldingButton(Button.JUMP) == true:
-        eventPlayer.typing_in_xp_code = eventPlayer.typing_in_xp_code.concat(iconString(Icon.CIRCLE))
-        playEffect(eventPlayer, DynamicEffect.BUFF_EXPLOSION_SOUND, Color.WHITE, shop_location, 100)
-        waitUntil(eventPlayer.isHoldingButton(Button.JUMP) == false or eventPlayer.isHoldingButton(Button.CROUCH) == false, 99999)
-    if eventPlayer.isHoldingButton(Button.CROUCH) == false:
-        eventPlayer.typing_in_xp_code = [false, null, null, null, null, null, null, null, null]
-        eventPlayer.typing_in_xp_code[0] = false
-        return
-    if len(eventPlayer.typing_in_xp_code) == 5:
-        if eventPlayer.typing_in_xp_code == xp_code:
-            eventPlayer.stats[5] = 0.715
-            bigMessage(getAllPlayers(), "{0} Unlocked 110% XP".format(eventPlayer))
-            playEffect(eventPlayer, DynamicEffect.RING_EXPLOSION_SOUND, Color.WHITE, shop_location, 100)
-            return
-        else:
-            eventPlayer.typing_in_xp_code = [false]
-            playEffect(eventPlayer, DynamicEffect.DEBUFF_IMPACT_SOUND, Color.WHITE, shop_location, 100)
-            eventPlayer.code_cooldown = 60
-            chase(eventPlayer.code_cooldown, 0, rate=1, ChaseReeval.DESTINATION_AND_RATE)
-    eventPlayer.typing_in_xp_code[0] = false
-*/
+    wait(0.75, Wait.ABORT_WHEN_FALSE)
+    eventPlayer.is_using_hearthstone[1] = true
+    using_one_of_the_hearthstones()
+
+
+rule "SHOP - - - Canceled Skip Talent & Exit Shop or Skip Showdown":
+    @Event eachPlayer
+    @Hero soldier
+    @Condition eventPlayer.is_using_hearthstone[1] == true
+    @Condition eventPlayer.isHoldingButton(Button.RELOAD) == false
+    
+    stopped_using_hearthstone()
+def leave_shop_messages():
+    @Name "SHOP - - - [SUBROUTINE] Exit Shop Messages"
+        
+    eventPlayer.random_integer_between_0_to_5 = random.randint(0, 5)
+    createInWorldText(eventPlayer, "{0}".format(leave_shop_messages[eventPlayer.random_integer_between_0_to_5]), updateEveryTick(eventPlayer.getEyePosition() + (100 * (0 * worldVector(Vector.RIGHT, eventPlayer, Transform.ROTATION) + ((0 - 1) * (angleToDirection(horizontalAngleOfDirection(eventPlayer.getFacingDirection()), verticalAngleOfDirection(eventPlayer.getFacingDirection()) - 90))) + 3 *eventPlayer.getFacingDirection()))), 1.75, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.ORANGE, SpecVisibility.DEFAULT)
+    eventPlayer.player_temp_effects[43] = getLastCreatedText()
+    wait(5)
+    destroyInWorldText(eventPlayer.player_temp_effects[43])
