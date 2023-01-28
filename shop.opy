@@ -1,3 +1,4 @@
+#!mainFile "soldier_x.opy"
 #Global variables
 
 globalvar shop_location
@@ -173,12 +174,12 @@ def open_shop():
         eventPlayer.selected_talent_will_replace[0] = false
     #Set the left talent
     #return
-    eventPlayer.offered_talents_in_shop[0] = random.choice([player for player in eventPlayer.talents_you_do_not_have if player != null]) if eventPlayer.selected_talent_will_replace[0] == true else random.choice([player for player in eventPlayer.possible_talents if player != null])
+    eventPlayer.talents_offered_in_shop[0] = random.choice([player for player in eventPlayer.talents_you_do_not_have if player != null]) if eventPlayer.selected_talent_will_replace[0] == true else random.choice([player for player in eventPlayer.possible_talents if player != null])
     #Remove the left talent
     if len([player for player in eventPlayer.possible_talents if player != null]) > 2:
-        eventPlayer.possible_talents[talent_names.index(eventPlayer.offered_talents_in_shop[0])] = null
+        eventPlayer.possible_talents[talent_names.index(eventPlayer.talents_offered_in_shop[0])] = null
     else:
-        eventPlayer.possible_talents[talent_names.index(eventPlayer.offered_talents_in_shop[0])] = null
+        eventPlayer.possible_talents[talent_names.index(eventPlayer.talents_offered_in_shop[0])] = null
     #Will the middle talent replace a talent if taken?
     #return
     if len(eventPlayer.bought_talents) == 5:
@@ -187,12 +188,12 @@ def open_shop():
         eventPlayer.selected_talent_will_replace[1] = false
     #Set the middle talent
     #return
-    eventPlayer.offered_talents_in_shop[1] = random.choice([player for player in eventPlayer.talents_you_do_not_have if player != null and player!= eventPlayer.offered_talents_in_shop[0]]) if eventPlayer.selected_talent_will_replace[1] == true else random.choice([player for player in eventPlayer.possible_talents if player != null])
+    eventPlayer.talents_offered_in_shop[1] = random.choice([player for player in eventPlayer.talents_you_do_not_have if player != null and player!= eventPlayer.talents_offered_in_shop[0]]) if eventPlayer.selected_talent_will_replace[1] == true else random.choice([player for player in eventPlayer.possible_talents if player != null])
     #Remove the middle talent
     if len([player for player in eventPlayer.possible_talents if player != null]) > 1:
-        eventPlayer.possible_talents[talent_names.index(eventPlayer.offered_talents_in_shop[1])] = null
+        eventPlayer.possible_talents[talent_names.index(eventPlayer.talents_offered_in_shop[1])] = null
     else:
-        eventPlayer.possible_talents[talent_names.index(eventPlayer.offered_talents_in_shop[1])] = null
+        eventPlayer.possible_talents[talent_names.index(eventPlayer.talents_offered_in_shop[1])] = null
     #Will the right talent replace a talent if taken?
     #return
     if len(eventPlayer.bought_talents) == 5 and len([player for player in eventPlayer.possible_talents if player != null]) == 0:
@@ -201,7 +202,7 @@ def open_shop():
         eventPlayer.selected_talent_will_replace[2] = false
     #Set the right talent
     #return
-    eventPlayer.offered_talents_in_shop[2] = random.choice([player for player in eventPlayer.talents_you_do_not_have if player != null and player!= eventPlayer.offered_talents_in_shop[0] and player != eventPlayer.offered_talents_in_shop[1]]) if eventPlayer.selected_talent_will_replace[2]== true else random.choice([player for player in eventPlayer.possible_talents if player != null])
+    eventPlayer.talents_offered_in_shop[2] = random.choice([player for player in eventPlayer.talents_you_do_not_have if player != null and player!= eventPlayer.talents_offered_in_shop[0] and player != eventPlayer.talents_offered_in_shop[1]]) if eventPlayer.selected_talent_will_replace[2]== true else random.choice([player for player in eventPlayer.possible_talents if player != null])
     eventPlayer.startCamera(shop_location, shop_talent_middle_location, 0.5)
     playEffect(eventPlayer, DynamicEffect.SYMMETRA_TELEPORTER_REAPPEAR_SOUND, Color.TEAM_1, shop_location.getPosition(), 100)
 
@@ -290,7 +291,7 @@ rule "SHOP - - - Buy Talent":
         #Remove the talent you removed from bought_talents
         eventPlayer.bought_talents = eventPlayer.bought_talents.exclude(eventPlayer.bought_talents[eventPlayer.selected_talent[1]])
         #Put the new talents in bought_talents
-        eventPlayer.bought_talents.append(talent_names[talent_names.index(eventPlayer.offered_talents_in_shop[eventPlayer.selected_talent[0]])])
+        eventPlayer.bought_talents.append(talent_names[talent_names.index(eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]])])
         goto lbl_0
     if eventPlayer.selected_talent[0] == 0:
         if eventPlayer.selected_talent_will_replace[0] == true:
@@ -312,19 +313,19 @@ rule "SHOP - - - Buy Talent":
                 return
     #If the player do not have 5 talents yet and the talent is not bought yet, add it to bought_talents
     lbl_0:
-    if len(eventPlayer.bought_talents) < 5 and talent_names[talent_names.index(eventPlayer.offered_talents_in_shop[eventPlayer.selected_talent[0]])] in eventPlayer.bought_talents == false:
-        eventPlayer.bought_talents.append(talent_names[talent_names.index(eventPlayer.offered_talents_in_shop[eventPlayer.selected_talent[0]])])
+    if len(eventPlayer.bought_talents) < 5 and talent_names[talent_names.index(eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]])] in eventPlayer.bought_talents == false:
+        eventPlayer.bought_talents.append(talent_names[talent_names.index(eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]])])
     eventPlayer.browsing_shop = false
     eventPlayer.selected_talent_location = shop_talent_middle_location
     eventPlayer.amount_of_talents_purchased += 1
     #Add +1 to "talent_ranks" in the correct index
-    eventPlayer.talent_ranks[talent_names.index(eventPlayer.offered_talents_in_shop[eventPlayer.selected_talent[0]])] += 1
+    eventPlayer.talent_ranks[talent_names.index(eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]])] += 1
     #If the talent being purchased has reached 5...
-    if eventPlayer.talent_ranks[talent_names.index(eventPlayer.offered_talents_in_shop[eventPlayer.selected_talent[0]])] == 5:
+    if eventPlayer.talent_ranks[talent_names.index(eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]])] == 5:
         #...remove it from possible talents.
-        eventPlayer.possible_talents[talent_names.index(eventPlayer.offered_talents_in_shop[eventPlayer.selected_talent[0]])] = null
+        eventPlayer.possible_talents[talent_names.index(eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]])] = null
     eventPlayer.replace_replacing_or_cancelled[1] = false
-    eventPlayer.current_talent_replace_or_buy = eventPlayer.offered_talents_in_shop[eventPlayer.selected_talent[0]]
+    eventPlayer.current_talent_replace_or_buy = eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]]
     eventPlayer.possible_talents[talent_names.index(eventPlayer.current_talent_replace_or_buy)] = talent_names[talent_names.index(eventPlayer.current_talent_replace_or_buy)]
     buy_or_upgrade_talent()
     eventPlayer.can_enter_shop = false

@@ -1,3 +1,4 @@
+#!mainFile "soldier_x.opy"
 #Global variables
 
 globalvar spawn_bots = createWorkshopSetting(bool, "Bots", "Spawn bots (Recommended)", true, 0)
@@ -5,6 +6,7 @@ globalvar spawn_bots = createWorkshopSetting(bool, "Bots", "Spawn bots (Recommen
 #Player variables
 
 playervar reaper_view_angle
+playervar reaper_hello_cooldown
 playervar reaper_turn_speed
 playervar reaper_brain_information
 playervar reaper_aggro_list
@@ -31,8 +33,8 @@ rule "BOT SYSTEM - - - Bot INIT":
     eventPlayer.reaper_aggro_list = []
     eventPlayer.setMoveSpeed(75)
     eventPlayer.reaper_has_respawned_once = false
-    eventPlayer.stealth_cooldown = 0
-    chase(eventPlayer.stealth_cooldown, 0, rate=1, ChaseReeval.DESTINATION_AND_RATE)
+    eventPlayer.reaper_hello_cooldown = 0
+    chase(eventPlayer.reaper_hello_cooldown, 0, rate=1, ChaseReeval.DESTINATION_AND_RATE)
 
 
 rule "BOT SYSTEM - - - Add Player To Aggro List":
@@ -85,9 +87,9 @@ def reaper_has_a_target():
     @Name "BOT SYSTEM - - - [SUBROUTINE] Bot Has a Target"
     
     eventPlayer.random_integer_between_0_to_5 = random.randint(0, 9)
-    if eventPlayer.random_integer_between_0_to_5 <= 1 and eventPlayer.stealth_cooldown == 0:
+    if eventPlayer.random_integer_between_0_to_5 <= 1 and eventPlayer.reaper_hello_cooldown == 0:
         eventPlayer.communicate(Comms.HELLO)
-        eventPlayer.stealth_cooldown = 10
+        eventPlayer.reaper_hello_cooldown = 10
     eventPlayer.reaper_brain_information[3] = false
     eventPlayer.stopFacing()
     eventPlayer.startFacing(directionTowards(eventPlayer.getEyePosition(), eventPlayer.reaper_brain_information[0].getPosition() + Vector.UP) if eventPlayer.reaper_brain_information[0] != null and eventPlayer.reaper_brain_information[1] == false else directionTowards(eventPlayer.getEyePosition(), eventPlayer.last_known_position_of_target[0]) if eventPlayer.reaper_brain_information[0] != null and eventPlayer.reaper_brain_information[1] == true else directionTowards(eventPlayer.getEyePosition(), eventPlayer.last_known_position_of_target[1] + Vector.UP) if eventPlayer.reaper_brain_information[0] == null and eventPlayer.reaper_brain_information[1] == false else 0, 1000 if eventPlayer.reaper_brain_information[2] == true else 150, Relativity.TO_WORLD, FacingReeval.DIRECTION_AND_TURN_RATE)
@@ -117,9 +119,9 @@ def reaper_has_a_target():
         #Current target is out of sight or dead, is there more aggroed players in sight?
         #return
         eventPlayer.random_integer_between_0_to_5 = random.randint(0, 9)
-        if eventPlayer.random_integer_between_0_to_5 <= 1 and eventPlayer.stealth_cooldown == 0:
+        if eventPlayer.random_integer_between_0_to_5 <= 1 and eventPlayer.reaper_hello_cooldown == 0:
             eventPlayer.communicate(Comms.GOODBYE)
-            eventPlayer.stealth_cooldown = 10
+            eventPlayer.reaper_hello_cooldown = 10
         eventPlayer.reaper_aggro_list = []
         eventPlayer.reaper_brain_information[0] = null
 

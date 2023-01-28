@@ -1,3 +1,4 @@
+#!mainFile "soldier_x.opy"
 rule "DEBUG - - - Hold Reload For XP [DEFAULT: OFF]":
     @Event eachPlayer
     @Condition eventPlayer.isHoldingButton(Button.RELOAD) == true
@@ -194,5 +195,5 @@ rule "DEBUG - - - Reset [Talent: Juggernaut] Cooldown With Reload [DEFAULT: OFF]
     @Hero soldier
     @Condition eventPlayer.isHoldingButton(Button.RELOAD) == true
     
-    eventPlayer.juggernaut_cooldown = 0
+    eventPlayer.talent_trigger_times[Talent.JUGGERNAUT] = getTotalTimeElapsed() - talent_base_cooldowns[Talent.JUGGERNAUT]
 */

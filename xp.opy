@@ -1,3 +1,4 @@
+#!mainFile "soldier_x.opy"
 rule "XP SYSTEM - - - Level 0 or 25? Activate XP Boost":
     @Event eachPlayer
     @Hero soldier
