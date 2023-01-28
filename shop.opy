@@ -133,7 +133,7 @@ def open_shop():
             #If the current talent considered by the counter variable have not reached maximum rank yet
             if eventPlayer.talent_ranks[eventPlayer.bought_talents[eventPlayer.talent_counter_or_position_etc[15]]] < 5:
                 #FILL POSSIBLE_TALENTS with the current talent considered by the counter variable
-                eventPlayer.possible_talents[talent_names.index(eventPlayer.bought_talents[eventPlayer.talent_counter_or_position_etc[15]])] =eventPlayer.bought_talents[eventPlayer.talent_counter_or_position_etc[15]]
+                eventPlayer.possible_talents[eventPlayer.bought_talents[eventPlayer.talent_counter_or_position_etc[15]]] = eventPlayer.bought_talents[eventPlayer.talent_counter_or_position_etc[15]]
             eventPlayer.talent_counter_or_position_etc[15] -= 1
     else:
         #Set while counter variable to the length of bought_talents (-1 because array starts at 0)
@@ -142,7 +142,10 @@ def open_shop():
             #If the current talent considered in bought_talents by the counter variable has something in it
             if eventPlayer.bought_talents[eventPlayer.talent_counter_or_position_etc[15]] != null:
                 #FILL POSSIBLE_TALENTS with the current talent considered by the counter variable
-                eventPlayer.possible_talents[talent_names.index(eventPlayer.bought_talents[eventPlayer.talent_counter_or_position_etc[15]])] =eventPlayer.bought_talents[eventPlayer.talent_counter_or_position_etc[15]]
+                eventPlayer.possible_talents.append(eventPlayer.bought_talents[eventPlayer.talent_counter_or_position_etc[15]])
+
+                /*eventPlayer.possible_talents[talent_names.index(eventPlayer.bought_talents[eventPlayer.talent_counter_or_position_etc[15]])] = eventPlayer.bought_talents[eventPlayer.talent_counter_or_position_etc[15]]*/
+
             eventPlayer.talent_counter_or_position_etc[15] -= 1
         #Set while counter variable to the length of talents_you_do_not_have
         eventPlayer.talent_counter_or_position_etc[15] = len(eventPlayer.talents_you_do_not_have)
@@ -150,7 +153,10 @@ def open_shop():
             #If the current talent considered in talents_you_do_not_have by the counter variable has something in it
             if eventPlayer.talents_you_do_not_have[eventPlayer.talent_counter_or_position_etc[15]] != null:
                 #FILL POSSIBLE_TALENTS with the current talent considered by the counter variable
-                eventPlayer.possible_talents[talent_names.index(eventPlayer.talents_you_do_not_have[eventPlayer.talent_counter_or_position_etc[15]])] = eventPlayer.talents_you_do_not_have[eventPlayer.talent_counter_or_position_etc[15]]
+                eventPlayer.possible_talents.append(eventPlayer.talents_you_do_not_have[eventPlayer.talent_counter_or_position_etc[15]])
+
+                /*eventPlayer.possible_talents[talent_names.index(eventPlayer.talents_you_do_not_have[eventPlayer.talent_counter_or_position_etc[15]])] = eventPlayer.talents_you_do_not_have[eventPlayer.talent_counter_or_position_etc[15]]*/
+
             eventPlayer.talent_counter_or_position_etc[15] -= 1
     eventPlayer.is_using_hearthstone[0] = false
     eventPlayer.skipped_a_talent = false
@@ -177,9 +183,9 @@ def open_shop():
     eventPlayer.talents_offered_in_shop[0] = random.choice([player for player in eventPlayer.talents_you_do_not_have if player != null]) if eventPlayer.selected_talent_will_replace[0] == true else random.choice([player for player in eventPlayer.possible_talents if player != null])
     #Remove the left talent
     if len([player for player in eventPlayer.possible_talents if player != null]) > 2:
-        eventPlayer.possible_talents[talent_names.index(eventPlayer.talents_offered_in_shop[0])] = null
+        eventPlayer.possible_talents[eventPlayer.talents_offered_in_shop[0]] = null
     else:
-        eventPlayer.possible_talents[talent_names.index(eventPlayer.talents_offered_in_shop[0])] = null
+        eventPlayer.possible_talents[eventPlayer.talents_offered_in_shop[0]] = null
     #Will the middle talent replace a talent if taken?
     #return
     if len(eventPlayer.bought_talents) == 5:
@@ -191,9 +197,9 @@ def open_shop():
     eventPlayer.talents_offered_in_shop[1] = random.choice([player for player in eventPlayer.talents_you_do_not_have if player != null and player!= eventPlayer.talents_offered_in_shop[0]]) if eventPlayer.selected_talent_will_replace[1] == true else random.choice([player for player in eventPlayer.possible_talents if player != null])
     #Remove the middle talent
     if len([player for player in eventPlayer.possible_talents if player != null]) > 1:
-        eventPlayer.possible_talents[talent_names.index(eventPlayer.talents_offered_in_shop[1])] = null
+        eventPlayer.possible_talents[eventPlayer.talents_offered_in_shop[1]] = null
     else:
-        eventPlayer.possible_talents[talent_names.index(eventPlayer.talents_offered_in_shop[1])] = null
+        eventPlayer.possible_talents[eventPlayer.talents_offered_in_shop[1]] = null
     #Will the right talent replace a talent if taken?
     #return
     if len(eventPlayer.bought_talents) == 5 and len([player for player in eventPlayer.possible_talents if player != null]) == 0:
@@ -285,13 +291,13 @@ rule "SHOP - - - Buy Talent":
         #Reduce the score by how many times the talent you removed was upgraded
         #return
         #Reduce the amount_of_talents_purchased by how many time the talent you removed was upgraded
-        eventPlayer.amount_of_talents_purchased -= eventPlayer.talent_ranks[talent_names.index(eventPlayer.current_talent_replace_or_buy)]
+        eventPlayer.amount_of_talents_purchased -= eventPlayer.talent_ranks[eventPlayer.current_talent_replace_or_buy]
         #Remove the talent from talent_ranks
-        eventPlayer.talent_ranks[talent_names.index(eventPlayer.current_talent_replace_or_buy)] = 0
+        eventPlayer.talent_ranks[eventPlayer.current_talent_replace_or_buy] = 0
         #Remove the talent you removed from bought_talents
         eventPlayer.bought_talents = eventPlayer.bought_talents.exclude(eventPlayer.bought_talents[eventPlayer.selected_talent[1]])
         #Put the new talents in bought_talents
-        eventPlayer.bought_talents.append(talent_names[talent_names.index(eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]])])
+        eventPlayer.bought_talents.append(eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]])
         goto lbl_0
     if eventPlayer.selected_talent[0] == 0:
         if eventPlayer.selected_talent_will_replace[0] == true:
@@ -313,20 +319,20 @@ rule "SHOP - - - Buy Talent":
                 return
     #If the player do not have 5 talents yet and the talent is not bought yet, add it to bought_talents
     lbl_0:
-    if len(eventPlayer.bought_talents) < 5 and talent_names[talent_names.index(eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]])] in eventPlayer.bought_talents == false:
-        eventPlayer.bought_talents.append(talent_names[talent_names.index(eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]])])
+    if len(eventPlayer.bought_talents) < 5 and eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]] in eventPlayer.bought_talents == false:
+        eventPlayer.bought_talents.append(eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]])
     eventPlayer.browsing_shop = false
     eventPlayer.selected_talent_location = shop_talent_middle_location
     eventPlayer.amount_of_talents_purchased += 1
     #Add +1 to "talent_ranks" in the correct index
-    eventPlayer.talent_ranks[talent_names.index(eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]])] += 1
+    eventPlayer.talent_ranks[eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]]] += 1
     #If the talent being purchased has reached 5...
-    if eventPlayer.talent_ranks[talent_names.index(eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]])] == 5:
+    if eventPlayer.talent_ranks[eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]]] == 5:
         #...remove it from possible talents.
-        eventPlayer.possible_talents[talent_names.index(eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]])] = null
+        eventPlayer.possible_talents[eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]]] = null
     eventPlayer.replace_replacing_or_cancelled[1] = false
     eventPlayer.current_talent_replace_or_buy = eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]]
-    eventPlayer.possible_talents[talent_names.index(eventPlayer.current_talent_replace_or_buy)] = talent_names[talent_names.index(eventPlayer.current_talent_replace_or_buy)]
+    eventPlayer.possible_talents[eventPlayer.current_talent_replace_or_buy] = eventPlayer.current_talent_replace_or_buy
     buy_or_upgrade_talent()
     eventPlayer.can_enter_shop = false
     eventPlayer.experience_current = 0
@@ -366,63 +372,63 @@ def cancel_shop_camera():
 def buy_or_upgrade_talent():
     @Name "SHOP - - - [SUBROUTINE] Buy Or Upgrade Talent"
     
-    if eventPlayer.current_talent_replace_or_buy == talent_names[Talent.BLOODTHIRST]:
+    if eventPlayer.current_talent_replace_or_buy == Talent.BLOODTHIRST:
         buy_bloodthirst()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.PURITY_FIELD]:
+    elif eventPlayer.current_talent_replace_or_buy == Talent.PURITY_FIELD:
         buy_purity_field()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.CYBERNETICS]:
+    elif eventPlayer.current_talent_replace_or_buy == Talent.CYBERNETICS:
         buy_cybernetics()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.ENGINEER]:
+    elif eventPlayer.current_talent_replace_or_buy == Talent.ENGINEER:
         buy_engineer()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.SHADOWSTRIKE]:
+    elif eventPlayer.current_talent_replace_or_buy == Talent.SHADOWSTRIKE:
         buy_shadowstrike()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.STEALTH]:
+    elif eventPlayer.current_talent_replace_or_buy == Talent.STEALTH:
         buy_stealth()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.JUGGERNAUT]:
+    elif eventPlayer.current_talent_replace_or_buy == Talent.JUGGERNAUT:
         buy_juggernaut()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.DIVE_BOMB]:
+    elif eventPlayer.current_talent_replace_or_buy == Talent.DIVE_BOMB:
         buy_dive_bomb()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.CRYOGENICS]:
+    elif eventPlayer.current_talent_replace_or_buy == Talent.CRYOGENICS:
         buy_cryogenics()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.RAILGUN]:
+    elif eventPlayer.current_talent_replace_or_buy == Talent.RAILGUN:
         buy_railgun()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.PREDATOR]:
+    elif eventPlayer.current_talent_replace_or_buy == Talent.PREDATOR:
         buy_predator()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.JETPACK]:
+    elif eventPlayer.current_talent_replace_or_buy == Talent.JETPACK:
         buy_jetpack()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.LIFESTEAL_AMMO]:
+    elif eventPlayer.current_talent_replace_or_buy == Talent.LIFESTEAL_AMMO:
         buy_lifesteal_ammo()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.HEALTH_REGEN]:
+    elif eventPlayer.current_talent_replace_or_buy == Talent.HEALTH_REGEN:
         buy_health_regen()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.HEALTH_POTIONS]:
+    elif eventPlayer.current_talent_replace_or_buy == Talent.HEALTH_POTIONS:
         if eventPlayer.talent_ranks[Talent.HEALTH_POTIONS] == 1:
             eventPlayer.amount_of_potions_or_vials = 3
         buy_health_potions()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.IGNITE]:
+    elif eventPlayer.current_talent_replace_or_buy == Talent.IGNITE:
         buy_ignite()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.OVERCLOCK]:
+    elif eventPlayer.current_talent_replace_or_buy == Talent.OVERCLOCK:
         buy_overclock()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.SHADOWSTEP]:
+    elif eventPlayer.current_talent_replace_or_buy == Talent.SHADOWSTEP:
         buy_shadowstep()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.BURNING_SOUL]:
+    elif eventPlayer.current_talent_replace_or_buy == Talent.BURNING_SOUL:
         buy_fire_aura()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.BERSERKER]:
+    elif eventPlayer.current_talent_replace_or_buy == Talent.BERSERKER:
         buy_berserker()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.FIREBALL]:
+    elif eventPlayer.current_talent_replace_or_buy == Talent.FIREBALL:
         buy_fireball()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.IGNORE_PAIN]:
+    elif eventPlayer.current_talent_replace_or_buy == Talent.IGNORE_PAIN:
         buy_ignore_pain()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.JAVELIN]:
+    elif eventPlayer.current_talent_replace_or_buy == Talent.JAVELIN:
         return
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.SOUL_SIPHON]:
+    elif eventPlayer.current_talent_replace_or_buy == Talent.SOUL_SIPHON:
         buy_soul_siphon()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.PYROMANIAC]:
+    elif eventPlayer.current_talent_replace_or_buy == Talent.PYROMANIAC:
         buy_pyromaniac()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.POISON_VIALS]:
+    elif eventPlayer.current_talent_replace_or_buy == Talent.POISON_VIALS:
         if eventPlayer.talent_ranks[Talent.POISON_VIALS] == 1:
             eventPlayer.amount_of_potions_or_vials = 3
         buy_poison_vials()
-    elif eventPlayer.current_talent_replace_or_buy == talent_names[Talent.CRAZY_ALCHEMIST]:
+    elif eventPlayer.current_talent_replace_or_buy == Talent.CRAZY_ALCHEMIST:
         buy_crazy_alchemist()
 
 rule "SHOP - - - Skip Talents & Exit Shop":
