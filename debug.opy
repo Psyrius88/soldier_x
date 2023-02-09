@@ -3,12 +3,13 @@ rule "DEBUG - - - Hold Reload For XP [DEFAULT: OFF]":
     @Event eachPlayer
     @Condition eventPlayer.isHoldingButton(Button.RELOAD) == true
     @Condition eventPlayer.can_enter_shop == false
+    @Condition eventPlayer.browsing_shop == false
     
     if eventPlayer.experience_current < eventPlayer.experience_max:
-        eventPlayer.experience_current += 400
+        eventPlayer.experience_current += eventPlayer.experience_max/25
     if eventPlayer.isHoldingButton(Button.INTERACT):
         damage(eventPlayer, eventPlayer, 100)
-    wait(0.125)
+    wait(0.04)
     if RULE_CONDITION:
         goto RULE_START
 

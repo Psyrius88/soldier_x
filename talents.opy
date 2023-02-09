@@ -5,13 +5,9 @@ globalvar accurateTime
 
 #Player variables
 
-playervar bloodthirst_shield
-playervar burning_soul_orb_timer
 playervar can_be_executed
 playervar created_predator_effects_on_self
 playervar poison_vials_effectMemory
-playervar engineer_scrap
-playervar entering_stealth
 playervar entering_stealth_timer
 playervar poison_vials_exitSpeed
 playervar fire_soul_loop
@@ -19,44 +15,25 @@ playervar fireball_destination
 playervar fireball_effects
 playervar fireball_in_air
 playervar fireball_loop
-playervar fireball_position
 playervar gravity
 playervar has_hit_the_ground = true
-playervar health_pool_id_or_hot_id
 playervar health_regen_in_stealth_id
 playervar hit_by_talent
-playervar ignite_position
 playervar ignore_pain_damage_resistance
-playervar ignore_pain_damage_resisted
-playervar ignore_pain_volume
 playervar in_execution_range_effects
-playervar is_lifestealing
-playervar jetpack_fuel
 playervar jetpack_will_have_a_delay
 playervar predator_effect_position_1
 playervar predator_effect_position_2
 playervar predator_effects = null
 playervar poison_vials_projData
-playervar pyromaniac_heal_duration
-playervar railgun_charge
-playervar railgun_discharge
 playervar railgun_hit_someone
 playervar railgun_projectile_destination
 playervar railgun_projectile_is_in_air
-playervar railgun_projectile_player_hit
-playervar railgun_projectile_start
 playervar railgun_raycasts_counter
 playervar refresh_slow
 playervar shadowstrike_enemies_hit
 playervar slow_amount = 100
 playervar slow_duration = 0
-playervar soul_siphon_duration
-playervar talent_trigger_times
-playervar talent_1_cooldown = 0
-playervar talent_2_cooldown = 0
-playervar talent_3_cooldown = 0
-playervar talent_4_cooldown = 0
-playervar talent_5_cooldown = 0
 playervar time_since_freezing_rocket
 playervar total_time_in_combat
 playervar used_soul_siphon_on
@@ -70,7 +47,6 @@ subroutine purity_field_impulse
 subroutine stealth_camera
 subroutine lifesteal_hps
 subroutine railgun_projectile_is_in_air
-subroutine health_regen_heal_over_time
 subroutine already_at_full_health
 subroutine health_potion_hps
 subroutine health_potion_heal_over_time
@@ -86,17 +62,6 @@ subroutine ignore_pain_hps
 #!extension debuffStatusEffects
 #!extension kineticExplosionEffects
 
-def buy_bloodthirst():
-    @Name "TALENT SYSTEM - - - [TALENT 0: BLOODTHIRST] [SUBROUTINE] Buy Bloodthirst"
-    
-    if eventPlayer.replace_replacing_or_cancelled[1] == true:
-        eventPlayer.talents_you_do_not_have.append(Talent.BLOODTHIRST)
-        return
-    if eventPlayer.talent_ranks[Talent.BLOODTHIRST] == 1:
-        eventPlayer.bloodthirst_shield = 0
-        eventPlayer.talents_you_do_not_have.remove(Talent.BLOODTHIRST)
-
-
 def bloodthirst_effects():
     @Name "TALENT SYSTEM - - - [TALENT 0: BLOODTHIRST] [SUBROUTINE] Bloodthirst Effects"
     
@@ -108,18 +73,6 @@ def bloodthirst_effects():
     wait(1.5)
     destroyEffect(eventPlayer.player_temp_effects[45])
     destroyEffect(eventPlayer.player_temp_effects[46])
-
-
-def buy_purity_field():
-    @Name "TALENT SYSTEM - - - [TALENT 1: PURITY FIELD] [SUBROUTINE] Buy Purity Field"
-    
-    if eventPlayer.replace_replacing_or_cancelled[1] == true:
-        eventPlayer.talents_you_do_not_have.append(Talent.PURITY_FIELD)
-        return
-    if eventPlayer.talent_ranks[Talent.PURITY_FIELD] == 1:
-        eventPlayer.talents_you_do_not_have.remove(Talent.PURITY_FIELD)
-        eventPlayer.talent_trigger_times[Talent.PURITY_FIELD] = getTotalTimeElapsed() - talent_base_cooldowns[Talent.PURITY_FIELD]
-
 
 rule "TALENT SYSTEM - - - [TALENT 1: PURITY FIELD] Use Purity Field":
     @Event eachPlayer
@@ -213,38 +166,6 @@ rule "TALENT SYSTEM - - - [TALENT 1: PURITY FIELD] Hit By Purity Field":
     playEffect(getAllPlayers(), DynamicEffect.BAPTISTE_BIOTIC_LAUNCHER_EXPLOSION_SOUND, Color.WHITE, eventPlayer, 100)
     eventPlayer.hit_by_talent[Talent.PURITY_FIELD] = null
 
-
-def buy_cybernetics():
-    @Name "TALENT SYSTEM - - - [TALENT 2: CYBERNETICS] [SUBROUTINE] Buy Cybernetics (hit_by_ability[2] is borrowed by talent: juggernaut)"
-    
-    if eventPlayer.replace_replacing_or_cancelled[1] == true:
-        eventPlayer.talents_you_do_not_have.append(Talent.CYBERNETICS)
-        #Shields
-        eventPlayer.stats[4] = 0
-        removeHealthPool(eventPlayer.health_pool_id_or_hot_id[7])
-        return
-    if eventPlayer.talent_ranks[Talent.CYBERNETICS] == 1:
-        eventPlayer.talents_you_do_not_have.remove(Talent.CYBERNETICS)
-    #Shields
-    eventPlayer.stats[4] = eventPlayer.stats[4] + 40
-
-
-def buy_engineer():
-    @Name "TALENT SYSTEM - - - [TALENT 3: ENGINEER] [SUBROUTINE] Buy Engineer"
-    
-    if eventPlayer.replace_replacing_or_cancelled[1] == true:
-        eventPlayer.engineer_scrap = 0
-        eventPlayer.talents_you_do_not_have.append(Talent.ENGINEER)
-        eventPlayer.talents_you_do_not_have.append(Talent.IGNORE_PAIN)
-        return
-    if eventPlayer.talent_ranks[Talent.ENGINEER] == 1:
-        #Lock talent Ignore Pain
-        eventPlayer.possible_talents.remove(Talent.IGNORE_PAIN)
-        eventPlayer.talents_you_do_not_have.remove(Talent.IGNORE_PAIN)
-        eventPlayer.engineer_scrap = 0
-        eventPlayer.talents_you_do_not_have.remove(Talent.ENGINEER)
-
-
 rule "TALENT SYSTEM - - - [TALENT 3: ENGINEER] Use Engineer":
     @Event eachPlayer
     @Hero soldier
@@ -268,19 +189,6 @@ rule "TALENT SYSTEM - - - [TALENT 3: ENGINEER] Use Engineer":
     eventPlayer.health_pool_id_or_hot_id[0] = getLastCreatedHealthPool()
     smallMessage(eventPlayer, "{0} Armor Repaired!".format(abilityIconString(Hero.BASTION, Button.SECONDARY_FIRE)))
 
-
-def buy_shadowstrike():
-    @Name "TALENT SYSTEM - - - [TALENT 4: SHADOWSTRIKE] [SUBROUTINE] Buy Shadowstrike"
-    
-    if eventPlayer.replace_replacing_or_cancelled[1] == true:
-        eventPlayer.talents_you_do_not_have.append(Talent.SHADOWSTRIKE)
-        eventPlayer.talents_you_do_not_have.append(Talent.SHADOWSTEP)
-        return
-    if eventPlayer.talent_ranks[Talent.SHADOWSTRIKE] == 1:
-        eventPlayer.talent_trigger_times[Talent.SHADOWSTRIKE] = getTotalTimeElapsed() - talent_base_cooldowns[Talent.SHADOWSTRIKE]
-        eventPlayer.talents_you_do_not_have.remove(Talent.SHADOWSTRIKE)
-        eventPlayer.talents_you_do_not_have.remove(Talent.SHADOWSTEP)
-
 rule "TALENT SYSTEM - - - [TALENT 4: SHADOWSTRIKE] Use Shadowstrike":
     @Event eachPlayer
     @Hero soldier
@@ -291,7 +199,7 @@ rule "TALENT SYSTEM - - - [TALENT 4: SHADOWSTRIKE] Use Shadowstrike":
     @Condition eventPlayer.hasStatusEffect(Status.STUNNED) == false
     @Condition eventPlayer.hasStatusEffect(Status.KNOCKED_DOWN) == false
     @Condition eventPlayer.hasStatusEffect(Status.FROZEN) == false
-    @Condition eventPlayer.is_using_hearthstone[0] == false
+    @Condition eventPlayer.is_using_hearthstone == false
     @Condition eventPlayer.is_using_ability[Talent.JUGGERNAUT] == false
     @Condition eventPlayer.is_using_ability[Talent.DIVE_BOMB] == false
     @Condition eventPlayer.isCommunicatingEmote() == false
@@ -356,27 +264,6 @@ def shadowstrike():
         eventPlayer.talent_trigger_times[Talent.SHADOWSTRIKE] = getTotalTimeElapsed() - talent_base_cooldowns[Talent.SHADOWSTRIKE] / 2
     lbl_0:
     eventPlayer.shadowstrike_enemies_hit = []
-
-
-def buy_stealth():
-    @Name "TALENT SYSTEM - - - [TALENT 5: STEALTH] [SUBROUTINE] Buy Stealth"
-    
-    if eventPlayer.replace_replacing_or_cancelled[1] == true:
-        break_stealth()
-        eventPlayer.entering_stealth = false
-        destroyEffect(eventPlayer.player_temp_effects[57])
-        destroyEffect(eventPlayer.player_temp_effects[58])
-        eventPlayer.talents_you_do_not_have.append(Talent.STEALTH)
-        return
-    if eventPlayer.talent_ranks[Talent.STEALTH] == 1:
-        eventPlayer.talent_trigger_times[Talent.STEALTH] = getTotalTimeElapsed() - talent_base_cooldowns[Talent.STEALTH]
-        eventPlayer.entering_stealth = false
-        createEffect(eventPlayer if eventPlayer.is_using_ability[Talent.STEALTH] == true else null, Effect.REAPER_WRAITH_FORM, Color.TEAM_1, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-        eventPlayer.player_temp_effects[57] = getLastCreatedEntity()
-        createEffect(eventPlayer if eventPlayer.is_using_ability[Talent.STEALTH] == true else null, Effect.SIGMA_GRAVITIC_FLUX_TARGET_SOUND, Color.WHITE, eventPlayer, 100, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-        eventPlayer.player_temp_effects[58] = getLastCreatedEntity()
-        eventPlayer.talents_you_do_not_have.remove(Talent.STEALTH)
-
 
 rule "TALENT SYSTEM - - - [TALENT 5: STEALTH] Use Stealth":
     @Event eachPlayer
@@ -463,29 +350,6 @@ def break_stealth():
     playEffect(getAllPlayers(), DynamicEffect.MOIRA_FADE_REAPPEAR, Color.TEAM_2, eventPlayer.getPosition(), 1)
     playEffect(getAllPlayers(), DynamicEffect.MOIRA_FADE_REAPPEAR_SOUND, Color.TEAM_2, eventPlayer.getPosition(), 100)
 
-
-/*
-def buy_juggernaut():
-    @Name "TALENT SYSTEM - - - [TALENT 6: JUGGERNAUT] [SUBROUTINE] Buy Juggernaut [DISABLED: JUGGERNAUT NOT WORKING AS INTENDED]"
-    
-    if eventPlayer.replace_replacing_or_cancelled[1] == true:
-        stopChasingVariable(eventPlayer.juggernaut_cooldown)
-        stopChasingVariable(eventPlayer.juggernaut_charge)
-        eventPlayer.juggernaut_cooldown = 0
-        destroyEffect(eventPlayer.player_temp_effects[59])
-        eventPlayer.talents_you_do_not_have.append(Talent.JUGGERNAUT)
-        eventPlayer.talents_you_do_not_have.append(Talent.FIREBALL)
-        return
-    if eventPlayer.talent_ranks[Talent.JUGGERNAUT] == 1:
-        eventPlayer.juggernaut_cooldown = 0
-        chase(eventPlayer.juggernaut_cooldown, 0, rate=1, ChaseReeval.DESTINATION_AND_RATE)
-        chase(eventPlayer.juggernaut_charge, 0, rate=1, ChaseReeval.DESTINATION_AND_RATE)
-        createEffect(eventPlayer if eventPlayer.is_using_ability[Talent.JUGGERNAUT] == true else null, Effect.SOLDIER_SPRINTING, Color.TEAM_1, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-        eventPlayer.player_temp_effects[59] = getLastCreatedEntity()
-        eventPlayer.talents_you_do_not_have.remove(Talent.JUGGERNAUT)
-        eventPlayer.talents_you_do_not_have.remove(Talent.FIREBALL)
-*/
-
 /*
 rule "TALENT SYSTEM - - - [TALENT 6: JUGGERNAUT] Use Juggernaut [DISABLED: JUGGERNAUT NOT WORKING AS INTENDED]":
     @Event eachPlayer
@@ -502,7 +366,7 @@ rule "TALENT SYSTEM - - - [TALENT 6: JUGGERNAUT] Use Juggernaut [DISABLED: JUGGE
     @Condition eventPlayer.isHoldingButton(Button.INTERACT) == true
     @Condition eventPlayer.isCommunicatingEmote() == false
     @Condition (eventPlayer.hasStatusEffect(Status.PHASED_OUT) == false if eventPlayer.is_using_ability[Talent.SHADOWSTEP] == false else eventPlayer.isAlive()) == true
-    @Condition eventPlayer.is_using_hearthstone[0] == false
+    @Condition eventPlayer.is_using_hearthstone == false
     @Condition eventPlayer.is_using_ability[Talent.JETPACK] == false
     
     eventPlayer.setKnockbackReceived(0)
@@ -687,17 +551,6 @@ def cancel_juggernaut():
 */
 
 /*
-def buy_dive_bomb():
-    @Name "TALENT SYSTEM - - - [TALENT 7: DIVE BOMB] [SUBROUTINE] Buy Dive Bomb [DISABLED: DIVE BOMB NOT WORKING AS INTENDED]"
-    
-    if eventPlayer.replace_replacing_or_cancelled[1] == true:
-        eventPlayer.talents_you_do_not_have.append(Talent.DIVE_BOMB)
-        return
-    if eventPlayer.talent_ranks[Talent.DIVE_BOMB] == 1:
-        eventPlayer.talents_you_do_not_have.remove(Talent.DIVE_BOMB)
-*/
-
-/*
 rule "TALENT SYSTEM - - - [TALENT 7: DIVE BOMB] Use Dive Bomb [DISABLED: JUGGERNAUT NOT WORKING AS INTENDED]":
     @Event eachPlayer
     @Hero soldier
@@ -777,16 +630,6 @@ rule "TALENT SYSTEM - - - [TALENT 7: DIVE BOMB] Hit By Dive Bomb [DISABLED: JUGG
         wait(0.5, Wait.RESTART_WHEN_TRUE)
 */
 
-def buy_cryogenics():
-    @Name "TALENT SYSTEM - - - [TALENT 8: CRYOGENICS] [SUBROUTINE] Buy Cryogenics"
-    
-    if eventPlayer.replace_replacing_or_cancelled[1] == true:
-        eventPlayer.talents_you_do_not_have.append(Talent.CRYOGENICS)
-        return
-    if eventPlayer.talent_ranks[Talent.CRYOGENICS] == 1:
-        eventPlayer.talents_you_do_not_have.remove(Talent.CRYOGENICS)
-
-
 rule "TALENT SYSTEM - - - [TALENT 8: CRYOGENICS] Hit By Cryogenics":
     @Event eachPlayer
     @Condition eventPlayer.hit_by_talent[Talent.CRYOGENICS] != null
@@ -827,49 +670,11 @@ rule "TALENT SYSTEM - - - [TALENT 8: CRYOGENICS] Hit By Cryogenics":
     stopChasingVariable(eventPlayer.time_since_freezing_rocket)
     eventPlayer.time_since_freezing_rocket = 0
 
-
-def buy_railgun():
-    @Name "TALENT SYSTEM - - - [TALENT 9: RAILGUN] [SUBROUTINE] Buy Railgun"
-    
-    if eventPlayer.replace_replacing_or_cancelled[1] == true:
-        if eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]] == talent_names[Talent.OVERCLOCK]:
-            smallMessage(eventPlayer, "You need {0} for {1}!".format(talent_names[Talent.RAILGUN], talent_names[Talent.OVERCLOCK]))
-            goto lbl_0
-        if eventPlayer.talent_ranks[Talent.OVERCLOCK] > 0:
-            smallMessage(eventPlayer, "Need to remove {0} first!".format(talent_names[Talent.OVERCLOCK]))
-            lbl_0:
-            eventPlayer.replace_replacing_or_cancelled[2] = true
-            return
-        stopChasingVariable(eventPlayer.railgun_discharge)
-        destroyEffect(eventPlayer.player_temp_effects[59])
-        eventPlayer.railgun_discharge = 0
-        eventPlayer.railgun_charge = 0
-        eventPlayer.setSecondaryFireEnabled(true)
-        eventPlayer.railgun_projectile_start = []
-        eventPlayer.railgun_projectile_player_hit = []
-        eventPlayer.talents_you_do_not_have.append(Talent.RAILGUN)
-        eventPlayer.talents_you_do_not_have.remove(Talent.OVERCLOCK)
-        return
-    if eventPlayer.talent_ranks[Talent.RAILGUN] == 1:
-        if len(eventPlayer.bought_talents) < 5:
-            #Unlock follow-up talent
-            eventPlayer.possible_talents.append(Talent.OVERCLOCK)
-        eventPlayer.railgun_projectile_start = []
-        eventPlayer.railgun_projectile_player_hit = []
-        chase(eventPlayer.railgun_discharge, 0, rate=1, ChaseReeval.DESTINATION_AND_RATE)
-        eventPlayer.railgun_charge = 0
-        eventPlayer.setSecondaryFireEnabled(false)
-        createEffect(getAllPlayers() if eventPlayer.railgun_charge >= 100 else null, Effect.ANA_NANO_BOOSTED, Color.TEAM_1, eventPlayer, 100, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-        eventPlayer.player_temp_effects[59] = getLastCreatedEntity()
-        eventPlayer.talents_you_do_not_have.remove(Talent.RAILGUN)
-        eventPlayer.talents_you_do_not_have.append(Talent.OVERCLOCK)
-
-
 rule "TALENT SYSTEM - - - [TALENT 9: RAILGUN] Use Railgun":
     @Event eachPlayer
     @Hero soldier
     @Condition eventPlayer.talent_ranks[Talent.RAILGUN] > 0
-    @Condition eventPlayer.is_using_hearthstone[0] == false
+    @Condition eventPlayer.is_using_hearthstone == false
     @Condition eventPlayer.railgun_charge >= 100
     @Condition eventPlayer.isHoldingButton(Button.SECONDARY_FIRE) == true
     @Condition eventPlayer.isCommunicatingEmote() == false
@@ -949,33 +754,6 @@ def railgun_projectile_is_in_air():
     eventPlayer.railgun_projectile_start = []
     eventPlayer.railgun_projectile_player_hit = []
 
-
-def buy_predator():
-    @Name "TALENT SYSTEM - - - [TALENT 10: PREDATOR] [SUBROUTINE] Buy Predator"
-    
-    if eventPlayer.replace_replacing_or_cancelled[1] == true:
-        #If you are trying to replace predator with soul siphon
-        if eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]] == talent_names[Talent.SOUL_SIPHON]:
-            smallMessage(eventPlayer, "You need {0} for {1}!".format(talent_names[Talent.PREDATOR], talent_names[Talent.SOUL_SIPHON]))
-            goto lbl_0
-        #If you are trying to remove predator when you have soul siphon
-        if eventPlayer.talent_ranks[Talent.SOUL_SIPHON] > 0:
-            smallMessage(eventPlayer, "Need to remove {0} Soul Siphon first!".format(abilityIconString(Hero.MOIRA, Button.SECONDARY_FIRE)))
-            lbl_0:
-            eventPlayer.replace_replacing_or_cancelled[2] = true
-            return
-        eventPlayer.talents_you_do_not_have.append(Talent.PREDATOR)
-        eventPlayer.talents_you_do_not_have.remove(Talent.SOUL_SIPHON)
-        return
-    if eventPlayer.talent_ranks[Talent.PREDATOR] == 1:
-        eventPlayer.talent_trigger_times[Talent.PREDATOR] = getTotalTimeElapsed() - talent_base_cooldowns[Talent.PREDATOR]
-        if len(eventPlayer.bought_talents) < 5:
-            #Unlock follow-up talent
-            eventPlayer.possible_talents.append(Talent.SOUL_SIPHON)
-        eventPlayer.talents_you_do_not_have.remove(Talent.PREDATOR)
-        eventPlayer.talents_you_do_not_have.append(Talent.SOUL_SIPHON)
-
-
 rule "TALENT SYSTEM - - - [TALENT 10: PREDATOR] Hit By Predator":
     @Event eachPlayer
     @Condition eventPlayer.hit_by_talent[Talent.PREDATOR] != null
@@ -1035,26 +813,6 @@ rule "TALENT SYSTEM - - - [TALENT 10: PREDATOR] Remove Predator Effect On Myself
     destroyEffect(eventPlayer.in_execution_range_effects)
     eventPlayer.stopForcingOutlineFor(getAllPlayers())
 
-
-def buy_jetpack():
-    @Name "TALENT SYSTEM - - - [TALENT 11: JETPACK] [SUBROUTINE] Buy Jetpack"
-    
-    if eventPlayer.replace_replacing_or_cancelled[1] == true:
-        eventPlayer.stopAcceleration()
-        stopChasingVariable(eventPlayer.jetpack_fuel)
-        eventPlayer.jetpack_fuel = 100
-        destroyEffect(eventPlayer.player_temp_effects[14])
-        eventPlayer.talents_you_do_not_have.append(Talent.JETPACK)
-        return
-    if eventPlayer.talent_ranks[Talent.JETPACK] == 1:
-        eventPlayer.startAcceleration(Vector.UP, 10 + 0.275 * eventPlayer.jetpack_fuel if eventPlayer.is_using_ability[Talent.JETPACK] == true else 0, 3, Relativity.TO_PLAYER, AccelReeval.DIRECTION_RATE_AND_MAX_SPEED)
-        eventPlayer.jetpack_fuel = 100
-        createEffect(getAllPlayers() if eventPlayer.is_using_ability[Talent.JETPACK] == true and eventPlayer.is_using_ability[Talent.STEALTH] == false else null, Effect.WRECKING_BALL_PILEDRIVER_FIRE_SOUND, Color.WHITE, eventPlayer, 100, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-        eventPlayer.player_temp_effects[14] = getLastCreatedEntity()
-        chase(eventPlayer.jetpack_fuel, 0 if eventPlayer.is_using_ability[Talent.JETPACK] == true else 100, rate=25 - eventPlayer.talent_ranks[Talent.JETPACK] * 3 if eventPlayer.is_using_ability[Talent.JETPACK] == true else 10, ChaseReeval.DESTINATION_AND_RATE)
-        eventPlayer.talents_you_do_not_have.remove(Talent.JETPACK)
-
-
 rule "TALENT SYSTEM - - - [TALENT 11: JETPACK] Use Jetpack":
     @Event eachPlayer
     @Condition eventPlayer.talent_ranks[Talent.JETPACK] > 0
@@ -1104,48 +862,6 @@ rule "TALENT SYSTEM - - - [TALENT 11: JETPACK] Jetpack Will Have a Delay":
     
     eventPlayer.jetpack_will_have_a_delay = true
 
-
-def buy_lifesteal_ammo():
-    @Name "TALENT SYSTEM - - - [TALENT 12: LIFESTEAL AMMO] [SUBROUTINE] Buy Lifesteal Ammo"
-    
-    if eventPlayer.replace_replacing_or_cancelled[1] == true:
-        stopChasingVariable(eventPlayer.is_lifestealing)
-        eventPlayer.is_lifestealing = 0
-        destroyEffect(eventPlayer.player_temp_effects[60])
-        destroyEffect(eventPlayer.player_temp_effects[61])
-        destroyEffect(eventPlayer.player_temp_effects[62])
-        eventPlayer.talents_you_do_not_have.append(Talent.LIFESTEAL_AMMO)
-        return
-    if eventPlayer.talent_ranks[Talent.LIFESTEAL_AMMO] == 1:
-        eventPlayer.is_lifestealing = 0
-        chase(eventPlayer.is_lifestealing, 0, rate=1, ChaseReeval.DESTINATION_AND_RATE)
-        createEffect(eventPlayer if eventPlayer.is_lifestealing > 0 else null, Effect.BAD_AURA_SOUND, Color.WHITE, eventPlayer, 100, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-        eventPlayer.player_temp_effects[60] = getLastCreatedEntity()
-        createEffect(getAllPlayers() if eventPlayer.is_lifestealing > 0 else null, Effect.HEAL_TARGET, Color.TEAM_1, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-        eventPlayer.player_temp_effects[61] = getLastCreatedEntity()
-        createEffect(getAllPlayers() if eventPlayer.is_lifestealing > 0 else null, Effect.HEAL_TARGET_ACTIVE, Color.TEAM_1, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-        eventPlayer.player_temp_effects[62] = getLastCreatedEntity()
-        eventPlayer.talents_you_do_not_have.remove(Talent.LIFESTEAL_AMMO)
-
-
-def buy_health_regen():
-    @Name "TALENT SYSTEM - - - [TALENT 13: HEALTH REGEN] [SUBROUTINE] Buy Health Regen"
-    
-    if eventPlayer.replace_replacing_or_cancelled[1] == true:
-        eventPlayer.talents_you_do_not_have.append(Talent.HEALTH_REGEN)
-        destroyEffect(eventPlayer.player_temp_effects[63])
-        destroyEffect(eventPlayer.player_temp_effects[64])
-        stopHoT(eventPlayer.health_pool_id_or_hot_id[2])
-        return
-    if eventPlayer.talent_ranks[Talent.HEALTH_REGEN] == 1:
-        createEffect(eventPlayer if eventPlayer.getHealthOfType(Health.NORMAL) < eventPlayer.getMaxHealthOfType(Health.NORMAL) and eventPlayer.isAlive() == true else null, Effect.SPARKLES_SOUND, Color.WHITE, eventPlayer, 100, EffectReeval.VISIBILITY_POSITION_RADIUS_AND_COLOR)
-        eventPlayer.player_temp_effects[63] = getLastCreatedEntity()
-        createEffect(eventPlayer if eventPlayer.getHealthOfType(Health.NORMAL) < eventPlayer.getMaxHealthOfType(Health.NORMAL) and eventPlayer.isAlive() == true else null, Effect.SPARKLES, Color.PURPLE if eventPlayer.is_using_ability[Talent.STEALTH] == true else Color.ORANGE, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_RADIUS_AND_COLOR)
-        eventPlayer.player_temp_effects[64] = getLastCreatedEntity()
-        eventPlayer.talents_you_do_not_have.remove(Talent.HEALTH_REGEN)
-        async(health_regen_heal_over_time, AsyncBehavior.RESTART)
-
-
 def health_regen_heal_over_time():
     @Name "TALENT SYSTEM - - - [TALENT 13: HEALTH REGEN] [SUBROUTINE] Health Regen Heal Over Time"
     
@@ -1155,36 +871,6 @@ def health_regen_heal_over_time():
         eventPlayer.health_pool_id_or_hot_id[2] = getLastHoT()
         waitUntil(eventPlayer.getHealthOfType(Health.NORMAL) >= eventPlayer.getMaxHealthOfType(Health.NORMAL) or eventPlayer.is_using_ability[Talent.POISON_VIALS] == true or eventPlayer.talent_ranks[Talent.HEALTH_REGEN] == 0 == true, 99999)
         stopHoT(eventPlayer.health_pool_id_or_hot_id[2])
-
-
-def buy_health_potions():
-    @Name "TALENT SYSTEM - - - [TALENT 14: HEALTH POTIONS] [SUBROUTINE] Buy Health Potions"
-    
-    if eventPlayer.replace_replacing_or_cancelled[1] == true:
-        if eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]] == talent_names[Talent.CRAZY_ALCHEMIST]:
-            smallMessage(eventPlayer, "You need {0} for {1}!".format(talent_names[Talent.HEALTH_POTIONS], talent_names[Talent.CRAZY_ALCHEMIST]))
-            goto lbl_0
-        if eventPlayer.talent_ranks[Talent.CRAZY_ALCHEMIST] > 0:
-            smallMessage(eventPlayer, "Need to remove {0} Crazy Alchemist first!".format(iconString(Icon.RADIOACTIVE)))
-            lbl_0:
-            eventPlayer.replace_replacing_or_cancelled[2] = true
-            return
-        eventPlayer.amount_of_potions_or_vials = 0
-        eventPlayer.talents_you_do_not_have.append(Talent.HEALTH_POTIONS)
-        eventPlayer.talents_you_do_not_have.append(Talent.POISON_VIALS)
-        eventPlayer.talents_you_do_not_have.remove(Talent.CRAZY_ALCHEMIST)
-        return
-    if eventPlayer.talent_ranks[Talent.HEALTH_POTIONS] == 1:
-        eventPlayer.amount_of_potions_or_vials = 3
-        #Lock talent Poison Vials
-        eventPlayer.possible_talents.remove(Talent.POISON_VIALS)
-        eventPlayer.talents_you_do_not_have.remove(Talent.POISON_VIALS)
-        eventPlayer.talents_you_do_not_have.remove(Talent.HEALTH_POTIONS)
-        eventPlayer.talents_you_do_not_have.append(Talent.CRAZY_ALCHEMIST)
-        if len(eventPlayer.bought_talents) < 5:
-            #Unlock follow-up talent
-            eventPlayer.possible_talents.append(Talent.CRAZY_ALCHEMIST)
-
 
 rule "TALENT SYSTEM - - - [TALENT 14/31: HEALTH POTIONS/POISON VIAL] Use Health Potion or Poison Vial":
     @Event eachPlayer
@@ -1269,18 +955,6 @@ def already_at_full_health():
     playEffect(eventPlayer, DynamicEffect.DEBUFF_IMPACT_SOUND, Color.WHITE, eventPlayer, 75)
     wait(3)
 
-
-def buy_ignite():
-    @Name "TALENT SYSTEM - - - [TALENT 16: IGNITE] [SUBROUTINE] Buy Ignite"
-    
-    if eventPlayer.replace_replacing_or_cancelled[1] == true:
-        eventPlayer.ignite_position = eventPlayer.getEyePosition()
-        eventPlayer.talents_you_do_not_have.append(Talent.IGNITE)
-        return
-    if eventPlayer.talent_ranks[Talent.IGNITE] == 1:
-        eventPlayer.talents_you_do_not_have.remove(Talent.IGNITE)
-
-
 rule "TALENT SYSTEM - - - [TALENT 16: IGNITE] Ignite Effects":
     @Event eachPlayer
     @Hero soldier
@@ -1303,29 +977,6 @@ rule "TALENT SYSTEM - - - [TALENT 16: IGNITE] Ignite Effects":
     destroyEffect(eventPlayer.player_temp_effects[72])
     eventPlayer.is_using_ability[Talent.IGNITE] = false
 
-
-def buy_overclock():
-    @Name "TALENT SYSTEM - - - [TALENT 17: OVERCLOCK] [SUBROUTINE] Buy Overclock"
-    
-    if eventPlayer.replace_replacing_or_cancelled[1] == true:
-        eventPlayer.talents_you_do_not_have.append(Talent.OVERCLOCK)
-        return
-    if eventPlayer.talent_ranks[Talent.OVERCLOCK] == 1:
-        eventPlayer.talents_you_do_not_have.remove(Talent.OVERCLOCK)
-
-
-def buy_shadowstep():
-    @Name "TALENT SYSTEM - - - [TALENT 18: SHADOWSTEP] [SUBROUTINE] Buy Shadowstep"
-    
-    if eventPlayer.replace_replacing_or_cancelled[1] == true:
-        eventPlayer.talents_you_do_not_have.append(Talent.SHADOWSTEP)
-        eventPlayer.talents_you_do_not_have.append(Talent.SHADOWSTRIKE)
-        return
-    if eventPlayer.talent_ranks[Talent.SHADOWSTEP] == 1:
-        eventPlayer.talent_trigger_times[Talent.SHADOWSTEP] = getTotalTimeElapsed() - talent_base_cooldowns[Talent.SHADOWSTEP]
-        eventPlayer.talents_you_do_not_have.remove(Talent.SHADOWSTEP)
-        eventPlayer.talents_you_do_not_have.remove(Talent.SHADOWSTRIKE)
-
 rule "TALENT SYSTEM - - - [TALENT 18: SHADOWSTEP] Use Shadowstep":
     @Event eachPlayer
     @Hero soldier
@@ -1336,7 +987,7 @@ rule "TALENT SYSTEM - - - [TALENT 18: SHADOWSTEP] Use Shadowstep":
     @Condition eventPlayer.hasStatusEffect(Status.STUNNED) == false
     @Condition eventPlayer.hasStatusEffect(Status.KNOCKED_DOWN) == false
     @Condition eventPlayer.hasStatusEffect(Status.FROZEN) == false
-    @Condition eventPlayer.is_using_hearthstone[0] == false
+    @Condition eventPlayer.is_using_hearthstone == false
     @Condition eventPlayer.is_using_ability[Talent.JUGGERNAUT] == false
     @Condition eventPlayer.is_using_ability[Talent.DIVE_BOMB] == false
     @Condition eventPlayer.isCommunicatingEmote() == false
@@ -1372,25 +1023,6 @@ rule "TALENT SYSTEM - - - [TALENT 18: SHADOWSTEP] Use Shadowstep":
     eventPlayer.is_using_ability[Talent.SHADOWSTEP] = false
     destroyEffect(eventPlayer.player_temp_effects[6])
     destroyEffect(eventPlayer.player_temp_effects[7])
-
-
-def buy_fire_aura():
-    @Name "TALENT SYSTEM - - - [TALENT 19: BURNING SOUL] [SUBROUTINE] Buy Burning Soul"
-    
-    if eventPlayer.replace_replacing_or_cancelled[1] == true:
-        stopChasingVariable(eventPlayer.burning_soul_orb_timer)
-        eventPlayer.talents_you_do_not_have.append(Talent.BURNING_SOUL)
-        destroyEffect(eventPlayer.player_temp_effects[65])
-        destroyEffect(eventPlayer.player_temp_effects[66])
-        return
-    if eventPlayer.talent_ranks[Talent.BURNING_SOUL] == 1:
-        createEffect(getAllPlayers() if eventPlayer.isCommunicatingEmote() == true else [player for player in getAllPlayers() if player != eventPlayer], Effect.ASHE_DYNAMITE_BURNING_PARTICLE, Color.TEAM_1, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-        eventPlayer.player_temp_effects[65] = getLastCreatedEntity()
-        createEffect(getAllPlayers(), Effect.ASHE_DYNAMITE_BURNING_MATERIAL, Color.TEAM_2, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-        eventPlayer.player_temp_effects[66] = getLastCreatedEntity()
-        chase(eventPlayer.burning_soul_orb_timer, 0, rate=1, ChaseReeval.DESTINATION_AND_RATE)
-        eventPlayer.talents_you_do_not_have.remove(Talent.BURNING_SOUL)
-
 
 rule "TALENT SYSTEM - - - [TALENT 19: BURNING SOUL] Burning Soul":
     @Event eachPlayer
@@ -1428,39 +1060,6 @@ def dropped_burning_soul_orb():
     playEffect(getAllPlayers(), DynamicEffect.JUNKRAT_FRAG_LAUNCHER_EXPLOSION_SOUND, Color.TEAM_2, eventPlayer.getPosition() if eventPlayer.is_using_ability[33] == true else eventPlayer.xp_orb_location, 100)
     playEffect(getAllPlayers(), DynamicEffect.JUNKRAT_FRAG_LAUNCHER_EXPLOSION, Color.TEAM_2, eventPlayer.getPosition() if eventPlayer.is_using_ability[33] == true else eventPlayer.xp_orb_location, 1)
     destroyEffect(eventPlayer.player_temp_effects[54])
-
-
-def buy_berserker():
-    @Name "TALENT SYSTEM - - - [TALENT 20: BERSERKER] [SUBROUTINE] Buy Berserker"
-    
-    if eventPlayer.replace_replacing_or_cancelled[1] == true:
-        if eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]] == talent_names[Talent.BLOODTHIRST]:
-            smallMessage(eventPlayer, "You need {0} for {1}!".format(talent_names[Talent.BERSERKER], talent_names[Talent.BLOODTHIRST]))
-            goto lbl_0
-        if eventPlayer.talent_ranks[Talent.BLOODTHIRST] > 0:
-            smallMessage(eventPlayer, "Need to remove {0} Bloodthirst first!".format(abilityIconString(Hero.SIGMA, Button.ABILITY_1)))
-            lbl_0:
-            eventPlayer.replace_replacing_or_cancelled[2] = true
-            return
-        eventPlayer.talents_you_do_not_have.append(Talent.BERSERKER)
-        eventPlayer.talents_you_do_not_have.remove(Talent.BLOODTHIRST)
-        destroyEffect(eventPlayer.player_temp_effects[67])
-        destroyEffect(eventPlayer.player_temp_effects[68])
-        destroyEffect(eventPlayer.player_temp_effects[69])
-        return
-    if eventPlayer.talent_ranks[Talent.BERSERKER] == 1:
-        if len(eventPlayer.bought_talents) < 5:
-            #Unlock follow-up talent
-            eventPlayer.possible_talents.append(Talent.BLOODTHIRST)
-        createEffect(eventPlayer if eventPlayer.is_using_ability[Talent.BERSERKER] == true else null, Effect.WINSTON_PRIMAL_RAGE, Color.TEAM_1, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-        eventPlayer.player_temp_effects[67] = getLastCreatedEntity()
-        createEffect(getAllPlayers() if eventPlayer.is_using_ability[Talent.BERSERKER] == true else null, Effect.WINSTON_PRIMAL_RAGE, Color.TEAM_2, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-        eventPlayer.player_temp_effects[68] = getLastCreatedEntity()
-        createEffect(getAllPlayers() if eventPlayer.is_using_ability[Talent.BERSERKER] == true else null, Effect.WINSTON_PRIMAL_RAGE_SOUND, Color.WHITE, eventPlayer, 100, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-        eventPlayer.player_temp_effects[69] = getLastCreatedEntity()
-        eventPlayer.talents_you_do_not_have.remove(Talent.BERSERKER)
-        eventPlayer.talents_you_do_not_have.append(Talent.BLOODTHIRST)
-
 
 rule "TALENT SYSTEM - - - [TALENT 20: BERSERKER] Use Berserker":
     @Event eachPlayer
@@ -1513,34 +1112,6 @@ rule "TALENT SYSTEM - - - [TALENT 20: BERSERKER] Use Berserker":
         wait()
     eventPlayer.bloodthirst_shield = 0
 
-
-def buy_fireball():
-    @Name "TALENT SYSTEM - - - [TALENT 21: FIREBALL] [SUBROUTINE] Buy Fireball"
-    
-    if eventPlayer.replace_replacing_or_cancelled[1] == true:
-        if eventPlayer.talents_offered_in_shop[1] == talent_names[Talent.PYROMANIAC]:
-            smallMessage(eventPlayer, "You need {0} for {1}!".format(talent_names[Talent.FIREBALL], talent_names[Talent.PYROMANIAC]))
-            goto lbl_0
-        if eventPlayer.talent_ranks[Talent.PYROMANIAC] > 0:
-            smallMessage(eventPlayer, "Need to remove {0} Pyromaniac first!".format(abilityIconString(Hero.REAPER, Button.ULTIMATE)))
-            lbl_0:
-            eventPlayer.replace_replacing_or_cancelled[2] = true
-            return
-        eventPlayer.fireball_position = vect(0, 0, 0)
-        eventPlayer.talents_you_do_not_have.append(Talent.JUGGERNAUT)
-        eventPlayer.talents_you_do_not_have.append(Talent.FIREBALL)
-        eventPlayer.talents_you_do_not_have.remove(Talent.PYROMANIAC)
-        return
-    if eventPlayer.talent_ranks[Talent.FIREBALL] == 1:
-        eventPlayer.fireball_position = vect(0, 0, 0)
-        if len(eventPlayer.bought_talents) < 5:
-            #Unlock follow-up talent
-            eventPlayer.possible_talents.append(Talent.PYROMANIAC)
-        eventPlayer.talents_you_do_not_have.remove(Talent.JUGGERNAUT)
-        eventPlayer.talents_you_do_not_have.remove(Talent.FIREBALL)
-        eventPlayer.talents_you_do_not_have.append(Talent.PYROMANIAC)
-
-
 def spawned_with_fireball():
     @Name "TALENT SYSTEM - - - [TALENT 21: FIREBALL] [SUBROUTINE] Spawned With Fireball"
     
@@ -1563,7 +1134,7 @@ rule "TALENT SYSTEM - - - [TALENT 21: FIREBALL] Use Fireball":
     @Condition eventPlayer.isUsingAbility1() == false
     @Condition eventPlayer.fireball_in_air == false
     @Condition eventPlayer.is_using_ability[15] == false
-    @Condition eventPlayer.is_using_hearthstone[0] == false
+    @Condition eventPlayer.is_using_hearthstone == false
     @Condition eventPlayer.is_using_ability[Talent.JUGGERNAUT] == false
     @Condition eventPlayer.fireball_position == vect(0, 0, 0)
     @Condition eventPlayer.isHoldingButton(Button.INTERACT) == true
@@ -1651,29 +1222,6 @@ rule "TALENT SYSTEM - - - [TALENT 21: FIREBALL] Hit By Fireball":
     
     eventPlayer.applyImpulse(directionTowards(eventPlayer.hit_by_talent[Talent.FIREBALL].fireball_position, eventPlayer.getEyePosition()), 15, Relativity.TO_WORLD, Impulse.INCORPORATE_CONTRARY_MOTION)
     eventPlayer.hit_by_talent[Talent.FIREBALL] = null
-
-
-def buy_ignore_pain():
-    @Name "TALENT SYSTEM - - - [TALENT 22: IGNORE PAIN] [SUBROUTINE] Buy Ignore Pain"
-    
-    if eventPlayer.replace_replacing_or_cancelled[1] == true:
-        eventPlayer.ignore_pain_damage_resisted = 0
-        eventPlayer.talents_you_do_not_have.append(Talent.ENGINEER)
-        eventPlayer.talents_you_do_not_have.append(Talent.IGNORE_PAIN)
-        destroyEffect(eventPlayer.player_temp_effects[55])
-        destroyEffect(eventPlayer.player_temp_effects[56])
-        return
-    if eventPlayer.talent_ranks[Talent.IGNORE_PAIN] == 1:
-        #Lock talent Engineer
-        eventPlayer.possible_talents.remove(Talent.IGNORE_PAIN)
-        eventPlayer.talents_you_do_not_have.remove(Talent.ENGINEER)
-        eventPlayer.talents_you_do_not_have.remove(Talent.IGNORE_PAIN)
-        eventPlayer.ignore_pain_damage_resisted = 0
-        createEffect(getAllPlayers() if eventPlayer.is_using_ability[Talent.IGNORE_PAIN] == true else null, Effect.WRECKING_BALL_ADAPTIVE_SHIELD_TARGET, Color.TEAM_1, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-        eventPlayer.player_temp_effects[55] = getLastCreatedEntity()
-        createEffect(eventPlayer if eventPlayer.is_using_ability[Talent.IGNORE_PAIN] == true else null, Effect.WRECKING_BALL_ADAPTIVE_SHIELD_TARGET_SOUND, Color.TEAM_1, eventPlayer.getPosition(), eventPlayer.ignore_pain_volume, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-        eventPlayer.player_temp_effects[56] = getLastCreatedEntity()
-
 
 rule "TALENT SYSTEM - - - [TALENT 22: IGNORE PAIN] Ignore Pain Activated":
     @Event eachPlayer
@@ -1830,20 +1378,6 @@ rule "TALENT SYSTEM - - - [TALENT 23: JAVELIN] Stop Using Javelin [DISABLED: WOR
     destroyEffect(eventPlayer.player_temp_effects[75])
 */
 
-def buy_soul_siphon():
-    @Name "TALENT SYSTEM - - - [TALENT 29: SOUL SIPHON] [SUBROUTINE] Buy Soul Siphon"
-    
-    if eventPlayer.replace_replacing_or_cancelled[1] == true:
-        stopChasingVariable(eventPlayer.soul_siphon_duration)
-        eventPlayer.soul_siphon_duration = 0
-        eventPlayer.talents_you_do_not_have.append(Talent.SOUL_SIPHON)
-        return
-    if eventPlayer.talent_ranks[Talent.SOUL_SIPHON] == 1:
-        eventPlayer.soul_siphon_duration = 0
-        chase(eventPlayer.soul_siphon_duration, 0, rate=1, ChaseReeval.DESTINATION_AND_RATE)
-        eventPlayer.talents_you_do_not_have.remove(Talent.SOUL_SIPHON)
-
-
 rule "TALENT SYSTEM - - - [TALENT 29: SOUL SIPHON] Hit By Soul Siphon":
     @Event eachPlayer
     @Condition eventPlayer.hit_by_talent[Talent.SOUL_SIPHON] != null
@@ -1894,21 +1428,6 @@ rule "TALENT SYSTEM - - - [TALENT 29: SOUL SIPHON] Used Soul Siphon":
     if RULE_CONDITION:
         goto RULE_START
 
-
-def buy_pyromaniac():
-    @Name "TALENT SYSTEM - - - [TALENT 30: PYROMANIAC] [SUBROUTINE] Buy Pyromaniac"
-    
-    if eventPlayer.replace_replacing_or_cancelled[1] == true:
-        stopChasingVariable(eventPlayer.pyromaniac_heal_duration)
-        eventPlayer.pyromaniac_heal_duration = 0
-        eventPlayer.talents_you_do_not_have.append(Talent.PYROMANIAC)
-        return
-    if eventPlayer.talent_ranks[Talent.PYROMANIAC] == 1:
-        eventPlayer.pyromaniac_heal_duration = 0
-        chase(eventPlayer.pyromaniac_heal_duration, 0, rate=1, ChaseReeval.DESTINATION_AND_RATE)
-        eventPlayer.talents_you_do_not_have.remove(Talent.PYROMANIAC)
-
-
 def pyromaniac_heal_over_time():
     @Name "TALENT SYSTEM - - - [TALENT 30: PYROMANIAC] [SUBROUTINE] Pyromaniac Stop Healing Over Time"
     
@@ -1924,47 +1443,6 @@ def pyromaniac_heal_over_time():
             return
         eventPlayer.talent_counter_or_position_etc[30] = eventPlayer.pyromaniac_heal_duration
         waitUntil(eventPlayer.getHealthOfType(Health.NORMAL) < eventPlayer.getMaxHealthOfType(Health.NORMAL), eventPlayer.talent_counter_or_position_etc[30])
-
-
-/*
-def buy_poison_vials():
-    @Name "TALENT SYSTEM - - - [TALENT 31: POISON VIALS] [SUBROUTINE] Buy Poison Vials [DISABLED: POISON VIALS NOT WORKING AS INTENDED]"
-    
-    if eventPlayer.replace_replacing_or_cancelled[1] == true:
-        if eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]] == talent_names[Talent.CRAZY_ALCHEMIST]:
-            smallMessage(eventPlayer, "You need {0} for {1}!".format(talent_names[Talent.POISON_VIALS], talent_names[Talent.CRAZY_ALCHEMIST]))
-            goto lbl_0
-        if eventPlayer.talent_ranks[Talent.CRAZY_ALCHEMIST] > 0:
-            smallMessage(eventPlayer, "Need to remove {0} Crazy Alchemist first!".format(iconString(Icon.RADIOACTIVE)))
-            lbl_0:
-            eventPlayer.replace_replacing_or_cancelled[2] = true
-            return
-        stopChasingVariable(eventPlayer.time_since_poison_vial_exploded)
-        stopChasingVariable(eventPlayer.health_potion_cooldown)
-        eventPlayer.poison_vial_effects = []
-        eventPlayer.poison_vial_clouds_spawned = 0
-        eventPlayer.time_since_poison_vial_exploded = 0
-        eventPlayer.health_potion_cooldown = 0
-        eventPlayer.amount_of_potions_or_vials = 0
-        eventPlayer.talents_you_do_not_have.append(Talent.HEALTH_POTIONS)
-        eventPlayer.talents_you_do_not_have.append(Talent.POISON_VIALS)
-        eventPlayer.talents_you_do_not_have.remove(Talent.CRAZY_ALCHEMIST)
-        return
-    if eventPlayer.talent_ranks[Talent.POISON_VIALS] == 1:
-        eventPlayer.talents_you_do_not_have.remove(Talent.HEALTH_POTIONS)
-        eventPlayer.talents_you_do_not_have.remove(Talent.POISON_VIALS)
-        eventPlayer.talents_you_do_not_have.append(Talent.CRAZY_ALCHEMIST)
-        eventPlayer.amount_of_potions_or_vials = 3
-        #Lock talent Health Potions
-        eventPlayer.possible_talents.remove(Talent.HEALTH_POTIONS)
-        if len(eventPlayer.bought_talents) < 5:
-            #Unlock follow-up talent
-            eventPlayer.possible_talents.append(Talent.CRAZY_ALCHEMIST)
-        eventPlayer.poison_vial_effects = []
-        eventPlayer.poison_vial_clouds_spawned = 0
-        chase(eventPlayer.time_since_poison_vial_exploded, 0, rate=1, ChaseReeval.DESTINATION_AND_RATE)
-        chase(eventPlayer.health_potion_cooldown, 0, rate=1, ChaseReeval.DESTINATION_AND_RATE)
-*/
 
 /*
 rule "TALENT SYSTEM - - - [TALENT 31: POISON VIALS] accurateTime [DISABLED: POISON VIALS NOT WORKING AS INTENDED]":
@@ -2054,12 +1532,3 @@ rule "TALENT SYSTEM - - - [TALENT 31: POISON VIALS] Hit By Poison Vials [DISABLE
     eventPlayer.is_using_ability[Talent.POISON_VIALS] = false
     destroyEffect(eventPlayer.player_temp_effects[40])
 */
-
-def buy_crazy_alchemist():
-    @Name "TALENT SYSTEM - - - [TALENT 32: CRAZY ALCHEMIST] [SUBROUTINE] Buy Crazy Alchemist"
-    
-    if eventPlayer.replace_replacing_or_cancelled[1] == true:
-        eventPlayer.talents_you_do_not_have.append(Talent.CRAZY_ALCHEMIST)
-        return
-    if eventPlayer.talent_ranks[Talent.CRAZY_ALCHEMIST] == 1:
-        eventPlayer.talents_you_do_not_have.remove(Talent.CRAZY_ALCHEMIST)
