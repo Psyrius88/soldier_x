@@ -9,10 +9,19 @@ rule "DEBUG - - - Hold Reload For XP [DEFAULT: OFF]":
         eventPlayer.experience_current += eventPlayer.experience_max/25
     if eventPlayer.isHoldingButton(Button.INTERACT):
         damage(eventPlayer, eventPlayer, 100)
-    wait(0.04)
+    wait(0.02)
     if RULE_CONDITION:
         goto RULE_START
 
+rule "DEBUG - - - Activate Admin Rights [DEFAULT: OFF]":
+    @Event eachPlayer
+    @Hero soldier
+    @Condition hostPlayer == eventPlayer
+
+    debugging = true
+
+
+    
 
 /*
 rule "DEBUG - - - Abilities [DEFAULT: OFF]":
@@ -76,7 +85,16 @@ rule "DEBUG - - - Abilities [DEFAULT: OFF]":
     #return
 */
 rule "DEBUG - - - Host HUD Texts [DEFAULT: OFF]":
+    @Event eachPlayer
+    @Hero soldier
+    @Condition hostPlayer == eventPlayer
+
     hudText(hostPlayer, "Amount of texts: {0}".format(getNumberOfTextIds()), "", "", HudPosition.RIGHT, 99, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
+    hudText(hostPlayer, "Max XP: {0}".format(eventPlayer.experience_max), "", "", HudPosition.RIGHT, 100, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
+    hudText(hostPlayer, "Amount of Talents: {0}".format(eventPlayer.amount_of_talents_purchased), "", "", HudPosition.RIGHT, 101, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
+    hudText(hostPlayer, "Using Hearthstone: {0}".format(eventPlayer.is_using_hearthstone), "", "", HudPosition.RIGHT, 101, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
+    hudText(hostPlayer, "Using Skip Talent: {0}".format(eventPlayer.is_using_skip_talent), "", "", HudPosition.RIGHT, 101, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
+    hudText(hostPlayer, "Using One of the HS: {0}".format(eventPlayer.using_one_of_the_hearthstones), "", "", HudPosition.RIGHT, 101, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
     /*
     hudText(hostPlayer, "Lifesteal Ammo:", "In Combat Avg: {0} {1}".format("[Rank 1: {0}] [Rank 2: {1}] [Rank 3: {2}]".format(lifesteal_total_healing[1] / lifesteal_time_in_combat[1], lifesteal_total_healing[2] / lifesteal_time_in_combat[2], lifesteal_total_healing[3] / lifesteal_time_in_combat[3]), "[Rank 4: {0}] [Rank 5: {1}]".format(lifesteal_total_healing[4] / lifesteal_time_in_combat[4], lifesteal_total_healing[5] / lifesteal_time_in_combat[5])), null, HudPosition.LEFT, 100, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
     hudText(hostPlayer, "Health Regen:", "In Combat Avg: {0} {1}".format("[Rank 1: {0}] [Rank 2: {1}] [Rank 3: {2}]".format(health_regen_total_healing[1] / health_regen_time_in_combat[1], health_regen_total_healing[2] / health_regen_time_in_combat[2], health_regen_total_healing[3] / health_regen_time_in_combat[3]), "[Rank 4: {0}] [Rank 5: {1}]".format(health_regen_total_healing[4] / health_regen_time_in_combat[4], health_regen_total_healing[5] / health_regen_time_in_combat[5])), null, HudPosition.LEFT, 101, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
@@ -105,7 +123,7 @@ def ignore_pain_hps():
     eventPlayer.healing_done_in_combat[22] += eventPlayer.ignore_pain_damage_resisted[1]
 */
 
-/*
+
 rule "DEBUG - - - Activate Slow Motion With Melee & Cancel Slow Motion With Interact [DEFAULT: OFF]":
     @Event eachPlayer
     @Condition eventPlayer.isHoldingButton(Button.MELEE) == true
@@ -115,7 +133,7 @@ rule "DEBUG - - - Activate Slow Motion With Melee & Cancel Slow Motion With Inte
     waitUntil(eventPlayer.isHoldingButton(Button.INTERACT) == false and eventPlayer.isHoldingButton(Button.MELEE) == false, 99999)
     waitUntil(eventPlayer.isHoldingButton(Button.INTERACT) == true and eventPlayer.isHoldingButton(Button.MELEE) == true, 99999)
     setSlowMotion(100)
-*/
+
 
 /*
 rule "DEBUG - - - Create Dummy Bot With Crouch + Primary Fire [DEFAULT: OFF]":
@@ -196,5 +214,5 @@ rule "DEBUG - - - Reset [Talent: Juggernaut] Cooldown With Reload [DEFAULT: OFF]
     @Hero soldier
     @Condition eventPlayer.isHoldingButton(Button.RELOAD) == true
     
-    eventPlayer.talent_trigger_times[Talent.JUGGERNAUT] = getTotalTimeElapsed() - talent_base_cooldowns[Talent.JUGGERNAUT]
+    eventPlayer.talent_trigger_times[Talent.JUGGERNAUT] = eventPlayer.totalTimeElapsed - talent_base_cooldowns[Talent.JUGGERNAUT]
 */
