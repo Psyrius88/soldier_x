@@ -25,9 +25,9 @@ rule "BOT SYSTEM - - - Bot INIT":
     
     eventPlayer.reaper_view_angle = 90
     eventPlayer.reaper_turn_speed = 200
-    eventPlayer.setMaxHealth(200)
+    eventPlayer.setMaxHealth(1000)
     #Damage, Health, Speed, Armor, Shields, Size
-    eventPlayer.stats = [100, 200, 75, 0, 0, 1, 1]
+    eventPlayer.stats = [100, 1000, 75, 0, 0, 1, 1]
     #[0] = Current Target, [1] = Searching For Target, [2] = Using Teleport Ability, [3] = Is Pathfinding, [4] = Is Changing Direction
     eventPlayer.reaper_brain_information = [null, false, false, false, false]
     eventPlayer.reaper_aggro_list = []
@@ -35,9 +35,10 @@ rule "BOT SYSTEM - - - Bot INIT":
     eventPlayer.reaper_has_respawned_once = false
     eventPlayer.reaper_hello_cooldown = 0
     chase(eventPlayer.reaper_hello_cooldown, 0, rate=1, ChaseReeval.DESTINATION_AND_RATE)
+    eventPlayer.startHoT(eventPlayer, 9999, 500)
 
 
-rule "BOT SYSTEM - - - Add Player To Aggro List":
+/*rule "BOT SYSTEM - - - Add Player To Aggro List":
     @Event playerTookDamage
     @Hero reaper
     @Condition spawn_bots == true
@@ -170,7 +171,7 @@ rule "BOT SYSTEM - - - Bot Start Shooting":
     eventPlayer.stopForcingButton(Button.PRIMARY_FIRE)
     if RULE_CONDITION:
         goto RULE_START
-
+*/
 
 rule "BOT SYSTEM - - - Bot Respawn Once":
     @Event eachPlayer
@@ -203,7 +204,7 @@ rule "BOT SYSTEM - - - Bot Died":
     waitUntil(eventPlayer.isAlive() == true and eventPlayer.hasSpawned() == true, 99999)
     eventPlayer.setGravity(50)
 
-
+/*
 rule "BOT SYSTEM - - - Bot Use Teleport":
     @Event eachPlayer
     @Hero reaper
@@ -220,7 +221,7 @@ rule "BOT SYSTEM - - - Bot Use Teleport":
     if eventPlayer.getAbilityCooldown(Button.ABILITY_2) == 0:
         eventPlayer.forceButtonPress(Button.SECONDARY_FIRE)
     eventPlayer.reaper_brain_information[2] = false
-
+*/
 
 /*
 def start_pathfinding():

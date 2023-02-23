@@ -1,4 +1,5 @@
 #!mainFile "soldier_x.opy"
+
 rule "DEBUG - - - Hold Reload For XP [DEFAULT: OFF]":
     @Event eachPlayer
     @Condition eventPlayer.isHoldingButton(Button.RELOAD) == true
@@ -7,94 +8,92 @@ rule "DEBUG - - - Hold Reload For XP [DEFAULT: OFF]":
     
     if eventPlayer.experience_current < eventPlayer.experience_max:
         eventPlayer.experience_current += eventPlayer.experience_max/25
-    if eventPlayer.isHoldingButton(Button.INTERACT):
-        damage(eventPlayer, eventPlayer, 100)
     wait(0.02)
     if RULE_CONDITION:
         goto RULE_START
 
+/*
 rule "DEBUG - - - Activate Admin Rights [DEFAULT: OFF]":
     @Event eachPlayer
     @Hero soldier
     @Condition hostPlayer == eventPlayer
 
     debugging = true
+    */
 
-
-    
-
-/*
-rule "DEBUG - - - Abilities [DEFAULT: OFF]":
+rule "DEBUG - - - Hold Crouch + Jump to take Damage [DEFAULT: OFF]":
     @Event eachPlayer
-    @Hero soldier
-    @Condition eventPlayer.hasSpawned() == true
-    
-    #Burning Soul (has no buy subroutine)
-    #return
-    #Purity Field
-    #return
-    #Engineer
-    #return
-    #Stealth
-    #return
-    #Cryogenics
-    #return
-    #Juggernaut
-    #return
-    #Railgun
-    #return
-    #Shadowstep
-    #return
-    #Dive Bomb
-    #return
-    #Jetpack
-    #return
-    #Predator
-    eventPlayer.talent_ranks[Talent.PREDATOR] = 1
-    buy_predator()
-    eventPlayer.talent_ranks[Talent.PREDATOR] = 5
-    #Health Potions
-    #return
-    #Poison Vials
-    #return
-    #Soul Siphon
-    eventPlayer.talent_ranks[Talent.SOUL_SIPHON] = 1
-    buy_soul_siphon()
-    eventPlayer.talent_ranks[Talent.SOUL_SIPHON] = 5
-    #Overclock
-    #return
-    #Ignore Pain
-    #return
-    #Lifesteal
-    #return
-    #Health Regen
-    #return
-    #Fireball
-    #return
-    #Berserker
-    #return
-    #Bloodthirst
-    #return
-    #Shadowstrike
-    #return
-    #Ignite
-    #return
-    #Pyromaniac
-    #return
-    #Cybernetics
-    #return
-*/
+    @Condition eventPlayer.isHoldingButton(Button.CROUCH) == true
+    @Condition eventPlayer.isHoldingButton(Button.JUMP) == true
+    @Condition eventPlayer.browsing_shop == false
+        damage(eventPlayer, eventPlayer, 100)    
+
+def buy_debug_talents():
+    if debug_gunslinger > 0:
+        eventPlayer.talent_ranks[Talent.GUNSLINGER] = 1
+        eventPlayer.bought_talents.append(Talent.GUNSLINGER)
+        buy_gunslinger()
+        eventPlayer.talent_ranks[Talent.GUNSLINGER] = debug_gunslinger
+        eventPlayer.amount_of_talents_purchased += debug_gunslinger
+    if debug_bombardment > 0:
+        eventPlayer.talent_ranks[Talent.BOMBARDMENT] = 1
+        eventPlayer.bought_talents.append(Talent.BOMBARDMENT)
+        buy_bombardment()
+        eventPlayer.talent_ranks[Talent.BOMBARDMENT] = debug_bombardment
+        eventPlayer.amount_of_talents_purchased += debug_bombardment
+    if debug_railgun > 0:
+        eventPlayer.talent_ranks[Talent.RAILGUN] = 1
+        eventPlayer.bought_talents.append(Talent.RAILGUN)
+        buy_railgun()
+        eventPlayer.talent_ranks[Talent.RAILGUN] = debug_railgun
+        eventPlayer.amount_of_talents_purchased += debug_railgun
+    if debug_lifesteal_ammo > 0:
+        eventPlayer.talent_ranks[Talent.LIFESTEAL_AMMO] = 1
+        eventPlayer.bought_talents.append(Talent.LIFESTEAL_AMMO)
+        buy_lifesteal_ammo()
+        eventPlayer.talent_ranks[Talent.LIFESTEAL_AMMO] = debug_lifesteal_ammo
+        eventPlayer.amount_of_talents_purchased += debug_lifesteal_ammo
+    if debug_cryogenics > 0:
+        eventPlayer.talent_ranks[Talent.CRYOGENICS] = 1
+        eventPlayer.bought_talents.append(Talent.CRYOGENICS)
+        buy_cryogenics()
+        eventPlayer.talent_ranks[Talent.CRYOGENICS] = debug_cryogenics
+        eventPlayer.amount_of_talents_purchased += debug_cryogenics
+    if debug_ignite > 0:
+        eventPlayer.talent_ranks[Talent.IGNITE] = 1
+        eventPlayer.bought_talents.append(Talent.IGNITE)
+        buy_ignite()
+        eventPlayer.talent_ranks[Talent.IGNITE] = debug_ignite
+        eventPlayer.amount_of_talents_purchased += debug_ignite
+    if debug_overclock > 0:
+        eventPlayer.talent_ranks[Talent.OVERCLOCK] = 1
+        eventPlayer.bought_talents.append(Talent.OVERCLOCK)
+        buy_overclock()
+        eventPlayer.talent_ranks[Talent.OVERCLOCK] = debug_overclock
+        eventPlayer.amount_of_talents_purchased += debug_overclock
+    if debug_ignore_pain > 0:
+        eventPlayer.talent_ranks[Talent.IGNORE_PAIN] = 1
+        eventPlayer.bought_talents.append(Talent.IGNORE_PAIN)
+        buy_ignore_pain()
+        eventPlayer.talent_ranks[Talent.IGNORE_PAIN] = debug_ignore_pain
+        eventPlayer.amount_of_talents_purchased += debug_ignore_pain
+    if debug_burning_soul > 0:
+        eventPlayer.talent_ranks[Talent.BURNING_SOUL] = 1
+        eventPlayer.bought_talents.append(Talent.BURNING_SOUL)
+        buy_burning_soul()
+        eventPlayer.talent_ranks[Talent.BURNING_SOUL] = debug_burning_soul
+        eventPlayer.amount_of_talents_purchased += debug_burning_soul
+
 rule "DEBUG - - - Host HUD Texts [DEFAULT: OFF]":
     @Event eachPlayer
     @Hero soldier
     @Condition hostPlayer == eventPlayer
 
     hudText(hostPlayer, "Amount of texts: {0}".format(getNumberOfTextIds()), "", "", HudPosition.RIGHT, 99, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
-    hudText(hostPlayer, "Max XP: {0}".format(eventPlayer.experience_max), "", "", HudPosition.RIGHT, 100, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
-    hudText(hostPlayer, "Amount of Talents: {0}".format(eventPlayer.amount_of_talents_purchased), "", "", HudPosition.RIGHT, 101, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
-    hudText(hostPlayer, "Using Hearthstone: {0}".format(eventPlayer.is_using_hearthstone), "", "", HudPosition.RIGHT, 101, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
-    hudText(hostPlayer, "Using Skip Talent: {0}".format(eventPlayer.is_using_skip_talent), "", "", HudPosition.RIGHT, 101, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
-    hudText(hostPlayer, "Using One of the HS: {0}".format(eventPlayer.using_one_of_the_hearthstones), "", "", HudPosition.RIGHT, 101, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
+    hudText(hostPlayer, "Amount of effects: {0}".format(getNumberOfEntityIds()), "", "", HudPosition.RIGHT, 99.1, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
+    hudText(hostPlayer, "Amount of effects: {0}".format(eventPlayer.rockets_cooldown), "", "", HudPosition.RIGHT, 99.2, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
+    hudText(hostPlayer, "Srv Load: {0} {1} {2}".format(getServerLoad(), getAverageServerLoad(), getPeakServerLoad()), "", "", HudPosition.RIGHT, 105, Color.RED, Color.RED, Color.RED, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
+    hudText(hostPlayer, null, null, ("DPS:"), HudPosition.RIGHT, 106, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
     /*
     hudText(hostPlayer, "Lifesteal Ammo:", "In Combat Avg: {0} {1}".format("[Rank 1: {0}] [Rank 2: {1}] [Rank 3: {2}]".format(lifesteal_total_healing[1] / lifesteal_time_in_combat[1], lifesteal_total_healing[2] / lifesteal_time_in_combat[2], lifesteal_total_healing[3] / lifesteal_time_in_combat[3]), "[Rank 4: {0}] [Rank 5: {1}]".format(lifesteal_total_healing[4] / lifesteal_time_in_combat[4], lifesteal_total_healing[5] / lifesteal_time_in_combat[5])), null, HudPosition.LEFT, 100, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
     hudText(hostPlayer, "Health Regen:", "In Combat Avg: {0} {1}".format("[Rank 1: {0}] [Rank 2: {1}] [Rank 3: {2}]".format(health_regen_total_healing[1] / health_regen_time_in_combat[1], health_regen_total_healing[2] / health_regen_time_in_combat[2], health_regen_total_healing[3] / health_regen_time_in_combat[3]), "[Rank 4: {0}] [Rank 5: {1}]".format(health_regen_total_healing[4] / health_regen_time_in_combat[4], health_regen_total_healing[5] / health_regen_time_in_combat[5])), null, HudPosition.LEFT, 101, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)

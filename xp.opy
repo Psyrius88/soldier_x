@@ -10,6 +10,8 @@ rule "XP SYSTEM - - - Level 0 or 25? Activate XP Boost":
     if eventPlayer.amount_of_talents_purchased == 0:
         eventPlayer.totalTimeElapsed = 0
         chase(eventPlayer.totalTimeElapsed, 99999, rate=1, ChaseReeval.DESTINATION_AND_RATE)
+        if debugging == true:
+            buy_debug_talents()
         return
     waitUntil(eventPlayer.amount_of_talents_purchased < 25, 99999)
     eventPlayer.xp_boost_is_active = false

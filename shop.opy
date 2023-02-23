@@ -57,7 +57,7 @@ subroutine buy_health_potions
 subroutine buy_ignite
 subroutine buy_overclock
 subroutine buy_shadowstep
-subroutine buy_fire_aura
+subroutine buy_burning_soul
 subroutine buy_berserker
 subroutine buy_fireball
 subroutine buy_ignore_pain
@@ -65,6 +65,10 @@ subroutine buy_soul_siphon
 subroutine buy_pyromaniac
 subroutine buy_poison_vials
 subroutine buy_crazy_alchemist
+subroutine buy_bombardment
+subroutine buy_gigachad
+subroutine buy_gunslinger
+subroutine buy_sprinter
 
 #Activated extensions
 
@@ -82,6 +86,9 @@ rule "SHOP - - - Using Hearthstone":
     @Condition eventPlayer.in_combat == 0
     @Condition eventPlayer.isHoldingButton(Button.RELOAD) == true
     @Condition eventPlayer.is_using_ability[Talent.JUGGERNAUT] == false
+    @Condition eventPlayer.is_using_ability[Talent.DIVE_BOMB] == false
+    @Condition eventPlayer.railgun_charge == 0
+
     
     wait(0.125, Wait.ABORT_WHEN_FALSE)
     eventPlayer.is_using_hearthstone = true
@@ -588,7 +595,7 @@ def buy_or_upgrade_talent():
     elif eventPlayer.current_talent_replace_or_buy == Talent.SHADOWSTEP:
         buy_shadowstep()
     elif eventPlayer.current_talent_replace_or_buy == Talent.BURNING_SOUL:
-        buy_fire_aura()
+        buy_burning_soul()
     elif eventPlayer.current_talent_replace_or_buy == Talent.BERSERKER:
         buy_berserker()
     elif eventPlayer.current_talent_replace_or_buy == Talent.FIREBALL:
@@ -607,6 +614,14 @@ def buy_or_upgrade_talent():
         buy_poison_vials()
     elif eventPlayer.current_talent_replace_or_buy == Talent.CRAZY_ALCHEMIST:
         buy_crazy_alchemist()
+    elif eventPlayer.current_talent_replace_or_buy == Talent.BOMBARDMENT:
+        buy_bombardment()
+    elif eventPlayer.current_talent_replace_or_buy == Talent.GIGACHAD:
+        buy_gigachad()
+    elif eventPlayer.current_talent_replace_or_buy == Talent.GUNSLINGER:
+        buy_gunslinger()
+    elif eventPlayer.current_talent_replace_or_buy == Talent.SPRINTER:
+        buy_sprinter()
 
 /*
 def leave_shop_messages():
@@ -650,7 +665,7 @@ def buy_cybernetics():
     if eventPlayer.talent_ranks[Talent.CYBERNETICS] == 1:
         eventPlayer.talents_you_do_not_have.remove(Talent.CYBERNETICS)
     #Shields
-    eventPlayer.stats[4] = eventPlayer.stats[4] + 40
+    eventPlayer.stats[4] = eventPlayer.stats[4] + 30
 
 def buy_engineer():
     @Name "TALENT SYSTEM - - - [TALENT 3: ENGINEER] [SUBROUTINE] Buy Engineer"
@@ -748,15 +763,18 @@ def buy_railgun():
             return
         stopChasingVariable(eventPlayer.railgun_discharge)
         destroyEffect(eventPlayer.player_temp_effects[59])
+        destroyEffect(eventPlayer.player_temp_effects[76])
         eventPlayer.railgun_discharge = 0
         eventPlayer.railgun_charge = 0
         eventPlayer.setSecondaryFireEnabled(true)
         eventPlayer.railgun_projectile_start = []
         eventPlayer.railgun_projectile_player_hit = []
         eventPlayer.talents_you_do_not_have.append(Talent.RAILGUN)
+        eventPlayer.talents_you_do_not_have.append(Talent.BOMBARDMENT)
         eventPlayer.talents_you_do_not_have.remove(Talent.OVERCLOCK)
         return
     if eventPlayer.talent_ranks[Talent.RAILGUN] == 1:
+        eventPlayer.talent_trigger_times[Talent.RAILGUN] = eventPlayer.totalTimeElapsed - talent_base_cooldowns[Talent.RAILGUN]
         if len(eventPlayer.bought_talents) < 5:
             #Unlock follow-up talent
             eventPlayer.possible_talents.append(Talent.OVERCLOCK)
@@ -765,9 +783,12 @@ def buy_railgun():
         chase(eventPlayer.railgun_discharge, 0, rate=1, ChaseReeval.DESTINATION_AND_RATE)
         eventPlayer.railgun_charge = 0
         eventPlayer.setSecondaryFireEnabled(false)
-        createEffect(getAllPlayers() if eventPlayer.railgun_charge >= 100 else null, Effect.ANA_NANO_BOOSTED, Color.TEAM_1, eventPlayer, 100, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+        createEffect(getAllPlayers() if eventPlayer.railgun_charge == 100 else null, Effect.ANA_NANO_BOOSTED, Color.TEAM_1, eventPlayer, 100, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
         eventPlayer.player_temp_effects[59] = getLastCreatedEntity()
+        createEffect(getAllPlayers() if eventPlayer.railgun_charge == 100 else null, Effect.WINSTON_TESLA_CANNON_TARGET_SOUND, Color.TEAM_1, eventPlayer, 75, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+        eventPlayer.player_temp_effects[76] = getLastCreatedEntity()
         eventPlayer.talents_you_do_not_have.remove(Talent.RAILGUN)
+        eventPlayer.talents_you_do_not_have.remove(Talent.BOMBARDMENT)
         eventPlayer.talents_you_do_not_have.append(Talent.OVERCLOCK)
 
 def buy_predator():
@@ -912,7 +933,7 @@ def buy_shadowstep():
         eventPlayer.talents_you_do_not_have.remove(Talent.SHADOWSTEP)
         eventPlayer.talents_you_do_not_have.remove(Talent.SHADOWSTRIKE)
 
-def buy_fire_aura():
+def buy_burning_soul():
     @Name "TALENT SYSTEM - - - [TALENT 19: BURNING SOUL] [SUBROUTINE] Buy Burning Soul"
     
     if eventPlayer.replacing_talent_show_bought_talents == true:
@@ -922,9 +943,9 @@ def buy_fire_aura():
         destroyEffect(eventPlayer.player_temp_effects[66])
         return
     if eventPlayer.talent_ranks[Talent.BURNING_SOUL] == 1:
-        createEffect(getAllPlayers() if eventPlayer.isCommunicatingEmote() == true else [player for player in getAllPlayers() if player != eventPlayer], Effect.ASHE_DYNAMITE_BURNING_PARTICLE, Color.TEAM_1, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+        createEffect(getAllPlayers() if "{0}".format(eventPlayer.isCommunicatingEmote()) == "false" else [player for player in getAllPlayers() if player != eventPlayer] if eventPlayer.isUsingAbility1() == false else null, Effect.ASHE_DYNAMITE_BURNING_PARTICLE, Color.TEAM_1, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
         eventPlayer.player_temp_effects[65] = getLastCreatedEntity()
-        createEffect(getAllPlayers(), Effect.ASHE_DYNAMITE_BURNING_MATERIAL, Color.TEAM_2, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+        createEffect(getAllPlayers() if eventPlayer.isUsingAbility1() == false else null, Effect.ASHE_DYNAMITE_BURNING_MATERIAL, Color.TEAM_2, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
         eventPlayer.player_temp_effects[66] = getLastCreatedEntity()
         chase(eventPlayer.burning_soul_orb_timer, 0, rate=1, ChaseReeval.DESTINATION_AND_RATE)
         eventPlayer.talents_you_do_not_have.remove(Talent.BURNING_SOUL)
@@ -1079,3 +1100,92 @@ def buy_crazy_alchemist():
         return
     if eventPlayer.talent_ranks[Talent.CRAZY_ALCHEMIST] == 1:
         eventPlayer.talents_you_do_not_have.remove(Talent.CRAZY_ALCHEMIST)
+
+def buy_bombardment():
+    @Name "TALENT SYSTEM - - - [BOMBARDMENT] [SUBROUTINE] Buy Bombardment"
+    
+    if eventPlayer.replacing_talent_show_bought_talents == true:
+        eventPlayer.talents_you_do_not_have.append(Talent.BOMBARDMENT)
+        eventPlayer.talents_you_do_not_have.append(Talent.GUNSLINGER)
+        eventPlayer.talents_you_do_not_have.append(Talent.RAILGUN)
+        eventPlayer.setMaxAmmo(0, 30)
+        eventPlayer.setProjectileSpeed(100)
+        return
+    if eventPlayer.talent_ranks[Talent.BOMBARDMENT] == 1:
+        eventPlayer.talents_you_do_not_have.remove(Talent.BOMBARDMENT)
+        eventPlayer.talents_you_do_not_have.remove(Talent.GUNSLINGER)
+        eventPlayer.talents_you_do_not_have.remove(Talent.RAILGUN)
+        eventPlayer.possible_talents.remove(Talent.BOMBARDMENT)
+        eventPlayer.setMaxAmmo(0, 0)
+        eventPlayer.setProjectileSpeed(70)
+
+def buy_gigachad():
+    @Name "TALENT SYSTEM - - - [GIGACHAD] [SUBROUTINE] Buy GIGACHAD"
+    
+    if eventPlayer.replacing_talent_show_bought_talents == true:
+        eventPlayer.talents_you_do_not_have.append(Talent.GIGACHAD)
+        eventPlayer.talents_you_do_not_have.append(Talent.SPRINTER)
+        #Health
+        eventPlayer.stats[1] = 250
+        #Speed
+        eventPlayer.stats[2] = 100
+        #Size
+        eventPlayer.stats[8] = 1
+        eventPlayer.startScalingSize(eventPlayer.stats[8], false)
+        #Voice
+        eventPlayer.stats[6] = 1
+        eventPlayer.startModifyingVoicelinePitch(eventPlayer.stats[6], false)
+        return
+    if eventPlayer.talent_ranks[Talent.GIGACHAD] == 1:
+        eventPlayer.talents_you_do_not_have.remove(Talent.GIGACHAD)
+        eventPlayer.talents_you_do_not_have.remove(Talent.SPRINTER)
+    #Health
+    eventPlayer.stats[1] += 50
+    #Speed
+    eventPlayer.stats[2] -= 5
+    #Size
+    eventPlayer.stats[8] += 0.07
+    eventPlayer.startScalingSize(eventPlayer.stats[8], false)
+    #Voice
+    eventPlayer.stats[6] -= 0.05
+    eventPlayer.startModifyingVoicelinePitch(eventPlayer.stats[6], false)
+
+def buy_gunslinger():
+    @Name "TALENT SYSTEM - - - [GUNSLINGER] [SUBROUTINE] Buy GUNSLINGER"
+    
+    if eventPlayer.replacing_talent_show_bought_talents == true:
+        eventPlayer.allowButton(Button.PRIMARY_FIRE)
+        eventPlayer.talents_you_do_not_have.append(Talent.GUNSLINGER)
+        eventPlayer.talents_you_do_not_have.append(Talent.BOMBARDMENT)
+        eventPlayer.setMaxAmmo(0, 30)
+        return
+    if eventPlayer.talent_ranks[Talent.GUNSLINGER] == 1:
+        eventPlayer.disallowButton(Button.PRIMARY_FIRE)
+        eventPlayer.talents_you_do_not_have.remove(Talent.GUNSLINGER)
+        eventPlayer.talents_you_do_not_have.remove(Talent.BOMBARDMENT)
+        eventPlayer.possible_talents.remove(Talent.BOMBARDMENT)
+        eventPlayer.setMaxAmmo(0, 6)
+        eventPlayer.setAmmo(0, 6)
+
+def buy_sprinter():
+    @Name "TALENT SYSTEM - - - [SPRINTER] [SUBROUTINE] Buy SPRINTER"
+    
+    if eventPlayer.replacing_talent_show_bought_talents == true:
+        eventPlayer.talents_you_do_not_have.append(Talent.SPRINTER)
+        eventPlayer.talents_you_do_not_have.append(Talent.GIGACHAD)
+        #Size
+        eventPlayer.stats[8] = 1
+        eventPlayer.startScalingSize(eventPlayer.stats[8], false)
+        #Voice
+        eventPlayer.stats[6] = 1
+        eventPlayer.startModifyingVoicelinePitch(eventPlayer.stats[6], false)
+        return
+    if eventPlayer.talent_ranks[Talent.SPRINTER] == 1:
+        eventPlayer.talents_you_do_not_have.remove(Talent.SPRINTER)
+        eventPlayer.talents_you_do_not_have.remove(Talent.GIGACHAD)
+    #Size
+    eventPlayer.stats[8] -= 0.035
+    eventPlayer.startScalingSize(eventPlayer.stats[8], false)
+    #Voice
+    eventPlayer.stats[6] += 0.075
+    eventPlayer.startModifyingVoicelinePitch(eventPlayer.stats[6], false)

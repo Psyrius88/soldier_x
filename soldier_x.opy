@@ -1,7 +1,8 @@
 settings {
     "main": {
-        "description": "Discover new ways to play with Soldier: 76! Level up and choose talents that change the way you play. Some talent examples: Sneak around in Stealth - Blast other players with Fireball - Heal yourself with Healing Potions -------------------------------- Big thanks to everyone that has helped me in the Elo Hell Workshops Discord. This wouldn't be possible without you guys!",
-        "modeName": "<fg00ffffff>S<fg2bffffff>o<fg55ffffff>l<fg80ffffff>d<fgaaffffff>i<fgd5ffffff>e<fgffffffff>r: X [v3.0]</fg>"
+        "description": "<FGce9e51f>● Made by Psyrius\n<FGddb465f>● Code: ZEKK3\n<FGebca78f>● v3.0 BETA\n<FGf8e2a7f>● RPG, Level up, Buy talents, FFA, Deathmatch\n<FGfeeebef>● Developed for 3 years",
+        "modeName": "<FGd26900f>S<FGcc7315f>O<FGc67e29f>L<FGc0883ef>D<FGce9e51f>I<FGddb465f>E<FGebca78f>R: <FGf8e2a7f>X <FGfeeebef>[v3.0]"
+
     },
     "lobby": {
         "allowPlayersInQueue": true,
@@ -59,6 +60,7 @@ settings {
                 "ultGen%": 180
             },
             "soldier": {
+                "secondaryFireCooldown%": 16.6,
                 "combatUltGen%": 0,
                 "passiveUltGen%": 0,
                 "ultGen%": 10
@@ -113,10 +115,25 @@ enum Talent:
     SOUL_SIPHON,
     PYROMANIAC,
     POISON_VIALS,
-    CRAZY_ALCHEMIST
+    CRAZY_ALCHEMIST,
+    BOMBARDMENT,
+    GIGACHAD,
+    GUNSLINGER,
+    SPRINTER
 
 #Global variables
-globalvar debugging = false
+globalvar debugging = createWorkshopSetting(bool, "Settings", "Debugging", true, 0)
+globalvar debug_gunslinger = createWorkshopSetting(int[0:5], "Talents", "Gunslinger", 0, Talent.GUNSLINGER)
+globalvar debug_bombardment = createWorkshopSetting(int[0:5], "Talents", "Bombardment", 0, Talent.BOMBARDMENT)
+globalvar debug_railgun = createWorkshopSetting(int[0:5], "Talents", "Railgun", 0, Talent.RAILGUN)
+globalvar debug_lifesteal_ammo = createWorkshopSetting(int[0:5], "Talents", "Lifesteal Ammo", 0, Talent.LIFESTEAL_AMMO)
+globalvar debug_cryogenics = createWorkshopSetting(int[0:5], "Talents", "Cryogenics", 0, Talent.CRYOGENICS)
+globalvar debug_ignite = createWorkshopSetting(int[0:5], "Talents", "Ignite", 0, Talent.IGNITE)
+globalvar debug_overclock = createWorkshopSetting(int[0:5], "Talents", "Overclock", 0, Talent.OVERCLOCK)
+globalvar debug_ignore_pain = createWorkshopSetting(int[0:5], "Talents", "Ignore Pain", 0, Talent.IGNORE_PAIN)
+globalvar debug_burning_soul = createWorkshopSetting(int[0:5], "Talents", "Burning Soul", 0, Talent.BURNING_SOUL)
+globalvar dpstracking_dpsTime = createWorkshopSetting(int[1:60], "Settings", "DPS Time", 20, 1)
+globalvar dpstracking_bot
 globalvar amount_of_dummy_bots = 0
 globalvar map_is_changing = false
 globalvar antiCrashActivated
@@ -140,6 +157,12 @@ globalvar xp_orb_mines = [null, null, null, null, null, null, null, null]
 globalvar xp_orb_values = [null, null, null, null, null, null, null, null]
 
 #Player variables
+playervar dpstracking_started_timer
+playervar dpstracking_time
+playervar dpstracking_damage
+playervar dpstracking_textID
+playervar dpstracking_position
+playervar rockets_cooldown
 playervar totalTimeElapsed
 playervar dummy_var
 playervar amount_of_potions_or_vials
@@ -167,18 +190,18 @@ playervar player_name = "{0}".format(eventPlayer)
 playervar player_temp_effects
 playervar poison_vial_clouds_spawned
 playervar poison_vial_effects
-playervar possible_talents = [Talent.PURITY_FIELD, Talent.CYBERNETICS, Talent.ENGINEER, Talent.SHADOWSTRIKE, Talent.STEALTH, Talent.JUGGERNAUT, Talent.DIVE_BOMB, Talent.CRYOGENICS, Talent.RAILGUN, Talent.PREDATOR, Talent.JETPACK, Talent.LIFESTEAL_AMMO, Talent.HEALTH_REGEN, Talent.HEALTH_POTIONS, Talent.IGNITE, Talent.SHADOWSTEP, Talent.BURNING_SOUL, Talent.BERSERKER, Talent.FIREBALL, Talent.IGNORE_PAIN, Talent.POISON_VIALS]
+playervar possible_talents = [Talent.PURITY_FIELD, Talent.CYBERNETICS, Talent.ENGINEER, Talent.SHADOWSTRIKE, Talent.STEALTH, Talent.JUGGERNAUT, Talent.DIVE_BOMB, Talent.CRYOGENICS, Talent.RAILGUN, Talent.PREDATOR, Talent.JETPACK, Talent.LIFESTEAL_AMMO, Talent.HEALTH_REGEN, Talent.HEALTH_POTIONS, Talent.IGNITE, Talent.SHADOWSTEP, Talent.BURNING_SOUL, Talent.BERSERKER, Talent.FIREBALL, Talent.IGNORE_PAIN, Talent.POISON_VIALS, Talent.BOMBARDMENT, Talent.GIGACHAD, Talent.GUNSLINGER, Talent.SPRINTER]
 playervar poison_vials_projPos
 playervar poison_vials_projPosIn0032
 playervar random_integer_between_0_to_5
 /*playervar replace_replacing_or_cancelled = [false, false, false]*/
 playervar selected_talent = [1, 0]
 playervar skipped_a_talent
-#[0] = Damage, [1] = Health, [2] = Speed, [3] = Armor, [4] = Shields, [5] = XP, [6] = Voice, [7] = Berserker Helper
-playervar stats = [100, 250, 100, 0, 0, 0.65, 1, 0]
+#[0] = Damage, [1] = Health, [2] = Speed, [3] = Armor, [4] = Shields, [5] = XP, [6] = Voice, [7] = Berserker Helper, [8] = Size
+playervar stats = [100, 250, 100, 0, 0, 0.65, 1, 0, 1]
 playervar talent_counter_or_position_etc
 playervar talent_ranks = []
-playervar talents_you_do_not_have = [Talent.PURITY_FIELD, Talent.CYBERNETICS, Talent.ENGINEER, Talent.SHADOWSTRIKE, Talent.STEALTH, Talent.JUGGERNAUT, Talent.DIVE_BOMB, Talent.CRYOGENICS, Talent.RAILGUN, Talent.PREDATOR, Talent.JETPACK, Talent.LIFESTEAL_AMMO, Talent.HEALTH_REGEN, Talent.HEALTH_POTIONS, Talent.IGNITE, Talent.SHADOWSTEP, Talent.BURNING_SOUL, Talent.BERSERKER, Talent.FIREBALL, Talent.IGNORE_PAIN, Talent.POISON_VIALS]
+playervar talents_you_do_not_have = [Talent.PURITY_FIELD, Talent.CYBERNETICS, Talent.ENGINEER, Talent.SHADOWSTRIKE, Talent.STEALTH, Talent.JUGGERNAUT, Talent.DIVE_BOMB, Talent.CRYOGENICS, Talent.RAILGUN, Talent.PREDATOR, Talent.JETPACK, Talent.LIFESTEAL_AMMO, Talent.HEALTH_REGEN, Talent.HEALTH_POTIONS, Talent.IGNITE, Talent.SHADOWSTEP, Talent.BURNING_SOUL, Talent.BERSERKER, Talent.FIREBALL, Talent.IGNORE_PAIN, Talent.POISON_VIALS, Talent.BOMBARDMENT, Talent.GIGACHAD, Talent.GUNSLINGER, Talent.SPRINTER]
 playervar time_since_poison_vial_exploded
 playervar using_one_of_the_hearthstones
 playervar which_is_talent_unique_unlocked = [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false]
@@ -193,8 +216,10 @@ playervar xp_orb_destination
 #!defineMember replacing_talent_show_bought_talents dummy_var[5]
 #!defineMember replacing_talent_cancelled dummy_var[6]
 #!defineMember totalTimeElapsed_alignment dummy_var[7]
+#!defineMember amount_of_bullets dummy_var[7]
 
 #Subroutine names
+subroutine buy_debug_talents
 subroutine bloodthirst_effects
 subroutine break_stealth
 subroutine cancel_juggernaut
@@ -246,6 +271,15 @@ generateTalents()
 #!define PREDATOR_COOLDOWN_REDUCTION_PER_RANK 6
 #!define HEALTH_POTIONS_COOLDOWN_REDUCTION_PER_RANK 1
 
+#Railgun: Rank 1: 150(300 headshot) damage, Rank 5: 200(400 headshot) damage
+#!define RAILGUN_DAMAGE 275 - eventDamage + (attacker.talent_ranks[Talent.RAILGUN] * 25) if eventWasCriticalHit == true else 137.5 - eventDamage + (attacker.talent_ranks[Talent.RAILGUN] * 12.5)
+#Gunslinger: Rank 1: 81(162 headshot) damage, Rank 5: 93(186 headshot) damage
+#!define GUNSLINGER_DAMAGE (round((eventDamage * 3.333) + (eventDamage * attacker.talent_ranks[Talent.GUNSLINGER] * 0.166)))
+#Ignite: Rank 1: 20 total damage, Rank 5: 100 total damage
+#!define IGNITE_DAMAGE_PER_SECOND (round(attacker.talent_ranks[Talent.IGNITE] * 0.055 * eventDamage / 6) if attacker.talent_ranks[Talent.BOMBARDMENT] > 0 else round(attacker.talent_ranks[Talent.IGNITE] * 0.055 * 120 / 3) if attacker.talent_ranks[Talent.RAILGUN] > 0 else ceil(attacker.talent_ranks[Talent.IGNITE] * 0.055 * eventDamage))
+#Bombardment: Rank 1: 4 total damage, Rank 5: 20 total damage
+#!define BOMBARDMENT_DAMAGE attacker.talent_ranks[Talent.BOMBARDMENT] * 4
+
 #!include "bots.opy"
 #!include "xp.opy"
 #!include "shop.opy"
@@ -261,7 +295,7 @@ rule "GENERAL - - - Global Variables":
     #Additional Talent Descriptions
     createInWorldText(localPlayer if localPlayer.browsing_shop == true and localPlayer.replacing_talent_show_confirmation == false and localPlayer.replacing_talent_show_bought_talents == false else null, "Hold {0} for more information...".format(buttonString(Button.JUMP)) if localPlayer.isHoldingButton(Button.JUMP) == false else "{0}".format(additional_information[localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]]]), localPlayer.selected_talent_location + vect(0, -1 * 1 * 1 * 1.25, 0), 1, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.GRAY if localPlayer.isHoldingButton(Button.JUMP) == false else Color.WHITE, SpecVisibility.DEFAULT)
     #Talent Information Unique
-    createInWorldText(localPlayer if (localPlayer.browsing_shop and localPlayer.isHoldingButton(Button.JUMP) and not localPlayer.replacing_talent_show_confirmation and not localPlayer.replacing_talent_show_bought_talents and is_talent_unique[localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]]]) else null, "[Unique]: {} Can not be learned after learning {}".format(talent_names[talent_information_unique[localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]]]], talent_names[localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]]]), localPlayer.selected_talent_location + vect(0, -1.5, 0), 1, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.WHITE, SpecVisibility.DEFAULT)
+    createInWorldText(localPlayer if (localPlayer.browsing_shop and localPlayer.isHoldingButton(Button.JUMP) and not localPlayer.replacing_talent_show_confirmation and not localPlayer.replacing_talent_show_bought_talents and is_talent_unique[localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]]]) else null, "[Unique]: {} Can not be learned after learning {}".format(talent_names[talent_information_unique[localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]]]], talent_names[localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]]]) if len(talent_information_unique[localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]]]) == 1 else "[Unique]: {} and {} Can not be learned after learning {}".format(talent_names[talent_information_unique[localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]]]], talent_names[talent_information_unique[localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]]][1]], talent_names[localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]]]), localPlayer.selected_talent_location + vect(0, -1.5, 0), 1, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.WHITE, SpecVisibility.DEFAULT)
     #Talent Information Expand Mind
     createInWorldText(localPlayer if localPlayer.browsing_shop and talent_information_expand_mind[localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]]] != null and localPlayer.isHoldingButton(Button.JUMP) and not localPlayer.replacing_talent_show_confirmation and not localPlayer.replacing_talent_show_bought_talents else null, "[Expand Mind]: {} can appear in shop after learning {}".format(talent_names[talent_information_expand_mind[localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]]]], talent_names[localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]]]), localPlayer.selected_talent_location + vect(0, -1 * 1 * 1 * 1.375, 0), 1, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.WHITE, SpecVisibility.DEFAULT)
     /*createInWorldText(localPlayer if (localPlayer.browsing_shop == true and localPlayer.replacing_talent_show_confirmation == false and localPlayer.replacing_talent_show_bought_talents == false) == true and localPlayer.isHoldingButton(Button.JUMP) == true else null, "Rank {0}: Amount healed: {1}% of the damage you dealt during {2}.".format(localPlayer.talent_ranks[Talent.BLOODTHIRST] + 1, round((100 * (0.187 + ((localPlayer.talent_ranks[Talent.BLOODTHIRST] + 1) * 0.063))) * (2.25 - ((localPlayer.talent_ranks[Talent.BERSERKER] + 1) * 0.25))), talent_names[Talent.BERSERKER]) if localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]] == [Talent.BLOODTHIRST] else "Rank {0}: Duration: {1} sec, {2}".format(localPlayer.talent_ranks[Talent.PURITY_FIELD] + 1, 3.75 + ((localPlayer.talent_ranks[Talent.PURITY_FIELD] + 1) * 1.25), "Healing Received: {0}%, Cooldown: {1} sec.".format(125 + ((localPlayer.talent_ranks[Talent.PURITY_FIELD] + 1) * 25), 45)) if localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]] == [Talent.PURITY_FIELD] else "Rank {0}: Total Shields: {1}.".format(localPlayer.talent_ranks[Talent.CYBERNETICS] + 1, 40 * (localPlayer.talent_ranks[Talent.PURITY_FIELD] + 1)) if localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]] == [Talent.CYBERNETICS] else "Rank {0}: Charge Rate: {1}% of the damage you deal with primary fire, Total Armor Repaired: 100.".format(localPlayer.talent_ranks[Talent.ENGINEER] + 1, round(100 * (0.037 + ((localPlayer.talent_ranks[Talent.ENGINEER] + 1) * 0.013)))) if localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]] == [Talent.ENGINEER] else "Rank {0}: Damage: {1}, Cooldown without hitting any targets: 20 sec.".format(localPlayer.talent_ranks[Talent.SHADOWSTRIKE] + 1, round(56.25 + ((localPlayer.talent_ranks[Talent.SHADOWSTRIKE] + 1) * 18.75))) if localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]] == [Talent.SHADOWSTRIKE] else "Rank {0}: Duration: {1} sec, {2}.".format(localPlayer.talent_ranks[Talent.STEALTH] + 1, round(10 + ((localPlayer.talent_ranks[Talent.STEALTH] + 1) * 2)), "Cooldown: {0} sec, Anti Healing Duration: 4 sec, Damage: 50.".format(20 - ((localPlayer.talent_ranks[Talent.STEALTH] + 1) * 4))) if localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]] == [Talent.STEALTH] else "Rank {0}: Damage: {1}, Cooldown: 20 sec, Charge Duration: 10 sec, Stun Duration: Charge duration + 1.5 sec.".format(localPlayer.talent_ranks[Talent.JUGGERNAUT] + 1, 125 + ((localPlayer.talent_ranks[Talent.JUGGERNAUT] + 1) * 25)) if localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]] == [Talent.JUGGERNAUT] else "Rank {0}: Damage: {1}, Cooldown: 20 sec.".format(localPlayer.talent_ranks[Talent.DIVE_BOMB] + 1, 125 + ((localPlayer.talent_ranks[Talent.DIVE_BOMB] + 1) * 25)) if localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]] == [Talent.DIVE_BOMB] else "Rank {0}: Slow Amount: {2}%, Slow Duration: {1} sec.".format(localPlayer.talent_ranks[Talent.DIVE_BOMB] + 1, 2 + ((localPlayer.talent_ranks[Talent.CRYOGENICS] + 1) * 0.2), 50 + ((localPlayer.talent_ranks[Talent.CRYOGENICS] + 1) * 10)) if localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]] == [Talent.CRYOGENICS] else "Rank {0}: Damage {1}, Charge Rate: {2}% of the damage you deal with primary fire.".format(localPlayer.talent_ranks[Talent.RAILGUN] + 1, 81.25 + ((localPlayer.talent_ranks[Talent.RAILGUN] + 1) * 18.75), 100 * 0.375) if localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]] == [Talent.RAILGUN] else "Rank {0}: Cooldown: {1}, Execution range: <25% Health.".format(localPlayer.talent_ranks[Talent.PREDATOR] + 1, 40 - ((localPlayer.talent_ranks[Talent.PREDATOR] + 1) * 6)) if localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]] == [Talent.PREDATOR] else "Rank {0}: Time to deplete fuel from 100-0%: {1} sec, Time to recharge fuel from 0-100%: 10 sec.".format(localPlayer.talent_ranks[Talent.JETPACK] + 1, 4 + ((localPlayer.talent_ranks[Talent.JETPACK] + 1) * 1.2)) if localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]] == [Talent.JETPACK] else "Rank {0}: Healing: {1}% of damage you deal with primary or secondary fire.".format(localPlayer.talent_ranks[Talent.LIFESTEAL_AMMO] + 1, (11.2 + ((localPlayer.talent_ranks[Talent.LIFESTEAL_AMMO] + 1) * 3.8)) / 100) if localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]] == [Talent.LIFESTEAL_AMMO] else "Rank {0}: Healing: {1}/sec.".format(localPlayer.talent_ranks[Talent.HEALTH_REGEN] + 1, 4.5 + ((localPlayer.talent_ranks[Talent.HEALTH_REGEN] + 1) * 0.9)) if localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]] == [Talent.HEALTH_REGEN] else "Rank {0}: Healing: {1}/potion. Potion Recharge: 15 sec.".format(localPlayer.talent_ranks[Talent.HEALTH_POTIONS] + 1, 43.75 + ((localPlayer.talent_ranks[Talent.HEALTH_POTIONS] + 1) * 17.5)) if localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]] == [Talent.HEALTH_POTIONS] else "Rank {0}: Damage: {1}-{2}. Cooldown: 6 sec.".format(localPlayer.talent_ranks[Talent.IGNITE] + 1, floor(((localPlayer.talent_ranks[Talent.IGNITE] + 1) * 0.168) * 40), floor(((localPlayer.talent_ranks[Talent.IGNITE] + 1) * 0.168) * 120)) if localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]] == [Talent.IGNITE] else "Rank {0}: Additional Charge Rate: {1}% of the damage you deal with primary fire.".format(localPlayer.talent_ranks[Talent.OVERCLOCK] + 1, 100 * localPlayer.talent_ranks[Talent.OVERCLOCK] * 0.075) if localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]] == [Talent.OVERCLOCK] else "Rank {0}: Cooldown: {1} sec.".format(localPlayer.talent_ranks[Talent.SHADOWSTEP] + 1, 22.5 - ((localPlayer.talent_ranks[Talent.SHADOWSTEP] + 1) * 2.5)) if localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]] == [Talent.SHADOWSTEP] else "Rank {0}: Damage: {1}, Orb Damage: {2}.".format(localPlayer.talent_ranks[Talent.BURNING_SOUL] + 1, 12 + ((localPlayer.talent_ranks[Talent.BURNING_SOUL] + 1) * 2.4), 75 + ((localPlayer.talent_ranks[Talent.BURNING_SOUL] + 1) * 25)) if localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]] == [Talent.BURNING_SOUL] else "Rank {0}: Duration: {1}, Cooldown: 45 sec, Damage Done: 125%, Damage Taken: 110%.".format(localPlayer.talent_ranks[Talent.BERSERKER] + 1, 3.75 + ((localPlayer.talent_ranks[Talent.BERSERKER] + 1) * 1.25)) if localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]] == [Talent.BERSERKER] else "Rank {0}: Damage: {1}, Cooldown: 12 sec, Radius: 4m.".format(localPlayer.talent_ranks[Talent.FIREBALL] + 1, 75 + ((localPlayer.talent_ranks[Talent.FIREBALL] + 1) * 25)) if localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]] == [Talent.FIREBALL] else "Rank {0}: Damage taken when active: {1}%.".format(localPlayer.talent_ranks[Talent.IGNORE_PAIN] + 1, 66.666 - ((localPlayer.talent_ranks[Talent.IGNORE_PAIN] + 1) * 6.666)) if localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]] == [Talent.IGNORE_PAIN] else "Rank {0}: Healing: {1}.".format(localPlayer.talent_ranks[Talent.SOUL_SIPHON] + 1, 150 + ((localPlayer.talent_ranks[Talent.SOUL_SIPHON] + 1) * 50)) if localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]] == [Talent.SOUL_SIPHON] else "Rank {0}: Healing: {1}.".format(localPlayer.talent_ranks[Talent.PYROMANIAC] + 1, 75 + ((localPlayer.talent_ranks[Talent.FIREBALL] + 1) * 25)) if localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]] == [Talent.PYROMANIAC] else "Rank {0}: Damage: {1}/Vial, Vial Recharge: 15 sec, Radius: 3m.".format(localPlayer.talent_ranks[Talent.POISON_VIALS] + 1, 56.25 + ((localPlayer.talent_ranks[Talent.POISON_VIALS] + 1) * 18.75)) if localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]] == [Talent.POISON_VIALS] else "Rank {0}: Cooldown reduced: {1} sec, Chance to get an extra charge when picking up an xp orb: {2}%.".format(localPlayer.talent_ranks[Talent.CRAZY_ALCHEMIST] + 1, localPlayer.talent_ranks[Talent.CRAZY_ALCHEMIST] + 1, (localPlayer.talent_ranks[Talent.CRAZY_ALCHEMIST] + 1) * 20) if localPlayer.talents_offered_in_shop[localPlayer.selected_talent[0]] == [Talent.CRAZY_ALCHEMIST] else "", localPlayer.selected_talent_location + vect(0, -1 * 1 * 1 * 1.625, 0), 1, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.WHITE, SpecVisibility.DEFAULT)*/
@@ -270,6 +304,7 @@ rule "GENERAL - - - [EACH PLAYER] INIT":
     @Event eachPlayer
 
     if eventPlayer.isDummy() == false:
+        chase(eventPlayer.rockets_cooldown, 0, rate=1, ChaseReeval.DESTINATION_AND_RATE)
         #[HUD Text for talent slot 1]
         hudText(eventPlayer if len(eventPlayer.bought_talents) >= 1 else null, "{0}".format(talent_names[eventPlayer.bought_talents[0]]), "Cooldown: {0}".format(eventPlayer.talent_trigger_times[eventPlayer.bought_talents[0]] + talent_base_cooldowns[eventPlayer.bought_talents[0]] - (eventPlayer.talent_ranks[eventPlayer.bought_talents[0]] * talent_cd_reduction_p_rank[eventPlayer.bought_talents[0]]) - eventPlayer.totalTimeElapsed) if eventPlayer.talent_trigger_times[eventPlayer.bought_talents[0]] + talent_base_cooldowns[eventPlayer.bought_talents[0]] - (eventPlayer.talent_ranks[eventPlayer.bought_talents[0]] * talent_cd_reduction_p_rank[eventPlayer.bought_talents[0]]) > eventPlayer.totalTimeElapsed else "", "{0}".format(talent_keybinds[eventPlayer.bought_talents[0]].replace("[F]", buttonString(Button.INTERACT)).replace("[R]", buttonString(Button.RELOAD)).replace("[E]", buttonString(Button.ABILITY_2)).replace("[Q]", buttonString(Button.ULTIMATE)).replace("[SHIFT]", buttonString(Button.ABILITY_1)).replace("[CTRL]", buttonString(Button.CROUCH)).replace("[SPACEBAR]", buttonString(Button.JUMP)).replace("[LEFTCLICK]", buttonString(Button.PRIMARY_FIRE)).replace("[RIGHTCLICK]", buttonString(Button.SECONDARY_FIRE)).replace("[MELEE]", buttonString(Button.MELEE))), HudPosition.LEFT, 0, talent_rarity_colors[eventPlayer.talent_ranks[eventPlayer.bought_talents[0]]], talent_rarity_colors[eventPlayer.talent_ranks[eventPlayer.bought_talents[0]]], Color.YELLOW, HudReeval.VISIBILITY_STRING_AND_COLOR, SpecVisibility.DEFAULT)
         #[HUD Text for talent slot 2]
@@ -312,8 +347,8 @@ rule "GENERAL - - - [EACH PLAYER] INIT":
     eventPlayer.disableGamemodeHud()
     eventPlayer.setMaxHealth(eventPlayer.stats[1])
     chase(eventPlayer.in_combat, 0, rate=1, ChaseReeval.DESTINATION_AND_RATE)
-    createEffect(getAllPlayers() if eventPlayer.is_using_ability[Talent.RAILGUN] == true or eventPlayer.hit_by_talent[Talent.RAILGUN] != null else null, Effect.WINSTON_TESLA_CANNON_TARGET, Color.TEAM_1, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-    createEffect(eventPlayer if eventPlayer.talent_ranks[Talent.RAILGUN] > 0 and eventPlayer.railgun_charge >= 100 or eventPlayer.hit_by_talent[Talent.RAILGUN] != null else null, Effect.WINSTON_TESLA_CANNON_TARGET_SOUND, Color.TEAM_1, eventPlayer, 50, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+    createEffect(getAllPlayers() if eventPlayer.hit_by_talent[Talent.RAILGUN] != null else null, Effect.WINSTON_TESLA_CANNON_TARGET, Color.TEAM_1, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+    createEffect(eventPlayer if eventPlayer.talent_ranks[Talent.RAILGUN] > 0 and eventPlayer.railgun_charge > 0 or eventPlayer.hit_by_talent[Talent.RAILGUN] != null else null, Effect.ENERGY_SOUND, Color.TEAM_1, eventPlayer, eventPlayer.railgun_charge, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
     chase(eventPlayer.is_electrified, 0, rate=1, ChaseReeval.DESTINATION_AND_RATE)
     createEffect(getAllPlayers() if eventPlayer.is_using_ability[Talent.CRYOGENICS] == true else null, Effect.MEI_FROZEN, Color.WHITE, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
     createEffect(getAllPlayers() if eventPlayer.is_using_ability[Talent.CRYOGENICS] == true else null, Effect.MEI_FROZEN_SOUND, Color.WHITE, eventPlayer, 100, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
@@ -552,12 +587,16 @@ def create_talent_helpers():
 
     #Hearthstone
     createProgressBarInWorldText(localPlayer if localPlayer.is_using_hearthstone or localPlayer.is_using_skip_talent or localPlayer.using_one_of_the_hearthstones else null, localPlayer.using_hearthstone_timer / 2.75 * 100 if debugging == false else 0.5 * 100, "{0} Using Hearthstone".format(iconString(Icon.SPIRAL)) if localPlayer.browsing_shop == false else "{0} YES".format(iconString(Icon.CHECKMARK)) if localPlayer.browsing_shop == true and localPlayer.isHoldingButton(Button.PRIMARY_FIRE) == true and localPlayer.replacing_talent_show_confirmation == true else "{0} NO".format(iconString(Icon.NO)) if localPlayer.browsing_shop == true and localPlayer.isHoldingButton(Button.SECONDARY_FIRE) == true and localPlayer.replacing_talent_show_confirmation == true else "{0} Skipping Talents For XP Boost".format(iconString(Icon.TRASHCAN)) if localPlayer.browsing_shop == true and localPlayer.isHoldingButton(Button.RELOAD) == true else "", updateEveryTick(localPlayer.getEyePosition() + (100 * (0 * worldVector(Vector.RIGHT, localPlayer, Transform.ROTATION) + ((0.75 - 0.2) * (angleToDirection(horizontalAngleOfDirection(localPlayer.getFacingDirection()), verticalAngleOfDirection(localPlayer.getFacingDirection()) - 90))) + 3 * localPlayer.getFacingDirection()))) if localPlayer.browsing_shop == false else localPlayer.selected_talent_location + Vector.UP, 1, Clip.NONE, Color.WHITE, Color.WHITE, ProgressWorldTextReeval.VISIBILITY_POSITION_VALUES_AND_COLOR, SpecVisibility.NEVER) 
+
     #What button to press in Stealth or Berserker
     createInWorldText(localPlayer if ((localPlayer.talent_ranks[Talent.STEALTH] > 0 or localPlayer.talent_ranks[Talent.BERSERKER] > 0) and localPlayer.browsing_shop == false) and localPlayer.is_using_ability[Talent.JUGGERNAUT] == false else null, "{0}".format("{0} {1} = Cancel".format(iconString(Icon.SKULL), buttonString(Button.ULTIMATE)) if localPlayer.is_using_ability[Talent.BERSERKER] == true else "{0} {1} = Damage & Stun".format(abilityIconString(Hero.SOMBRA, Button.ABILITY_1), buttonString(Button.MELEE)) if localPlayer.is_using_ability[Talent.STEALTH] == true else ""), updateEveryTick(localPlayer.getEyePosition() + (100 * (1.625 * worldVector(Vector.RIGHT, localPlayer, Transform.ROTATION) + ((0.05 - 0.25) * (angleToDirection(horizontalAngleOfDirection(localPlayer.getFacingDirection()), verticalAngleOfDirection(localPlayer.getFacingDirection()) - 90))) + 3 * localPlayer.getFacingDirection()))), 1.25, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.WHITE, SpecVisibility.DEFAULT)
-    #Railgun charge
-    createInWorldText(localPlayer if localPlayer.talent_ranks[Talent.RAILGUN] > 0 and localPlayer.isCommunicatingEmote() == false and localPlayer.browsing_shop == false and localPlayer.is_using_ability[Talent.JUGGERNAUT] == false else null, "{0} {1}%".format(iconString(Icon.BOLT), localPlayer.railgun_charge if localPlayer.railgun_charge < 100 else 100), updateEveryTick(localPlayer.getEyePosition() + (100 * (1 * worldVector(Vector.RIGHT, localPlayer, Transform.ROTATION) + ((0 - 0.3) * (angleToDirection(horizontalAngleOfDirection(localPlayer.getFacingDirection()), verticalAngleOfDirection(localPlayer.getFacingDirection()) - 90))) + 3 * localPlayer.getFacingDirection()))), 1, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.WHITE if localPlayer.railgun_charge < 100 else Color.SKY_BLUE, SpecVisibility.NEVER)
+    
+    #Helix Rocket Cooldown or Railgun Cooldown / Charge
+    createInWorldText(localPlayer if "{0}".format(localPlayer.isCommunicatingEmote()) == "0" and localPlayer.browsing_shop == false and localPlayer.is_using_ability[Talent.JUGGERNAUT] == false else null, "{0} {1}%".format(iconString(Icon.BOLT), ceil(localPlayer.railgun_charge)) if localPlayer.talent_ranks[Talent.RAILGUN] > 0 and localPlayer.railgun_charge > 0 else "{0} Ready".format(iconString(Icon.BOLT) if localPlayer.talent_ranks[Talent.RAILGUN] > 0 else abilityIconString(Hero.SOLDIER, Button.SECONDARY_FIRE)) if (localPlayer.talent_ranks[Talent.RAILGUN] > 0 and localPlayer.railgun_charge == 0 and localPlayer.talent_trigger_times[Talent.RAILGUN] + talent_base_cooldowns[Talent.RAILGUN] <= localPlayer.totalTimeElapsed) == true or (localPlayer.talent_ranks[Talent.RAILGUN] == 0 and localPlayer.rockets_cooldown == 0) == true else "{0} Cooldown: {1}".format(iconString(Icon.BOLT) if localPlayer.talent_ranks[Talent.RAILGUN] > 0 else abilityIconString(Hero.SOLDIER, Button.SECONDARY_FIRE), localPlayer.talent_trigger_times[Talent.RAILGUN] + talent_base_cooldowns[Talent.RAILGUN] - localPlayer.totalTimeElapsed if localPlayer.talent_ranks[Talent.RAILGUN] > 0 and localPlayer.railgun_charge == 0 and localPlayer.talent_trigger_times[Talent.RAILGUN] + talent_base_cooldowns[Talent.RAILGUN] > localPlayer.totalTimeElapsed else localPlayer.rockets_cooldown if localPlayer.talent_ranks[Talent.RAILGUN] == 0 else 0), updateEveryTick(localPlayer.getEyePosition() + (100 * (1 * worldVector(Vector.RIGHT, localPlayer, Transform.ROTATION) + ((0 - 0.3) * (angleToDirection(horizontalAngleOfDirection(localPlayer.getFacingDirection()), verticalAngleOfDirection(localPlayer.getFacingDirection()) - 90))) + 3 * localPlayer.getFacingDirection()))), 1, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.WHITE if localPlayer.talent_ranks[Talent.RAILGUN] > 0 and localPlayer.railgun_charge < 100 and localPlayer.talent_trigger_times[Talent.RAILGUN] + talent_base_cooldowns[Talent.RAILGUN] <= localPlayer.totalTimeElapsed else Color.SKY_BLUE if localPlayer.railgun_charge >= 100 else Color.GRAY if (localPlayer.talent_ranks[Talent.RAILGUN] > 0 and localPlayer.talent_trigger_times[Talent.RAILGUN] + talent_base_cooldowns[Talent.RAILGUN] > localPlayer.totalTimeElapsed) == true or (localPlayer.rockets_cooldown > 0 and localPlayer.talent_ranks[Talent.RAILGUN] == 0) == true else Color.WHITE, SpecVisibility.NEVER)
+
     #Engineer scrap
-    createInWorldText(localPlayer if localPlayer.talent_ranks[Talent.ENGINEER] > 0 and localPlayer.isCommunicatingEmote() == false and localPlayer.browsing_shop == false and localPlayer.is_using_ability[Talent.JUGGERNAUT] == false else null, "{0} {1}%".format(abilityIconString(Hero.BASTION, Button.SECONDARY_FIRE), localPlayer.engineer_scrap if localPlayer.engineer_scrap < 100 else 100), updateEveryTick(localPlayer.getEyePosition() + (100 * (1 * worldVector(Vector.RIGHT, localPlayer, Transform.ROTATION) + ((0 - 0.2) * (angleToDirection(horizontalAngleOfDirection(localPlayer.getFacingDirection()), verticalAngleOfDirection(localPlayer.getFacingDirection()) - 90))) + 3 * localPlayer.getFacingDirection()))), 1, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.WHITE if localPlayer.engineer_scrap < 100 else Color.ORANGE, SpecVisibility.NEVER)
+    createInWorldText(localPlayer if localPlayer.talent_ranks[Talent.ENGINEER] > 0 and "{0}".format(localPlayer.isCommunicatingEmote()) == "0" and localPlayer.browsing_shop == false and localPlayer.is_using_ability[Talent.JUGGERNAUT] == false else null, "{0} {1}%".format(abilityIconString(Hero.BASTION, Button.SECONDARY_FIRE), localPlayer.engineer_scrap if localPlayer.engineer_scrap < 100 else 100), updateEveryTick(localPlayer.getEyePosition() + (100 * (1 * worldVector(Vector.RIGHT, localPlayer, Transform.ROTATION) + ((0 - 0.2) * (angleToDirection(horizontalAngleOfDirection(localPlayer.getFacingDirection()), verticalAngleOfDirection(localPlayer.getFacingDirection()) - 90))) + 3 * localPlayer.getFacingDirection()))), 1, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.WHITE if localPlayer.engineer_scrap < 100 else Color.ORANGE, SpecVisibility.NEVER)
+    
     #Cancel Juggernaut
     createInWorldText(localPlayer if localPlayer.is_using_ability[Talent.JUGGERNAUT] == true and localPlayer.has_hit_the_ground == true else null, "{0} {1} = Cancel".format(abilityIconString(Hero.REINHARDT, Button.ABILITY_1), buttonString(Button.INTERACT)), updateEveryTick(localPlayer.getEyePosition()), 1, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.WHITE, SpecVisibility.NEVER)
 
@@ -609,6 +648,7 @@ rule "GENERAL - - - OW2 Temporary Health Fix [Needs proper solution when I got t
     @Event eachPlayer
     @Condition eventPlayer.hasSpawned() == true
     @Condition eventPlayer.isAlive() == true
+    @Condition eventPlayer.browsing_shop == false
     
     eventPlayer.setMaxHealth(eventPlayer.stats[1])
     heal(eventPlayer, null, eventPlayer.getMaxHealth())
@@ -690,7 +730,7 @@ rule "GENERAL - - - Player Dealt Damage":
             playEffect(getAllPlayers(), DynamicEffect.DOOMFIST_RISING_UPPERCUT_IMPACT_SOUND, Color.WHITE, victim.getPosition(), 100)
             playEffect(getAllPlayers(), DynamicEffect.WRECKING_BALL_PILEDRIVER_IMPACT_SOUND, Color.WHITE, eventPlayer.getPosition(), 100)
         #Dealt Predator damage?
-        if eventPlayer.talent_ranks[Talent.PREDATOR] > 0 and eventPlayer.talent_trigger_times[Talent.PREDATOR] + talent_base_cooldowns[Talent.PREDATOR] - eventPlayer.talent_ranks[Talent.PREDATOR] * PREDATOR_COOLDOWN_REDUCTION_PER_RANK <= eventPlayer.totalTimeElapsed and victim.can_be_executed == true and victim.is_using_ability[Talent.PURITY_FIELD] == false and victim.getHealth() <= victim.getMaxHealth() * 0.25 == true and attacker.is_using_ability[Talent.PURITY_FIELD] == false:
+        if eventPlayer.talent_ranks[Talent.PREDATOR] > 0 and eventPlayer.talent_trigger_times[Talent.PREDATOR] + talent_base_cooldowns[Talent.PREDATOR] - (eventPlayer.talent_ranks[Talent.PREDATOR] * PREDATOR_COOLDOWN_REDUCTION_PER_RANK) <= eventPlayer.totalTimeElapsed and victim.can_be_executed == true and victim.is_using_ability[Talent.PURITY_FIELD] == false and victim.getHealth() <= victim.getMaxHealth() * 0.25 == true and attacker.is_using_ability[Talent.PURITY_FIELD] == false:
             smallMessage(eventPlayer, "{0} Executed {1}!".format(abilityIconString(Hero.WIDOWMAKER, Button.ULTIMATE), victim))
             if attacker.talent_ranks[Talent.SOUL_SIPHON] > 0:
                 victim.hit_by_talent[Talent.SOUL_SIPHON] = attacker
@@ -702,27 +742,40 @@ rule "GENERAL - - - Player Dealt Damage":
             playEffect(getAllPlayers(), DynamicEffect.SIGMA_HYPERSPHERE_IMPLOSION, Color.WHITE, victim.getPosition() + Vector.UP, 1)
         #PRIMARY FIRE || ULTIMATE
     elif (eventAbility == Button.PRIMARY_FIRE or eventAbility == Button.ULTIMATE) == true:
+        #Gunslinger?
+        if attacker.talent_ranks[Talent.GUNSLINGER] > 0 and attacker.railgun_charge < 100:
+            damage(victim, attacker, GUNSLINGER_DAMAGE)
         #Railgun?
-        if attacker.talent_ranks[Talent.RAILGUN] > 0:
-            eventPlayer.railgun_discharge = 6
-            if attacker.railgun_charge < 100:
-                attacker.railgun_charge += eventDamage * 0.375 + eventDamage * attacker.talent_ranks[Talent.OVERCLOCK] * 0.038
+        if attacker.railgun_charge >= 100:
+            damage(victim, attacker, RAILGUN_DAMAGE)
+            eventPlayer.railgun_projectile_player_hit = victim
+            playEffect(getAllPlayers(), DynamicEffect.DOOMFIST_RISING_UPPERCUT_IMPACT, Color.TEAM_1, victim.getPosition(), 1)
+            playEffect(getAllPlayers(), DynamicEffect.WRECKING_BALL_PILEDRIVER_IMPACT_SOUND, Color.TEAM_2, victim.getPosition(), 100)
+            playEffect(getAllPlayers(), DynamicEffect.PHARAH_CONCUSSIVE_BLAST, Color.TEAM_1, victim.getPosition(), 1)
+            if eventPlayer.talent_ranks[Talent.CRYOGENICS] > 0 and victim.is_using_ability[Talent.JUGGERNAUT] == false and victim.is_using_ability[Talent.PURITY_FIELD] == false:
+                victim.hit_by_talent[Talent.CRYOGENICS] = eventPlayer
+            if attacker.talent_ranks[Talent.IGNITE] > 0 and victim.is_using_ability[Talent.PURITY_FIELD] == false:
+                    victim.setStatusEffect(attacker, Status.BURNING, 3)
+                    victim.startDoT(attacker, 3, IGNITE_DAMAGE_PER_SECOND)
         #Engineer?
         if attacker.talent_ranks[Talent.ENGINEER] > 0:
             if attacker.engineer_scrap < 100:
                 attacker.engineer_scrap += eventDamage * (0.037 + attacker.talent_ranks[Talent.ENGINEER] * 0.013)
+        #Lifesteal Ammo?
         if attacker.talent_ranks[Talent.LIFESTEAL_AMMO] > 0 and attacker.getHealthOfType(Health.NORMAL) < attacker.getMaxHealthOfType(Health.NORMAL):
-            heal(attacker, attacker, min(eventDamage * (0.112 + eventPlayer.talent_ranks[Talent.LIFESTEAL_AMMO] * 0.038), eventPlayer.getMaxHealthOfType(Health.NORMAL) - eventPlayer.getHealthOfType(Health.NORMAL)))
+            heal(attacker, attacker, min(((eventDamage * (0.112 + eventPlayer.talent_ranks[Talent.LIFESTEAL_AMMO] * 0.038)) + eventDamage + RAILGUN_DAMAGE) * (0.112 + eventPlayer.talent_ranks[Talent.LIFESTEAL_AMMO] * 0.038) if eventPlayer.railgun_charge >= 100 else ((eventDamage * (0.112 + eventPlayer.talent_ranks[Talent.LIFESTEAL_AMMO] * 0.038)) + eventDamage + ceil((eventDamage * 3.333) + (eventDamage * attacker.talent_ranks[Talent.GUNSLINGER] * 0.166))) * (0.112 + eventPlayer.talent_ranks[Talent.LIFESTEAL_AMMO] * 0.038) if attacker.talent_ranks[Talent.GUNSLINGER] > 0 else eventDamage * (0.112 + eventPlayer.talent_ranks[Talent.LIFESTEAL_AMMO] * 0.038), eventPlayer.getMaxHealthOfType(Health.NORMAL) - eventPlayer.getHealthOfType(Health.NORMAL)))
             eventPlayer.is_lifestealing = 1.5
             lifesteal_hps()
         #SECONDARY FIRE
     elif eventAbility == Button.SECONDARY_FIRE:
+        if attacker.talent_ranks[Talent.BOMBARDMENT] > 0:
+            damage(victim, attacker, BOMBARDMENT_DAMAGE)
         if eventPlayer.talent_ranks[Talent.CRYOGENICS] > 0 and victim.is_using_ability[Talent.JUGGERNAUT] == false and victim.is_using_ability[Talent.PURITY_FIELD] == false and victim.is_using_ability[Talent.SHADOWSTEP] == false:
             victim.hit_by_talent[Talent.CRYOGENICS] = attacker
         if attacker.talent_ranks[Talent.IGNITE] > 0:
             if victim.is_using_ability[Talent.PURITY_FIELD] == false:
                 victim.setStatusEffect(attacker, Status.BURNING, 3)
-                victim.startDoT(attacker, 3, floor(attacker.talent_ranks[Talent.IGNITE] * 0.056 * eventDamage))
+                victim.startDoT(attacker, 3, IGNITE_DAMAGE_PER_SECOND)
         if attacker.talent_ranks[Talent.LIFESTEAL_AMMO] > 0:
             heal(attacker, attacker, min(eventDamage * (0.112 + eventPlayer.talent_ranks[Talent.LIFESTEAL_AMMO] * 0.038), eventPlayer.getMaxHealthOfType(Health.NORMAL) - eventPlayer.getHealthOfType(Health.NORMAL)))
             eventPlayer.is_lifestealing = 1.5
@@ -730,7 +783,6 @@ rule "GENERAL - - - Player Dealt Damage":
             lifesteal_hps()
         if attacker.talent_ranks[Talent.IGNITE] > 0 and attacker.is_using_ability[Talent.IGNITE] == true:
             attacker.is_using_ability[Talent.IGNITE] = false
-
 
 rule "GENERAL - - - Player Took Damage":
     @Event playerTookDamage
@@ -841,3 +893,41 @@ rule "GENERAL - - - Anti Crash Disable":
     
     setSlowMotion(100)
     antiCrashActivated = false
+
+rule "dpstracking":
+    @Event eachPlayer
+    @Hero soldier
+
+    chase(eventPlayer.dpstracking_time, 0, rate=1, ChaseReeval.DESTINATION_AND_RATE)
+    hudText(eventPlayer, eventPlayer.dpstracking_damage, "Total Damage", null, HudPosition.RIGHT, 107, Color.YELLOW, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
+    hudText(eventPlayer, eventPlayer.dpstracking_damage / (dpstracking_dpsTime - eventPlayer.dpstracking_time), "DPS", null, HudPosition.RIGHT, 108, Color.RED, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
+    hudText(eventPlayer, eventPlayer.dpstracking_time, "Time", null, HudPosition.RIGHT, 109, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
+
+rule "dpstracking - dealt damage":
+    @Event playerDealtDamage
+    @Hero soldier
+    @Condition victim != attacker
+
+    destroyInWorldText(eventPlayer.dpstracking_textID)
+    eventPlayer.dpstracking_position = victim.getEyePosition()
+    createInWorldText(eventPlayer, eventDamage, eventPlayer.dpstracking_position, 0.850 + eventDamage / 30, Clip.SURFACES, WorldTextReeval.VISIBILITY_POSITION_AND_STRING, Color.WHITE, SpecVisibility.DEFAULT)
+    eventPlayer.dpstracking_textID = getLastCreatedText()
+    chase(eventPlayer.dpstracking_position, victim.getEyePosition() + Vector.UP, rate=0.900, ChaseReeval.NONE)
+    if eventPlayer.dpstracking_time == 0:
+        return
+    eventPlayer.dpstracking_damage += eventDamage
+
+rule "dpstracking - start timer":
+    @Event eachPlayer
+    @Hero soldier
+    @Condition eventPlayer.isHoldingButton(Button.CROUCH) == true
+
+    eventPlayer.dpstracking_time = dpstracking_dpsTime
+    eventPlayer.dpstracking_damage = 0
+    waitUntil(eventPlayer.isHoldingButton(Button.CROUCH) == false, 99999)
+    waitUntil(eventPlayer.isHoldingButton(Button.CROUCH) == true, 99999)
+    eventPlayer.dpstracking_time = 0
+    eventPlayer.dpstracking_damage = 0
+    eventPlayer.dpstracking_started_timer = false
+    wait(0.250)
+
