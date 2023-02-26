@@ -11,25 +11,24 @@ globalvar max_experience_per_level = [250, 275, 303, 333, 366, 403, 443, 487, 53
 playervar bloodthirst_shield
 playervar talent_trigger_times
 playervar health_pool_id_or_hot_id
-playervar engineer_scrap
 playervar entering_stealth
 playervar railgun_discharge
 playervar railgun_charge
 playervar railgun_projectile_start
 playervar railgun_projectile_player_hit
-playervar jetpack_fuel
+playervar jetpack_fuel = 100
 playervar is_lifestealing
 playervar ignite_position
 playervar burning_soul_orb_timer
 playervar fireball_position
 playervar ignore_pain_damage_resisted
 playervar ignore_pain_volume
-playervar soul_siphon_duration
+playervar bandage_progress
 playervar pyromaniac_heal_duration
 playervar current_talent_replace_or_buy
 playervar hearthstone_effects_id
 playervar is_respawning = false
-playervar selected_talent_location = shop_talent_positions[1]
+playervar selected_talent_position = shop_talent_positions[1]
 playervar selected_talent_will_replace
 playervar using_hearthstone_timer = 0
 
@@ -42,8 +41,8 @@ subroutine buy_or_upgrade_talent
 subroutine buy_bloodthirst
 subroutine buy_purity_field
 subroutine buy_cybernetics
-subroutine buy_engineer
-subroutine buy_shadowstrike
+subroutine buy_soul_harvest
+subroutine buy_poisonous_dagger
 subroutine buy_stealth
 subroutine buy_juggernaut
 subroutine buy_dive_bomb
@@ -61,7 +60,7 @@ subroutine buy_burning_soul
 subroutine buy_berserker
 subroutine buy_fireball
 subroutine buy_ignore_pain
-subroutine buy_soul_siphon
+subroutine buy_bandage
 subroutine buy_pyromaniac
 subroutine buy_poison_vials
 subroutine buy_crazy_alchemist
@@ -194,7 +193,6 @@ def using_one_of_the_hearthstones():
         async(stopped_using_hearthstone, AsyncBehavior.RESTART)
         return
     elif eventPlayer.is_using_skip_talent == true:
-        eventPlayer.is_using_skip_talent = false
         goto lbl_1
     elif eventPlayer.is_using_vote_yes == true:
         waitUntil(eventPlayer.isHoldingButton(Button.PRIMARY_FIRE) == false or eventPlayer.isHoldingButton(Button.SECONDARY_FIRE) == true, 2.75 if debugging == false else 0.5)
@@ -203,9 +201,6 @@ def using_one_of_the_hearthstones():
         if eventPlayer.replacing_talent_show_confirmation == true:
             eventPlayer.replacing_talent_show_bought_talents = true
             goto lbl_3
-        smallMessage(eventPlayer, "{0} Voted Yes!".format(iconString(Icon.CHECKMARK)))
-        /*eventPlayer.canVote_hasVoted_canStartVote[1] = true*/
-        /*players_that_voted_yes = players_that_voted_yes.concat(eventPlayer)*/
         playEffect(eventPlayer, DynamicEffect.RING_EXPLOSION_SOUND, Color.WHITE, shop_location, 100)
         lbl_2:
         lbl_3:
@@ -218,9 +213,6 @@ def using_one_of_the_hearthstones():
         if eventPlayer.replacing_talent_show_confirmation == true:
             eventPlayer.replacing_talent_cancelled = true
             goto lbl_5
-        smallMessage(eventPlayer, "{0} Voted No!".format(iconString(Icon.NO)))
-        /*eventPlayer.canVote_hasVoted_canStartVote[1] = true*/
-        /*players_that_voted_no = players_that_voted_no.concat(eventPlayer)*/
         playEffect(eventPlayer, DynamicEffect.DEBUFF_IMPACT_SOUND, Color.WHITE, shop_location, 100)
         lbl_4:
         lbl_5:
@@ -228,8 +220,22 @@ def using_one_of_the_hearthstones():
         return
     lbl_1:
     async(stopped_using_hearthstone, AsyncBehavior.RESTART)
+    if eventPlayer.is_using_skip_talent == true and eventPlayer.amount_of_talents_purchased + eventPlayer.amount_of_skipped_bonus_talents < leading_player_talents_purchased and eventPlayer.amount_of_talents_purchased < 5:
+
+        eventPlayer.amount_of_skipped_bonus_talents += 1
+        eventPlayer.is_using_skip_talent = false
+        eventPlayer.buying_another_talent = true
+        bigMessage(eventPlayer, "{0} Bonus Talent Point!".format(abilityIconString(Hero.GENJI, Button.JUMP)))
+        async(open_shop, AsyncBehavior.NOOP)
+        eventPlayer.selected_talent_in_shop = 1
+        eventPlayer.startCamera(shop_location, eventPlayer.selected_talent_position, 12)
+        wait(1, Wait.IGNORE_CONDITION)
+        return
+
+    eventPlayer.is_using_skip_talent = false
+    eventPlayer.buying_another_talent = false   
     eventPlayer.browsing_shop = false
-    eventPlayer.selected_talent_location = shop_talent_positions[1]
+    eventPlayer.selected_talent_position = shop_talent_positions[1]
     eventPlayer.can_enter_shop = false
     eventPlayer.experience_current = 0
     if eventPlayer.talent_ranks[Talent.FIREBALL] > 0 or eventPlayer.talent_ranks[Talent.JUGGERNAUT] > 0:
@@ -237,57 +243,9 @@ def using_one_of_the_hearthstones():
     eventPlayer.is_respawning = true
     eventPlayer.respawn()
     #Reset selection of a talent to the middle
-    eventPlayer.selected_talent[0] = 1
+    eventPlayer.selected_talent_in_shop = 1
     eventPlayer.skipped_a_talent = true
     eventPlayer.xp_boost_is_active = true
-    /*
-    if random.randint(1, 100) <= 10 and eventPlayer.amount_of_talents_purchased > 4:
-        async(leave_shop_messages, AsyncBehavior.NOOP)
-    async(stopped_using_hearthstone, AsyncBehavior.RESTART)
-    */
-    /*
-    if player_who_started_vote == eventPlayer and eventPlayer.time_since_joined_match < 725:
-        waitUntil(eventPlayer.browsing_shop == false, 30)
-        if eventPlayer.browsing_shop == false:
-            return
-        if eventPlayer.browsing_shop == true:
-            playEffect(eventPlayer, DynamicEffect.DEBUFF_IMPACT_SOUND, Color.WHITE, eventPlayer, 100)
-            smallMessage(eventPlayer, "{0} You have 30 seconds to leave the shop, or you will respawn automatically!".format(iconString(Icon.WARNING)))
-        waitUntil(eventPlayer.browsing_shop == false, 10)
-        if eventPlayer.browsing_shop == false:
-            return
-        if eventPlayer.browsing_shop == true:
-            playEffect(eventPlayer, DynamicEffect.DEBUFF_IMPACT_SOUND, Color.WHITE, eventPlayer, 100)
-            smallMessage(eventPlayer, "{0} You have 20 seconds to leave the shop, or you will respawn automatically!".format(iconString(Icon.WARNING)))
-        waitUntil(eventPlayer.browsing_shop == false, 10)
-        if eventPlayer.browsing_shop == false:
-            return
-        if eventPlayer.browsing_shop == true:
-            playEffect(eventPlayer, DynamicEffect.DEBUFF_IMPACT_SOUND, Color.WHITE, eventPlayer, 100)
-            smallMessage(eventPlayer, "{0} You have 10 seconds to leave the shop, or you will respawn automatically!".format(iconString(Icon.WARNING)))
-        waitUntil(eventPlayer.browsing_shop == false, 7)
-        if eventPlayer.browsing_shop == false:
-            return
-        if eventPlayer.browsing_shop == true:
-            playEffect(eventPlayer, DynamicEffect.DEBUFF_IMPACT_SOUND, Color.WHITE, eventPlayer, 100)
-            smallMessage(eventPlayer, "{0} 3".format(iconString(Icon.WARNING)))
-        waitUntil(eventPlayer.browsing_shop == false, 1)
-        if eventPlayer.browsing_shop == false:
-            return
-        if eventPlayer.browsing_shop == true:
-            playEffect(eventPlayer, DynamicEffect.DEBUFF_IMPACT_SOUND, Color.WHITE, eventPlayer, 100)
-            smallMessage(eventPlayer, "{0} 2".format(iconString(Icon.WARNING)))
-        waitUntil(eventPlayer.browsing_shop == false, 1)
-        if eventPlayer.browsing_shop == false:
-            return
-        if eventPlayer.browsing_shop == true:
-            playEffect(eventPlayer, DynamicEffect.DEBUFF_IMPACT_SOUND, Color.WHITE, eventPlayer, 100)
-            smallMessage(eventPlayer, "{0} 1".format(iconString(Icon.WARNING)))
-        waitUntil(eventPlayer.browsing_shop == false, 1)
-        if eventPlayer.browsing_shop == false:
-            return
-        */
-        #Act as skipped a talent because the player didn't exit in time
 
 def stopped_using_hearthstone():
     @Name "SHOP - - - [SUBROUTINE] Stopped Using Hearthstone"
@@ -378,7 +336,8 @@ def open_shop():
         eventPlayer.selected_talent_will_replace[2] = false
     #Set right talent to a random choice in talents_you_do_not_have if selected_talent_will_replace = true, else random choice in possible_talents
     eventPlayer.talents_offered_in_shop[2] = random.choice([player for player in eventPlayer.talents_you_do_not_have if player != null and player!= eventPlayer.talents_offered_in_shop[0] and player != eventPlayer.talents_offered_in_shop[1]]) if eventPlayer.selected_talent_will_replace[2]== true else random.choice([player for player in eventPlayer.possible_talents if player != null])
-    eventPlayer.startCamera(shop_location, shop_talent_positions[1], 0.5)
+    if eventPlayer.buying_another_talent == false:
+        eventPlayer.startCamera(shop_location, shop_talent_positions[1], 0.5)
     playEffect(eventPlayer, DynamicEffect.SYMMETRA_TELEPORTER_REAPPEAR_SOUND, Color.TEAM_1, shop_location.getPosition(), 100)
 
 rule "SHOP - - - Shop Left":
@@ -390,25 +349,25 @@ rule "SHOP - - - Shop Left":
     @Condition eventPlayer.isHoldingButton(Button.CROUCH) == false
     
     if eventPlayer.replacing_talent_show_bought_talents == true:
-        if eventPlayer.selected_talent[1] == 0:
-            eventPlayer.selected_talent[1] = 4
-            eventPlayer.startCamera(shop_location, shop_talent_positions[eventPlayer.selected_talent], 15)
+        if eventPlayer.selected_bought_talent == 0:
+            eventPlayer.selected_bought_talent = 4
+            eventPlayer.startCamera(shop_location, shop_talent_positions[eventPlayer.selected_talent_in_shop], 15)
         else:
-            eventPlayer.selected_talent[1] -= 1
-            eventPlayer.startCamera(shop_location, shop_talent_positions[eventPlayer.selected_talent], 15)
+            eventPlayer.selected_bought_talent -= 1
+            eventPlayer.startCamera(shop_location, shop_talent_positions[eventPlayer.selected_talent_in_shop], 15)
         return
     if eventPlayer.replacing_talent_show_confirmation == true:
         waitUntil(eventPlayer.replacing_talent_show_bought_talents == true or eventPlayer.replacing_talent_show_confirmation == false, 99999)
             wait(0.33)
             return
-    if eventPlayer.selected_talent[0] >= 1:
-        if eventPlayer.selected_talent[0] == 2:
-            eventPlayer.selected_talent_location = shop_talent_positions[1]
-            eventPlayer.selected_talent[0] = 1
+    if eventPlayer.selected_talent_in_shop >= 1:
+        if eventPlayer.selected_talent_in_shop == 2:
+            eventPlayer.selected_talent_position = shop_talent_positions[1]
+            eventPlayer.selected_talent_in_shop = 1
             eventPlayer.startCamera(shop_location, shop_talent_positions[1], 15)
-        elif eventPlayer.selected_talent[0] == 1:
-            eventPlayer.selected_talent_location = shop_talent_positions[0]
-            eventPlayer.selected_talent[0] = 0
+        elif eventPlayer.selected_talent_in_shop == 1:
+            eventPlayer.selected_talent_position = shop_talent_positions[0]
+            eventPlayer.selected_talent_in_shop = 0
             eventPlayer.startCamera(shop_location, shop_talent_positions[0], 15)
 
 
@@ -421,25 +380,25 @@ rule "SHOP - - - Shop Right":
     @Condition eventPlayer.isHoldingButton(Button.CROUCH) == false
     
     if eventPlayer.replacing_talent_show_bought_talents == true:
-        if eventPlayer.selected_talent[1] == 4:
-            eventPlayer.selected_talent[1] = 0
-            eventPlayer.startCamera(shop_location, shop_talent_positions[eventPlayer.selected_talent], 15)
+        if eventPlayer.selected_bought_talent == 4:
+            eventPlayer.selected_bought_talent = 0
+            eventPlayer.startCamera(shop_location, shop_talent_positions[eventPlayer.selected_talent_in_shop], 15)
         else:
-            eventPlayer.selected_talent[1] += 1
-            eventPlayer.startCamera(shop_location, shop_talent_positions[eventPlayer.selected_talent], 15)
+            eventPlayer.selected_bought_talent += 1
+            eventPlayer.startCamera(shop_location, shop_talent_positions[eventPlayer.selected_talent_in_shop], 15)
         return
     if eventPlayer.replacing_talent_show_confirmation == true:
         waitUntil(eventPlayer.replacing_talent_show_bought_talents == true or eventPlayer.replacing_talent_show_confirmation == false, 99999)
             wait(0.33)
             return
-    if eventPlayer.selected_talent[0] <= 1:
-        if eventPlayer.selected_talent[0] == 1:
-            eventPlayer.selected_talent_location = shop_talent_positions[2]
-            eventPlayer.selected_talent[0] = 2
+    if eventPlayer.selected_talent_in_shop <= 1:
+        if eventPlayer.selected_talent_in_shop == 1:
+            eventPlayer.selected_talent_position = shop_talent_positions[2]
+            eventPlayer.selected_talent_in_shop = 2
             eventPlayer.startCamera(shop_location, shop_talent_positions[2], 15)
-        elif eventPlayer.selected_talent[0] == 0:
-            eventPlayer.selected_talent_location = shop_talent_positions[1]
-            eventPlayer.selected_talent[0] = 1
+        elif eventPlayer.selected_talent_in_shop == 0:
+            eventPlayer.selected_talent_position = shop_talent_positions[1]
+            eventPlayer.selected_talent_in_shop = 1
             eventPlayer.startCamera(shop_location, shop_talent_positions[1], 15)
 
 rule "SHOP - - - Buy Talent":
@@ -450,21 +409,21 @@ rule "SHOP - - - Buy Talent":
     @Condition eventPlayer.replacing_talent_show_confirmation == false
     @Condition eventPlayer.isHoldingButton(Button.INTERACT) == true
     
-    if eventPlayer.selected_talent[0] == 0:
+    if eventPlayer.selected_talent_in_shop == 0:
         eventPlayer.startCamera(shop_talent_positions[0], shop_talent_positions[0], 4.125 if debugging == false else 8.250)
-    elif eventPlayer.selected_talent[0] == 1:
+    elif eventPlayer.selected_talent_in_shop == 1:
         eventPlayer.startCamera(shop_talent_positions[1], shop_talent_positions[1], 4.125 if debugging == false else 8.250)
-    elif eventPlayer.selected_talent[0] == 2:
+    elif eventPlayer.selected_talent_in_shop == 2:
         eventPlayer.startCamera(shop_talent_positions[2], shop_talent_positions[2], 4.125 if debugging == false else 8.250)
     waitUntil(eventPlayer.isHoldingButton(Button.INTERACT) == false or eventPlayer.isHoldingButton(Button.PRIMARY_FIRE) == true or eventPlayer.isHoldingButton(Button.SECONDARY_FIRE) == true, 0.85 if debugging == false else 0.425)
     if eventPlayer.isHoldingButton(Button.INTERACT) == false or eventPlayer.isHoldingButton(Button.PRIMARY_FIRE) == true or eventPlayer.isHoldingButton(Button.SECONDARY_FIRE) == true:
         wait(0.25)
         return
     if eventPlayer.replacing_talent_show_bought_talents == true:
-        eventPlayer.current_talent_replace_or_buy = eventPlayer.bought_talents[eventPlayer.selected_talent[1]]
+        eventPlayer.current_talent_replace_or_buy = eventPlayer.bought_talents[eventPlayer.selected_bought_talent]
         buy_or_upgrade_talent()
         if eventPlayer.replacing_talent_cancelled == true:
-            eventPlayer.startCamera(shop_location, eventPlayer.selected_talent_location, 12)
+            eventPlayer.startCamera(shop_location, eventPlayer.selected_talent_position, 12)
             playEffect(eventPlayer, DynamicEffect.DEBUFF_IMPACT_SOUND, Color.TEAM_1, shop_location.getPosition(), 100)
             eventPlayer.replacing_talent_show_confirmation = false
             eventPlayer.replacing_talent_show_bought_talents = false
@@ -477,17 +436,17 @@ rule "SHOP - - - Buy Talent":
         #Remove the talent from talent_ranks
         eventPlayer.talent_ranks[eventPlayer.current_talent_replace_or_buy] = 0
         #Remove the talent you removed from bought_talents
-        eventPlayer.bought_talents = eventPlayer.bought_talents.exclude(eventPlayer.bought_talents[eventPlayer.selected_talent[1]])
+        eventPlayer.bought_talents = eventPlayer.bought_talents.exclude(eventPlayer.bought_talents[eventPlayer.selected_bought_talent])
         #Put the new talents in bought_talents
-        eventPlayer.bought_talents.append(eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]])
+        eventPlayer.bought_talents.append(eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent_in_shop])
         goto lbl_0
-    if eventPlayer.selected_talent[0] == 0:
+    if eventPlayer.selected_talent_in_shop == 0:
         if eventPlayer.selected_talent_will_replace[0] == true:
             goto lbl_1
-    elif eventPlayer.selected_talent[0] == 1:
+    elif eventPlayer.selected_talent_in_shop == 1:
         if eventPlayer.selected_talent_will_replace[1] == true:
             goto lbl_2
-    elif eventPlayer.selected_talent[0] == 2:
+    elif eventPlayer.selected_talent_in_shop == 2:
         if eventPlayer.selected_talent_will_replace[2] == true:
             lbl_1:
             lbl_2:
@@ -501,21 +460,37 @@ rule "SHOP - - - Buy Talent":
                 return
     #If the player do not have 5 talents yet and the talent is not bought yet, add it to bought_talents
     lbl_0:
-    if len(eventPlayer.bought_talents) < 5 and eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]] in eventPlayer.bought_talents == false:
-        eventPlayer.bought_talents.append(eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]])
-    eventPlayer.browsing_shop = false
-    eventPlayer.selected_talent_location = shop_talent_positions[1]
+    if len(eventPlayer.bought_talents) < 5 and eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent_in_shop] in eventPlayer.bought_talents == false:
+        eventPlayer.bought_talents.append(eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent_in_shop])
+
+    eventPlayer.selected_talent_position = shop_talent_positions[1]
+
     eventPlayer.amount_of_talents_purchased += 1
+    if eventPlayer.amount_of_talents_purchased > leading_player_talents_purchased:
+        leading_player_talents_purchased = eventPlayer.amount_of_talents_purchased
     #Add +1 to "talent_ranks" in the correct index
-    eventPlayer.talent_ranks[eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]]] += 1
+    eventPlayer.talent_ranks[eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent_in_shop]] += 1
     #If the talent being purchased has reached 5...
-    if eventPlayer.talent_ranks[eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]]] == 5:
+    if eventPlayer.talent_ranks[eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent_in_shop]] == 5:
         #...remove it from possible talents.
-        eventPlayer.possible_talents[eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]]] = null
+        eventPlayer.possible_talents[eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent_in_shop]] = null
     eventPlayer.replacing_talent_show_bought_talents = false
-    eventPlayer.current_talent_replace_or_buy = eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]]
+    eventPlayer.current_talent_replace_or_buy = eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent_in_shop]
     eventPlayer.possible_talents[eventPlayer.current_talent_replace_or_buy] = eventPlayer.current_talent_replace_or_buy
+
     buy_or_upgrade_talent()
+
+    if eventPlayer.amount_of_talents_purchased < leading_player_talents_purchased and eventPlayer.amount_of_talents_purchased < 5:
+        eventPlayer.buying_another_talent = true
+        bigMessage(eventPlayer, "{0} Bonus Talent Point!".format(abilityIconString(Hero.GENJI, Button.JUMP)))
+        async(open_shop, AsyncBehavior.NOOP)
+        eventPlayer.selected_talent_in_shop = 1
+        eventPlayer.startCamera(shop_location, eventPlayer.selected_talent_position, 12)
+        wait(1, Wait.IGNORE_CONDITION)
+        return
+
+    eventPlayer.buying_another_talent = false
+    eventPlayer.browsing_shop = false
     eventPlayer.can_enter_shop = false
     eventPlayer.experience_current = 0
     eventPlayer.experience_max = max_experience_per_level[eventPlayer.amount_of_talents_purchased]
@@ -523,18 +498,13 @@ rule "SHOP - - - Buy Talent":
         async(spawned_with_fireball, AsyncBehavior.RESTART)
     eventPlayer.is_respawning = true
     eventPlayer.respawn()
-    #Reset selection of a talent to the middle
-    eventPlayer.selected_talent[0] = 1
-    /*
-    if random.randint(1, 100) <= 10 and eventPlayer.amount_of_talents_purchased > 4:
-        async(leave_shop_messages, AsyncBehavior.NOOP)
-    */
+    eventPlayer.selected_talent_in_shop = 1
 
 def replace_talent():
     @Name "SHOP - - - [SUBROUTINE] Replace Talent"
     
     eventPlayer.replacing_talent_show_confirmation = true
-    eventPlayer.startCamera(shop_location, eventPlayer.selected_talent_location, 12)
+    eventPlayer.startCamera(shop_location, eventPlayer.selected_talent_position, 12)
     playEffect(eventPlayer, DynamicEffect.RING_EXPLOSION_SOUND, Color.WHITE, shop_location, 100)
     waitUntil(eventPlayer.replacing_talent_show_bought_talents == true or eventPlayer.replacing_talent_cancelled == true, 99999)
 
@@ -545,13 +515,7 @@ rule "SHOP - - - Reset Shop Camera":
     @Condition eventPlayer.isHoldingButton(Button.INTERACT) == false
     @Condition (eventPlayer.is_using_skip_talent == true or eventPlayer.isHoldingButton(Button.INTERACT) == false) == true
     
-    eventPlayer.startCamera(shop_location, eventPlayer.selected_talent_location, 12)
-
-
-def cancel_shop_camera():
-    @Name "SHOP - - - [SUBROUTINE] Cancel Shop Camera"
-    
-    eventPlayer.startCamera(shop_location, eventPlayer.selected_talent_location, 12)
+    eventPlayer.startCamera(shop_location, eventPlayer.selected_talent_position, 12)
 
 def buy_or_upgrade_talent():
     @Name "SHOP - - - [SUBROUTINE] Buy Or Upgrade Talent"
@@ -562,10 +526,10 @@ def buy_or_upgrade_talent():
         buy_purity_field()
     elif eventPlayer.current_talent_replace_or_buy == Talent.CYBERNETICS:
         buy_cybernetics()
-    elif eventPlayer.current_talent_replace_or_buy == Talent.ENGINEER:
-        buy_engineer()
-    elif eventPlayer.current_talent_replace_or_buy == Talent.SHADOWSTRIKE:
-        buy_shadowstrike()
+    elif eventPlayer.current_talent_replace_or_buy == Talent.SOUL_HARVEST:
+        buy_soul_harvest()
+    elif eventPlayer.current_talent_replace_or_buy == Talent.POISONOUS_DAGGER:
+        buy_poisonous_dagger()
     elif eventPlayer.current_talent_replace_or_buy == Talent.STEALTH:
         buy_stealth()
     elif eventPlayer.current_talent_replace_or_buy == Talent.JUGGERNAUT:
@@ -604,8 +568,8 @@ def buy_or_upgrade_talent():
         buy_ignore_pain()
     elif eventPlayer.current_talent_replace_or_buy == Talent.JAVELIN:
         return
-    elif eventPlayer.current_talent_replace_or_buy == Talent.SOUL_SIPHON:
-        buy_soul_siphon()
+    elif eventPlayer.current_talent_replace_or_buy == Talent.BANDAGE:
+        buy_bandage()
     elif eventPlayer.current_talent_replace_or_buy == Talent.PYROMANIAC:
         buy_pyromaniac()
     elif eventPlayer.current_talent_replace_or_buy == Talent.POISON_VIALS:
@@ -640,7 +604,6 @@ def buy_bloodthirst():
         eventPlayer.talents_you_do_not_have.append(Talent.BLOODTHIRST)
         return
     if eventPlayer.talent_ranks[Talent.BLOODTHIRST] == 1:
-        eventPlayer.bloodthirst_shield = 0
         eventPlayer.talents_you_do_not_have.remove(Talent.BLOODTHIRST)
 
 def buy_purity_field():
@@ -667,32 +630,25 @@ def buy_cybernetics():
     #Shields
     eventPlayer.stats[4] = eventPlayer.stats[4] + 30
 
-def buy_engineer():
-    @Name "TALENT SYSTEM - - - [TALENT 3: ENGINEER] [SUBROUTINE] Buy Engineer"
+def buy_soul_harvest():
+    @Name "TALENT SYSTEM - - - [TALENT 3: SOUL_HARVEST] [SUBROUTINE] Buy Soul Harvest"
     
     if eventPlayer.replacing_talent_show_bought_talents == true:
-        eventPlayer.engineer_scrap = 0
-        eventPlayer.talents_you_do_not_have.append(Talent.ENGINEER)
-        eventPlayer.talents_you_do_not_have.append(Talent.IGNORE_PAIN)
+        eventPlayer.talents_you_do_not_have.append(Talent.SOUL_HARVEST)
         return
-    if eventPlayer.talent_ranks[Talent.ENGINEER] == 1:
-        #Lock talent Ignore Pain
-        eventPlayer.possible_talents.remove(Talent.IGNORE_PAIN)
-        eventPlayer.talents_you_do_not_have.remove(Talent.IGNORE_PAIN)
-        eventPlayer.engineer_scrap = 0
-        eventPlayer.talents_you_do_not_have.remove(Talent.ENGINEER)
+    if eventPlayer.talent_ranks[Talent.SOUL_HARVEST] == 1:
+        eventPlayer.talents_you_do_not_have.remove(Talent.SOUL_HARVEST)
 
-def buy_shadowstrike():
-    @Name "TALENT SYSTEM - - - [TALENT 4: SHADOWSTRIKE] [SUBROUTINE] Buy Shadowstrike"
+def buy_poisonous_dagger():
+    @Name "TALENT SYSTEM - - - [Poisonous Dagger] [SUBROUTINE] Buy Poisonous Dagger"
     
     if eventPlayer.replacing_talent_show_bought_talents == true:
-        eventPlayer.talents_you_do_not_have.append(Talent.SHADOWSTRIKE)
-        eventPlayer.talents_you_do_not_have.append(Talent.SHADOWSTEP)
+        eventPlayer.talents_you_do_not_have.append(Talent.POISONOUS_DAGGER)
         return
-    if eventPlayer.talent_ranks[Talent.SHADOWSTRIKE] == 1:
-        eventPlayer.talent_trigger_times[Talent.SHADOWSTRIKE] = eventPlayer.totalTimeElapsed - talent_base_cooldowns[Talent.SHADOWSTRIKE]
-        eventPlayer.talents_you_do_not_have.remove(Talent.SHADOWSTRIKE)
-        eventPlayer.talents_you_do_not_have.remove(Talent.SHADOWSTEP)
+    if eventPlayer.talent_ranks[Talent.POISONOUS_DAGGER] == 1:
+        eventPlayer.talent_trigger_times[Talent.POISONOUS_DAGGER] = eventPlayer.totalTimeElapsed - talent_base_cooldowns[Talent.POISONOUS_DAGGER]
+        eventPlayer.talents_you_do_not_have.remove(Talent.POISONOUS_DAGGER)
+
 
 def buy_stealth():
     @Name "TALENT SYSTEM - - - [TALENT 5: STEALTH] [SUBROUTINE] Buy Stealth"
@@ -702,7 +658,18 @@ def buy_stealth():
         eventPlayer.entering_stealth = false
         destroyEffect(eventPlayer.player_temp_effects[57])
         destroyEffect(eventPlayer.player_temp_effects[58])
+        #If you are trying to replace stealth with poisonous dagger
+        if eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent_in_shop] == [Talent.POISONOUS_DAGGER]:
+            smallMessage(eventPlayer, "You need {0} for {1}!".format(talent_names[Talent.STEALTH], talent_names[Talent.POISONOUS_DAGGER]))
+            goto lbl_0
+        #If you are trying to remove stealth when you have poisonous dagger
+        if eventPlayer.talent_ranks[Talent.POISONOUS_DAGGER] > 0:
+            smallMessage(eventPlayer, "Need to remove {0} first!".format(talent_names[Talent.STEALTH]))
+            lbl_0:
+            eventPlayer.replacing_talent_cancelled = true
+            return
         eventPlayer.talents_you_do_not_have.append(Talent.STEALTH)
+        eventPlayer.talents_you_do_not_have.remove(Talent.POISONOUS_DAGGER)
         return
     if eventPlayer.talent_ranks[Talent.STEALTH] == 1:
         eventPlayer.talent_trigger_times[Talent.STEALTH] = eventPlayer.totalTimeElapsed - talent_base_cooldowns[Talent.STEALTH]
@@ -711,7 +678,11 @@ def buy_stealth():
         eventPlayer.player_temp_effects[57] = getLastCreatedEntity()
         createEffect(eventPlayer if eventPlayer.is_using_ability[Talent.STEALTH] == true else null, Effect.SIGMA_GRAVITIC_FLUX_TARGET_SOUND, Color.WHITE, eventPlayer, 100, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
         eventPlayer.player_temp_effects[58] = getLastCreatedEntity()
+        if len(eventPlayer.bought_talents) < 5:
+            #Unlock follow-up talent
+            eventPlayer.possible_talents.append(Talent.POISONOUS_DAGGER)
         eventPlayer.talents_you_do_not_have.remove(Talent.STEALTH)
+        eventPlayer.talents_you_do_not_have.append(Talent.POISONOUS_DAGGER)
 
 def buy_juggernaut():
     @Name "TALENT SYSTEM - - - [TALENT 6: JUGGERNAUT] [SUBROUTINE] Buy Juggernaut [DISABLED: JUGGERNAUT NOT WORKING AS INTENDED]"
@@ -731,7 +702,7 @@ def buy_juggernaut():
         eventPlayer.talent_trigger_times[Talent.JUGGERNAUT] = eventPlayer.totalTimeElapsed - talent_base_cooldowns[Talent.JUGGERNAUT]
 
 def buy_dive_bomb():
-    @Name "TALENT SYSTEM - - - [TALENT 7: DIVE BOMB] [SUBROUTINE] Buy Dive Bomb [DISABLED: DIVE BOMB NOT WORKING AS INTENDED]"
+    @Name "TALENT SYSTEM - - - [DIVE BOMB] [SUBROUTINE] Buy Dive Bomb"
     
     if eventPlayer.replacing_talent_show_bought_talents == true:
         eventPlayer.talents_you_do_not_have.append(Talent.DIVE_BOMB)
@@ -753,7 +724,7 @@ def buy_railgun():
     @Name "TALENT SYSTEM - - - [TALENT 9: RAILGUN] [SUBROUTINE] Buy Railgun"
     
     if eventPlayer.replacing_talent_show_bought_talents == true:
-        if eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]] == [Talent.OVERCLOCK]:
+        if eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent_in_shop] == [Talent.OVERCLOCK]:
             smallMessage(eventPlayer, "You need {0} for {1}!".format(talent_names[Talent.RAILGUN], talent_names[Talent.OVERCLOCK]))
             goto lbl_0
         if eventPlayer.talent_ranks[Talent.OVERCLOCK] > 0:
@@ -795,26 +766,16 @@ def buy_predator():
     @Name "TALENT SYSTEM - - - [TALENT 10: PREDATOR] [SUBROUTINE] Buy Predator"
     
     if eventPlayer.replacing_talent_show_bought_talents == true:
-        #If you are trying to replace predator with soul siphon
-        if eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]] == [Talent.SOUL_SIPHON]:
-            smallMessage(eventPlayer, "You need {0} for {1}!".format(talent_names[Talent.PREDATOR], talent_names[Talent.SOUL_SIPHON]))
-            goto lbl_0
-        #If you are trying to remove predator when you have soul siphon
-        if eventPlayer.talent_ranks[Talent.SOUL_SIPHON] > 0:
-            smallMessage(eventPlayer, "Need to remove {0} Soul Siphon first!".format(abilityIconString(Hero.MOIRA, Button.SECONDARY_FIRE)))
-            lbl_0:
-            eventPlayer.replacing_talent_cancelled = true
-            return
         eventPlayer.talents_you_do_not_have.append(Talent.PREDATOR)
-        eventPlayer.talents_you_do_not_have.remove(Talent.SOUL_SIPHON)
         return
     if eventPlayer.talent_ranks[Talent.PREDATOR] == 1:
-        eventPlayer.talent_trigger_times[Talent.PREDATOR] = eventPlayer.totalTimeElapsed - talent_base_cooldowns[Talent.PREDATOR]
-        if len(eventPlayer.bought_talents) < 5:
-            #Unlock follow-up talent
-            eventPlayer.possible_talents.append(Talent.SOUL_SIPHON)
+        someone_in_match_have_predator = true
         eventPlayer.talents_you_do_not_have.remove(Talent.PREDATOR)
-        eventPlayer.talents_you_do_not_have.append(Talent.SOUL_SIPHON)
+    if eventPlayer.talent_ranks[Talent.PREDATOR] > 1:
+        players_with_predator_rank[eventPlayer.talent_ranks[Talent.PREDATOR] - 1] -= 1    
+    players_with_predator_rank[eventPlayer.talent_ranks[Talent.PREDATOR]] += 1
+    if eventPlayer.talent_ranks[Talent.PREDATOR] > highest_predator_rank_in_match:
+        highest_predator_rank_in_match = eventPlayer.talent_ranks[Talent.PREDATOR]
 
 def buy_jetpack():
     @Name "TALENT SYSTEM - - - [TALENT 11: JETPACK] [SUBROUTINE] Buy Jetpack"
@@ -877,7 +838,7 @@ def buy_health_potions():
     @Name "TALENT SYSTEM - - - [TALENT 14: HEALTH POTIONS] [SUBROUTINE] Buy Health Potions"
     
     if eventPlayer.replacing_talent_show_bought_talents == true:
-        if eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]] == [Talent.CRAZY_ALCHEMIST]:
+        if eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent_in_shop] == [Talent.CRAZY_ALCHEMIST]:
             smallMessage(eventPlayer, "You need {0} for {1}!".format(talent_names[Talent.HEALTH_POTIONS], talent_names[Talent.CRAZY_ALCHEMIST]))
             goto lbl_0
         if eventPlayer.talent_ranks[Talent.CRAZY_ALCHEMIST] > 0:
@@ -926,12 +887,10 @@ def buy_shadowstep():
     
     if eventPlayer.replacing_talent_show_bought_talents == true:
         eventPlayer.talents_you_do_not_have.append(Talent.SHADOWSTEP)
-        eventPlayer.talents_you_do_not_have.append(Talent.SHADOWSTRIKE)
         return
     if eventPlayer.talent_ranks[Talent.SHADOWSTEP] == 1:
         eventPlayer.talent_trigger_times[Talent.SHADOWSTEP] = eventPlayer.totalTimeElapsed - talent_base_cooldowns[Talent.SHADOWSTEP]
         eventPlayer.talents_you_do_not_have.remove(Talent.SHADOWSTEP)
-        eventPlayer.talents_you_do_not_have.remove(Talent.SHADOWSTRIKE)
 
 def buy_burning_soul():
     @Name "TALENT SYSTEM - - - [TALENT 19: BURNING SOUL] [SUBROUTINE] Buy Burning Soul"
@@ -954,7 +913,7 @@ def buy_berserker():
     @Name "TALENT SYSTEM - - - [TALENT 20: BERSERKER] [SUBROUTINE] Buy Berserker"
     
     if eventPlayer.replacing_talent_show_bought_talents == true:
-        if eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]] == [Talent.BLOODTHIRST]:
+        if eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent_in_shop] == [Talent.BLOODTHIRST]:
             smallMessage(eventPlayer, "You need {0} for {1}!".format(talent_names[Talent.BERSERKER], talent_names[Talent.BLOODTHIRST]))
             goto lbl_0
         if eventPlayer.talent_ranks[Talent.BLOODTHIRST] > 0:
@@ -986,7 +945,7 @@ def buy_fireball():
     @Name "TALENT SYSTEM - - - [TALENT 21: FIREBALL] [SUBROUTINE] Buy Fireball"
     
     if eventPlayer.replacing_talent_show_bought_talents == true:
-        if eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]] == [Talent.PYROMANIAC]:
+        if eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent_in_shop] == [Talent.PYROMANIAC]:
             smallMessage(eventPlayer, "You need {0} for {1}!".format(talent_names[Talent.FIREBALL], talent_names[Talent.PYROMANIAC]))
             goto lbl_0
         if eventPlayer.talent_ranks[Talent.PYROMANIAC] > 0:
@@ -1014,15 +973,13 @@ def buy_ignore_pain():
     
     if eventPlayer.replacing_talent_show_bought_talents == true:
         eventPlayer.ignore_pain_damage_resisted = 0
-        eventPlayer.talents_you_do_not_have.append(Talent.ENGINEER)
         eventPlayer.talents_you_do_not_have.append(Talent.IGNORE_PAIN)
         destroyEffect(eventPlayer.player_temp_effects[55])
         destroyEffect(eventPlayer.player_temp_effects[56])
         return
     if eventPlayer.talent_ranks[Talent.IGNORE_PAIN] == 1:
-        #Lock talent Engineer
+        #Lock talent Soul Harvest
         eventPlayer.possible_talents.remove(Talent.IGNORE_PAIN)
-        eventPlayer.talents_you_do_not_have.remove(Talent.ENGINEER)
         eventPlayer.talents_you_do_not_have.remove(Talent.IGNORE_PAIN)
         eventPlayer.ignore_pain_damage_resisted = 0
         createEffect(getAllPlayers() if eventPlayer.is_using_ability[Talent.IGNORE_PAIN] == true else null, Effect.WRECKING_BALL_ADAPTIVE_SHIELD_TARGET, Color.TEAM_1, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
@@ -1030,18 +987,17 @@ def buy_ignore_pain():
         createEffect(eventPlayer if eventPlayer.is_using_ability[Talent.IGNORE_PAIN] == true else null, Effect.WRECKING_BALL_ADAPTIVE_SHIELD_TARGET_SOUND, Color.TEAM_1, eventPlayer.getPosition(), eventPlayer.ignore_pain_volume, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
         eventPlayer.player_temp_effects[56] = getLastCreatedEntity()
 
-def buy_soul_siphon():
-    @Name "TALENT SYSTEM - - - [TALENT 29: SOUL SIPHON] [SUBROUTINE] Buy Soul Siphon"
+def buy_bandage():
+    @Name "TALENT SYSTEM - - - [Bandage] [SUBROUTINE] Buy Bandage"
     
     if eventPlayer.replacing_talent_show_bought_talents == true:
-        stopChasingVariable(eventPlayer.soul_siphon_duration)
-        eventPlayer.soul_siphon_duration = 0
-        eventPlayer.talents_you_do_not_have.append(Talent.SOUL_SIPHON)
+        stopChasingVariable(eventPlayer.bandage_progress)
+        eventPlayer.bandage_progress = 0
+        eventPlayer.talents_you_do_not_have.append(Talent.BANDAGE)
         return
-    if eventPlayer.talent_ranks[Talent.SOUL_SIPHON] == 1:
-        eventPlayer.soul_siphon_duration = 0
-        chase(eventPlayer.soul_siphon_duration, 0, rate=1, ChaseReeval.DESTINATION_AND_RATE)
-        eventPlayer.talents_you_do_not_have.remove(Talent.SOUL_SIPHON)
+    if eventPlayer.talent_ranks[Talent.BANDAGE] == 1:
+        eventPlayer.talent_trigger_times[Talent.BANDAGE] = eventPlayer.totalTimeElapsed - talent_base_cooldowns[Talent.BANDAGE]
+        eventPlayer.talents_you_do_not_have.remove(Talent.BANDAGE)
 
 def buy_pyromaniac():
     @Name "TALENT SYSTEM - - - [TALENT 30: PYROMANIAC] [SUBROUTINE] Buy Pyromaniac"
@@ -1060,7 +1016,7 @@ def buy_poison_vials():
     @Name "TALENT SYSTEM - - - [TALENT 31: POISON VIALS] [SUBROUTINE] Buy Poison Vials [DISABLED: POISON VIALS NOT WORKING AS INTENDED]"
     
     if eventPlayer.replacing_talent_show_bought_talents == true:
-        if eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent[0]] == talent_names[Talent.CRAZY_ALCHEMIST]:
+        if eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent_in_shop] == talent_names[Talent.CRAZY_ALCHEMIST]:
             smallMessage(eventPlayer, "You need {0} for {1}!".format(talent_names[Talent.POISON_VIALS], talent_names[Talent.CRAZY_ALCHEMIST]))
             goto lbl_0
         if eventPlayer.talent_ranks[Talent.CRAZY_ALCHEMIST] > 0:
@@ -1139,16 +1095,16 @@ def buy_gigachad():
     if eventPlayer.talent_ranks[Talent.GIGACHAD] == 1:
         eventPlayer.talents_you_do_not_have.remove(Talent.GIGACHAD)
         eventPlayer.talents_you_do_not_have.remove(Talent.SPRINTER)
-    #Health
-    eventPlayer.stats[1] += 50
-    #Speed
-    eventPlayer.stats[2] -= 5
-    #Size
-    eventPlayer.stats[8] += 0.07
-    eventPlayer.startScalingSize(eventPlayer.stats[8], false)
-    #Voice
-    eventPlayer.stats[6] -= 0.05
-    eventPlayer.startModifyingVoicelinePitch(eventPlayer.stats[6], false)
+        #Health
+        eventPlayer.stats[1] += 50
+        #Speed
+        eventPlayer.stats[2] -= 5
+        #Size
+        eventPlayer.stats[8] += 0.07
+        eventPlayer.startScalingSize(eventPlayer.stats[8], false)
+        #Voice
+        eventPlayer.stats[6] -= 0.05
+        eventPlayer.startModifyingVoicelinePitch(eventPlayer.stats[6], false)
 
 def buy_gunslinger():
     @Name "TALENT SYSTEM - - - [GUNSLINGER] [SUBROUTINE] Buy GUNSLINGER"

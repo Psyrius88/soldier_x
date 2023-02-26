@@ -57,7 +57,7 @@ rule "XP SYSTEM - - - Level Up":
     eventPlayer.can_enter_shop = true
     playEffect(getAllPlayers(), DynamicEffect.BUFF_EXPLOSION_SOUND, Color.WHITE, eventPlayer, 100)
     if eventPlayer.amount_of_talents_purchased < 25:
-        smallMessage(eventPlayer, "{0} +1 Talent Point!".format(abilityIconString(Hero.GENJI, Button.JUMP)))
+        bigMessage(eventPlayer, "{0} Level Up!".format(abilityIconString(Hero.GENJI, Button.JUMP)))
 
 
 rule "XP SYSTEM - - - Earned Elimination":
