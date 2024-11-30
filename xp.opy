@@ -2,16 +2,25 @@
 rule "XP SYSTEM - - - Level 0 or 25? Activate XP Boost":
     @Event eachPlayer
     @Hero soldier
-    @Condition (eventPlayer.amount_of_talents_purchased == 0 or eventPlayer.amount_of_talents_purchased == 25)
+    @Condition (eventPlayer.amount_of_talents_purchased == 0 or eventPlayer.amount_of_talents_purchased == 25) == true
     @Condition eventPlayer.hasSpawned() == true
     @Condition eventPlayer.isAlive() == true
     
     eventPlayer.xp_boost_is_active = true
     if eventPlayer.amount_of_talents_purchased == 0:
-        eventPlayer.totalTimeElapsed = 0
-        chase(eventPlayer.totalTimeElapsed, 99999, rate=1, ChaseReeval.DESTINATION_AND_RATE)
-        if debugging == true:
-            buy_debug_talents()
+        if eventPlayer.spawning_for_the_first_time == true:
+            if debugging == true:
+                buy_debug_talents()
+            eventPlayer.totalTimeElapsed = 0
+            chase(eventPlayer.totalTimeElapsed, 99999, rate=1, ChaseReeval.DESTINATION_AND_RATE)
+            #if eventPlayer.amount_of_talents_purchased < leading_player_talents_purchased and eventPlayer.amount_of_talents_purchased < 5:
+            #eventPlayer.xp_boost_is_active = false
+            #eventPlayer.amount_of_bonus_talents = leading_player_talents_purchased if leading_player_talents_purchased <= 5 else 5
+            #async(late_to_the_party, AsyncBehavior.NOOP)
+            #return
+            #__end__()
+        if eventPlayer.spawning_for_the_first_time == true:
+            eventPlayer.spawning_for_the_first_time = false
         return
     waitUntil(eventPlayer.amount_of_talents_purchased < 25, 99999)
     eventPlayer.xp_boost_is_active = false

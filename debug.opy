@@ -1,15 +1,16 @@
 #!mainFile "soldier_x.opy"
-
+/*
 rule "DEBUG - - - Host HUD Texts [DEFAULT: OFF]":
     @Event eachPlayer
     @Condition hostPlayer == eventPlayer
     #@Condition eventPlayer.player_name == "Psyrius"
+  
+   
+    hudText(hostPlayer, "selected_talent_in_shop: {0}".format(hostPlayer.selected_talent_in_shop), "", "", HudPosition.RIGHT, 99, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
+    hudText(hostPlayer, "selected_talent_position: {0}".format(hostPlayer.selected_talent_position), "", "", HudPosition.RIGHT, 99.1, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
+    #hudText(hostPlayer, "Leading Player Talents: {0}".format(leading_player_talents_purchased), "", "", HudPosition.RIGHT, 99.3, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
+    #hudText(hostPlayer, "Srv Load: {0} {1} {2}".format(getServerLoad(), getAverageServerLoad(), getPeakServerLoad()), "", "", HudPosition.RIGHT, 105, Color.RED, Color.RED, Color.RED, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
 
-    hudText(hostPlayer, "Amount of texts: {0}".format(getNumberOfTextIds()), "", "", HudPosition.RIGHT, 99, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
-    hudText(hostPlayer, "Amount of effects: {0}".format(getNumberOfEntityIds()), "", "", HudPosition.RIGHT, 99.1, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
-    hudText(hostPlayer, "Leading Player Talents: {0}".format(leading_player_talents_purchased), "", "", HudPosition.RIGHT, 99.3, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
-    hudText(hostPlayer, "Srv Load: {0} {1} {2}".format(getServerLoad(), getAverageServerLoad(), getPeakServerLoad()), "", "", HudPosition.RIGHT, 105, Color.RED, Color.RED, Color.RED, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
-/*
     hudText(hostPlayer, null, null, ("DPS:"), HudPosition.RIGHT, 106, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
     hudText(hostPlayer, "Lifesteal Ammo:", "In Combat Avg: {0} {1}".format("[Rank 1: {0}] [Rank 2: {1}] [Rank 3: {2}]".format(lifesteal_total_healing[1] / lifesteal_time_in_combat[1], lifesteal_total_healing[2] / lifesteal_time_in_combat[2], lifesteal_total_healing[3] / lifesteal_time_in_combat[3]), "[Rank 4: {0}] [Rank 5: {1}]".format(lifesteal_total_healing[4] / lifesteal_time_in_combat[4], lifesteal_total_healing[5] / lifesteal_time_in_combat[5])), null, HudPosition.LEFT, 100, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
     hudText(hostPlayer, "Health Regen:", "In Combat Avg: {0} {1}".format("[Rank 1: {0}] [Rank 2: {1}] [Rank 3: {2}]".format(health_regen_total_healing[1] / health_regen_time_in_combat[1], health_regen_total_healing[2] / health_regen_time_in_combat[2], health_regen_total_healing[3] / health_regen_time_in_combat[3]), "[Rank 4: {0}] [Rank 5: {1}]".format(health_regen_total_healing[4] / health_regen_time_in_combat[4], health_regen_total_healing[5] / health_regen_time_in_combat[5])), null, HudPosition.LEFT, 101, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
@@ -29,7 +30,7 @@ rule "DEBUG - - - Hold Reload For XP [DEFAULT: OFF]":
     wait(0.02)
     if RULE_CONDITION:
         goto RULE_START
-*/
+#*/
 /*
 rule "DEBUG - - - Activate Admin Rights [DEFAULT: OFF]":
     @Event eachPlayer
@@ -37,16 +38,17 @@ rule "DEBUG - - - Activate Admin Rights [DEFAULT: OFF]":
     @Condition hostPlayer == eventPlayer
 
     debugging = true
-    */
+*/
 /*
 rule "DEBUG - - - Hold Crouch + Jump to take Damage [DEFAULT: OFF]":
     @Event eachPlayer
     @Condition eventPlayer.isHoldingButton(Button.CROUCH) == true
     @Condition eventPlayer.isHoldingButton(Button.JUMP) == true
     @Condition eventPlayer.browsing_shop == false
-        damage(eventPlayer, eventPlayer, 100)   
-        leading_player_talents_purchased = 5 
-
+        damage(eventPlayer, eventPlayer, 100)
+        wait(1, Wait.IGNORE_CONDITION)
+*/
+/*
 def buy_debug_talents():
     if debug_gunslinger > 0:
         eventPlayer.talent_ranks[Talent.GUNSLINGER] = 1
@@ -144,6 +146,18 @@ def buy_debug_talents():
         buy_bloodthirst()
         eventPlayer.talent_ranks[Talent.BLOODTHIRST] = debug_bloodthirst
         eventPlayer.amount_of_talents_purchased += debug_bloodthirst
+    if debug_purity_field > 0:
+        eventPlayer.talent_ranks[Talent.PURITY_FIELD] = 1
+        eventPlayer.bought_talents.append(Talent.PURITY_FIELD)
+        buy_purity_field()
+        eventPlayer.talent_ranks[Talent.PURITY_FIELD] = debug_purity_field
+        eventPlayer.amount_of_talents_purchased += debug_purity_field
+    if debug_juggernaut > 0:
+        eventPlayer.talent_ranks[Talent.JUGGERNAUT] = 1
+        eventPlayer.bought_talents.append(Talent.JUGGERNAUT)
+        buy_juggernaut()
+        eventPlayer.talent_ranks[Talent.JUGGERNAUT] = debug_juggernaut
+        eventPlayer.amount_of_talents_purchased += debug_juggernaut
 */
 
 /*
