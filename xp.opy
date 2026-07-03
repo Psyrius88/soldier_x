@@ -111,7 +111,7 @@ def activate_xp_boost():
     @Name "XP SYSTEM - - - [SUBROUTINE] Activate XP Boost"
 
     eventPlayer.xp_boost_is_active = true
-    chase(eventPlayer.experience_current, eventPlayer.experience_max, rate=eventPlayer.experience_max / 60, ChaseReeval.DESTINATION_AND_RATE)
+    chase(eventPlayer.experience_current, eventPlayer.experience_max, rate=eventPlayer.experience_max / (30 if eventPlayer.amount_of_talents_purchased == 0 else 60), ChaseReeval.DESTINATION_AND_RATE)
     waitUntil((eventPlayer.skipped_a_talent == false and eventPlayer.amount_of_talents_purchased > 0 and eventPlayer.amount_of_talents_purchased < 25 and eventPlayer.amount_of_talents_purchased > (player_with_most_talents.amount_of_talents_purchased - 5)) or eventPlayer.xp_boost_is_active == false, 99999)
     eventPlayer.xp_boost_is_active = false
     stopChasingVariable(eventPlayer.experience_current)
@@ -124,7 +124,7 @@ rule "XP SYSTEM - - - Level Up":
     eventPlayer.can_enter_shop = true
     playEffect(getAllPlayers(), DynamicEffect.BUFF_EXPLOSION_SOUND, Color.WHITE, eventPlayer, 100)
     if eventPlayer.amount_of_talents_purchased < 25:
-        bigMessage(eventPlayer, "{0} Level Up!".format(('<TX00000004C5D2>')))
+        bigMessage(eventPlayer, "{0} +1 Talent Point!".format(('<TX00000004C5D2>')))
 
 rule "XP SYSTEM - - - Earned Elimination":
     @Event playerEarnedElimination

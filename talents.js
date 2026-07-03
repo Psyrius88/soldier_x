@@ -16,10 +16,11 @@
 //--- Shop info-box knobs (the info-bg bar auto-derives its size from these — nothing about it is hardcoded in the .opy) ---
 var WRAP_WIDTH = 42                 // description word-wrap width (characters); also drives the bar width & height below
 var BG_WIDTH_FACTOR = 1.3          // bar width = round(longestLine * this) spaces, where longestLine = the talent's OWN longest visible text line (> 1: header-font spaces are narrower than text glyphs; this doubles as the side margin). Tune in-game.
-var BG_HEIGHT_FACTOR = 0.7         // bar height = round(textLines * this) header rows (< 1: a header row is taller than a description/subheader row). Tune in-game.
+var BG_HEIGHT_FACTOR = 0.72        // bar height = round(textLines * this + BG_HEIGHT_BASE) header rows (< 1: a header row is taller than a description/subheader row). Tune in-game.
+var BG_HEIGHT_BASE = 0.6           // constant rows added on top of the factor — covers the fixed margin short cards need (a pure multiplier undershoots 3-line cards and overshoots 12-line ones). Tune in-game.
 var EMDASH_FILL = 0.55             // em-dash divider length = round(barWidthSpaces * this). Em-dashes (and "»") are Latin-1 and do NOT reskin the font, so the dividers sit in the normal merged text; an em-dash is ~2 spaces wide, so < 1. Tune until the line spans the background.
-var INFO_TEXT_PAD = 21             // blank lines above the description text — moves the whole text block DOWN toward/under the orbs
-var INFO_BAR_PAD = 13               // blank rows above the bar — moves the bar DOWN to sit behind the text (pair with INFO_TEXT_PAD)
+var INFO_TEXT_PAD = 22             // blank lines above the description text — moves the whole text block DOWN toward/under the orbs
+var INFO_BAR_PAD = 12               // blank rows above the bar — moves the bar DOWN to sit behind the text (pair with INFO_TEXT_PAD)
 var PAD_CHAR = "\xAD"               // soft hyphen (U+00AD): renders as nothing but counts as a character; anchors each bar/pad row so trailing spaces & blank lines aren't trimmed
 var ARROW = " » "                   // " » " (U+00BB) between current and upgraded stat value. Like "—", it's a Latin-1 char that does NOT reskin the font, so it's safe inside the normal merged text.
 //--- Colored upgrade value matches the talent's orb color, indexed by current rank ---
@@ -58,6 +59,9 @@ var ORB_HEX = ["FFFFFFFF", "45FF57FF", "27AAFFFF", "A149C5FF", "EC9900FF", "EC99
 //   unlocks / locks: [ids] Only feed the "Unlocks: / Locks:" text on the shop card. The
 //                          actual lock/unlock ENFORCEMENT is still hardcoded in shop.opy's
 //                          buy_* subroutines (not yet data-driven).
+//   bg_rows_nudge / bg_width_nudge: (optional, default 0) hand-tune THIS talent's info-bg
+//                          size by +/- N header rows / spaces after the global formula
+//                          (also stretches/shrinks its em-dash dividers with the width).
 //
 // NOT HERE (gameplay CODE, lives in the .opy): a talent's behavior — its use-rule and
 //   buy_<id>() subroutine. Adding a brand-new talent or fully removing one still needs
@@ -174,7 +178,7 @@ var talents = [
       name: "Stealth",
       icon: "('<tx0C000000000207B6>')",
       keybind: '"[Hold: [CTRL] (On Ground)]"',
-      description: "Enter stealth when crouching out of combat. Melee from stealth hacks the target, briefly preventing activation of their talents. Taking damage or using damage dealing abilities will break stealth.",
+      description: "Enter stealth when crouching out of combat. Melee from stealth applies a short stun and hacks the target, briefly preventing activation of their talents. Taking damage or using damage dealing abilities will break stealth.",
       cooldown: 22.5,
       upgrade_information: "[Upgrade: +Hack Duration, -Cooldown]",
       cd_reduction_per_rank: 2.5,
@@ -915,9 +919,10 @@ var textLineCount = (talent) => {
     }
     return lines
 }
+var barWidthSpaces = (talent) => Math.round(overallLongest(talent) * BG_WIDTH_FACTOR) + (talent.bg_width_nudge || 0)
 var infoBgRows = (talent) => {
-    var row = " ".repeat(Math.round(overallLongest(talent) * BG_WIDTH_FACTOR)) + PAD_CHAR
-    var barLines = Math.max(1, Math.round(textLineCount(talent) * BG_HEIGHT_FACTOR))
+    var row = " ".repeat(barWidthSpaces(talent)) + PAD_CHAR
+    var barLines = Math.max(1, Math.round(textLineCount(talent) * BG_HEIGHT_FACTOR + BG_HEIGHT_BASE) + (talent.bg_rows_nudge || 0))
     var rows = []
     for (var k = 0; k < barLines; k++) {
         rows.push(row)
@@ -926,14 +931,14 @@ var infoBgRows = (talent) => {
 }
 
 var result = "enum Talent:\n" + talents.map(t => "    " + t.id.toUpperCase()).join(",\n") + "\n\n"
-result += "globalvar talent_base_cooldowns = [" + talents.map(t => t.cooldown) + "]\n"
-result += "globalvar talent_cd_reduction_p_rank = [" + talents.map(t => t.cd_reduction_per_rank) + "]\n"
+result += "globalvar talent_base_cooldowns = compressed([" + talents.map(t => t.cooldown) + "])\n"
+result += "globalvar talent_cd_reduction_p_rank = compressed([" + talents.map(t => t.cd_reduction_per_rank) + "])\n"
 result += "globalvar cooldown_talents = [" + talents.filter(t => t.sweep_cooldown).map(t => "Talent." + t.id.toUpperCase()).join(", ") + "]\n"
 result += "playervar talents_you_do_not_have = [" + talents.filter(t => t.requires_any_of.length === 0 && !t.disabled).map(t => "Talent." + t.id.toUpperCase()).join(", ") + "]\n"
 result += "globalvar talent_names = [" + talents.map(t => `"{} [${t.name}]".format(${t.icon})`) + "]\n"
 result += "globalvar talent_descriptions = [" + talents.map(t => JSON.stringify("\n".repeat(INFO_TEXT_PAD) + wrapText(t.description, WRAP_WIDTH))) + "]\n"
 result += "globalvar talent_info_bg = [" + talents.map(t => JSON.stringify(infoBgRows(t))) + "]\n"
-result += "globalvar talent_emdash_sep = [" + talents.map(t => JSON.stringify("—".repeat(Math.round(Math.round(overallLongest(t) * BG_WIDTH_FACTOR) * EMDASH_FILL)))) + "]\n"
+result += "globalvar talent_emdash_sep = [" + talents.map(t => JSON.stringify("—".repeat(Math.round(barWidthSpaces(t) * EMDASH_FILL)))) + "]\n"
 result += "globalvar talent_info_bar_pad = " + JSON.stringify(Array(INFO_BAR_PAD).fill(PAD_CHAR).join("\n")) + "\n"
 //--- talent_availability[talent]: precomputed "Unlocks: ...\nLocks: a, b" block (multiple separated by commas) for the HUD subheader, or "" if the talent has no unlocks/locks. References talent_names (declared above) for the icon+name. ---
 result += "globalvar talent_availability = [" + talents.map(t => {

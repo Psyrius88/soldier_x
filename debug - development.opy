@@ -61,8 +61,6 @@ macro DEBUG_FLYCAM_BOOST_MULTIPLIER = 4     #speed multiplier while holding Abil
 #--- Workshop Settings (only active when this file is included) ---
 rule "DEBUG - - - Init Workshop Settings":
     debug_spectator_tools = createWorkshopSettingBool("00. Debug", "Debug tools", true, 0)
-    debug_hack_self = createWorkshopSettingBool("00. Debug", "Hacked: Press Interact to hack self", false, 1)
-    debug_hack_self_rank = createWorkshopSettingInt("00. Debug", "Hacked: Self Rank", 1, 1, 5, 2)
     debug_bot_load_test = createWorkshopSettingBool("00. Debug: Server Load", "Server load test", true, 0)
     debug_test_radius = createWorkshopSettingFloat("00. Debug: Server Load", "Formation Radius (Circle) | Distance Between bots (m)", 6, 1, 20, 1)
     debug_test_line = createWorkshopSettingBool("00. Debug: Server Load", "Formation: Circle (Off) | Line (On))", false, 2)
@@ -72,17 +70,6 @@ rule "DEBUG - - - Init Workshop Settings":
     debug_bot_low_hp = createWorkshopSettingBool("00. Debug: Server Load", "Bots: starts with 20% Health", false, 6)
     debug_disable_cooldown_huds = createWorkshopSettingBool("00. Debug: Server Load", "Disable talent cooldown HUDs", false, 7)
     debug_bot_damage_multi = createWorkshopSettingBool("00. Debug: Server Load", "Bots: random multi-victim (needs 'shoot each other')", false, 8)
-
-
-#--- Hacked tester: while the toggle is on, hold Interact to hack yourself for the chosen rank's duration (1.5 + rank*0.5 s) ---
-rule "DEBUG - - - Apply Hacked On Self (Interact)":
-    @Event eachPlayer
-    @Condition debug_hack_self == true
-    @Condition not eventPlayer.isDummy()
-    @Condition eventPlayer.isHoldingButton(Button.INTERACT) == true
-
-    eventPlayer.hacked_until = getTotalTimeElapsed() + 1.5 + debug_hack_self_rank * 0.5
-    eventPlayer.is_hacked = true
 
 
 #--- Element budget + server load readout (host, visible while playing) ---

@@ -108,7 +108,7 @@ rule "TALENT SYSTEM - - - [TALENT 1: IMMUNITY] Use Immunity":
     
     if eventPlayer.is_hacked == true:
         eventPlayer.hack_error_pending = true
-        waitUntil(eventPlayer.is_hacked == false or not RULE_CONDITION, 99999)
+        waitUntil(eventPlayer.is_hacked == false, 99999)
         if not RULE_CONDITION:
             return
     eventPlayer.talent_trigger_times[Talent.IMMUNITY] = getTotalTimeElapsed()
@@ -196,7 +196,7 @@ rule "TALENT SYSTEM - - - [TALENT 5: STEALTH] Use Stealth":
     
     if eventPlayer.is_hacked == true:
         eventPlayer.hack_error_pending = true
-        waitUntil(eventPlayer.is_hacked == false or not RULE_CONDITION, 99999)
+        waitUntil(eventPlayer.is_hacked == false, 99999)
         if not RULE_CONDITION:
             return
     eventPlayer.entering_stealth = true
@@ -558,7 +558,7 @@ rule "TALENT SYSTEM - - - [DIVE BOMB] Use Dive Bomb":
     
     if eventPlayer.is_hacked == true:
         eventPlayer.hack_error_pending = true
-        waitUntil(eventPlayer.is_hacked == false or not RULE_CONDITION, 99999)
+        waitUntil(eventPlayer.is_hacked == false, 99999)
         if not RULE_CONDITION:
             return
     eventPlayer.is_using_ability[Talent.DIVE_BOMB] = true
@@ -723,7 +723,7 @@ rule "TALENT SYSTEM - - - [TALENT 9: RAILGUN] Charge Railgun":
     while RULE_CONDITION:
         if eventPlayer.is_hacked == true:
             eventPlayer.hack_error_pending = true
-            waitUntil(eventPlayer.is_hacked == false or not RULE_CONDITION, 99999)
+            waitUntil(eventPlayer.is_hacked == false, 99999)
             if not RULE_CONDITION:
                 return
         #is charging railgun
@@ -882,7 +882,7 @@ rule "TALENT SYSTEM - - - [TALENT 11: JETPACK] Use Jetpack":
     while RULE_CONDITION:
         if eventPlayer.is_hacked == true:
             eventPlayer.hack_error_pending = true
-            waitUntil(eventPlayer.is_hacked == false or not RULE_CONDITION, 99999)
+            waitUntil(eventPlayer.is_hacked == false, 99999)
             if not RULE_CONDITION:
                 return
         if eventPlayer.using_gamepad == true:
@@ -1267,7 +1267,7 @@ rule "TALENT SYSTEM - - - [TALENT 20: BERSERKER] Use Berserker":
     
     if eventPlayer.is_hacked == true:
         eventPlayer.hack_error_pending = true
-        waitUntil(eventPlayer.is_hacked == false or not RULE_CONDITION, 99999)
+        waitUntil(eventPlayer.is_hacked == false, 99999)
         if not RULE_CONDITION:
             return
     eventPlayer.is_using_ability[Talent.BERSERKER] = true
@@ -1348,7 +1348,7 @@ rule "TALENT SYSTEM - - - [TALENT 21: FIREBALL] Use Fireball":
     
     if eventPlayer.is_hacked == true:
         eventPlayer.hack_error_pending = true
-        waitUntil(eventPlayer.is_hacked == false or not RULE_CONDITION, 99999)
+        waitUntil(eventPlayer.is_hacked == false, 99999)
         if not RULE_CONDITION:
             return
     if eventPlayer.is_using_ability[Talent.STEALTH] == true:
@@ -1370,7 +1370,7 @@ def fireball_casted():
     createProjectileEffect(getAllPlayers(), Projectile.REINHARDT_FIRE_STRIKE, Color.TEAM_1, eventPlayer.fireball_position, directionTowards(eventPlayer.fireball_position, eventPlayer.fireball_destination), 0, ProjectileEffectReeval.POSITION_DIRECTION_AND_SIZE)
     eventPlayer.fireball_effects[1] = getLastCreatedEntity()
 
-    waitUntil(eventPlayer.fireball_position == eventPlayer.fireball_destination or eventPlayer.talent_trigger_times[Talent.FIREBALL] + talent_base_cooldowns[Talent.FIREBALL] <= getTotalTimeElapsed() or any([player != eventPlayer and player.is_using_ability[Talent.SHADOWSTEP] == false and eventPlayer.fireball_position != null and player.isAlive() and player.browsing_shop == false and distance(eventPlayer.fireball_position, player.getPosition() + Vector.UP) <= FIREBALL_PROJECTILE_RADIUS and isInLoS(eventPlayer.fireball_position, player.getPosition() + Vector.UP, BarrierLos.PASS_THROUGH_BARRIERS) for player in getAllPlayers()]) == true, Math.INFINITY)
+    waitUntil(eventPlayer.fireball_position == eventPlayer.fireball_destination or eventPlayer.talent_trigger_times[Talent.FIREBALL] + talent_base_cooldowns[Talent.FIREBALL] <= getTotalTimeElapsed() or any([player != eventPlayer and player.hasSpawned() and player.is_using_ability[Talent.SHADOWSTEP] == false and eventPlayer.fireball_position != null and player.isAlive() and player.browsing_shop == false and distance(eventPlayer.fireball_position, player.getPosition() + Vector.UP) <= FIREBALL_PROJECTILE_RADIUS and isInLoS(eventPlayer.fireball_position, player.getPosition() + Vector.UP, BarrierLos.PASS_THROUGH_BARRIERS) for player in getAllPlayers()]) == true, Math.INFINITY)
 
     eventPlayer.victims_in_fireball_radius = [player for player in getPlayersInRadius(eventPlayer.fireball_position, FIREBALL_EXPLOSION_RADIUS, Team.ALL, LosCheck.SURFACES) 
         if 
@@ -1521,6 +1521,13 @@ def casting_cancelled():
         if eventPlayer.casting_success == true:
             return
 
+    # OPENING OPTIONS MENU / RETURNING TO SHOP
+    elif eventPlayer.is_using_open_options == true:
+        waitUntil(eventPlayer.isHoldingButton(Button.ULTIMATE) == false or eventPlayer.isHoldingButton(Button.JUMP if eventPlayer.using_gamepad else Button.INTERACT) or eventPlayer.casting_success)
+
+        if eventPlayer.casting_success == true:
+            return
+
     # VOTING YES      
     elif eventPlayer.is_using_vote_yes == true:
         waitUntil(eventPlayer.isHoldingButton(Button.ABILITY_1 if eventPlayer.using_gamepad else Button.PRIMARY_FIRE) == false or eventPlayer.isHoldingButton(Button.ABILITY_2 if eventPlayer.using_gamepad else Button.SECONDARY_FIRE) or eventPlayer.casting_success)
@@ -1564,6 +1571,7 @@ def casting_cancelled():
     eventPlayer.is_using_skip_talent = false
     eventPlayer.is_using_vote_yes = false
     eventPlayer.is_using_vote_no = false
+    eventPlayer.is_using_open_options = false
     stopChasingVariable(eventPlayer.casting_timer)
     eventPlayer.using_hearthstone_timer = 0
     destroyEffect(eventPlayer.casting_effect_id)
@@ -1598,7 +1606,7 @@ def casting():
         #Vector 0 Right, 1.8 Up, 1 Forward
         createEffect(getAllPlayers() if not eventPlayer.is_using_ability[Talent.STEALTH] else null, Effect.GOOD_AURA_SOUND, Color.WHITE, updateEveryFrame(eventPlayer.getPosition() + worldVector(vect(0, 1.8, 1), eventPlayer, Transform.ROTATION)), 100, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
 
-    elif eventPlayer.is_using_skip_talent or eventPlayer.is_using_vote_yes or eventPlayer.is_using_vote_no:
+    elif eventPlayer.is_using_skip_talent or eventPlayer.is_using_vote_yes or eventPlayer.is_using_vote_no or eventPlayer.is_using_open_options:
         createEffect(eventPlayer, Effect.SOMBRA_HACKING_SOUND, Color.WHITE, shop_location if eventPlayer.browsing_shop == true else eventPlayer.getPosition(), 100, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
 
     eventPlayer.casting_sound_effect_id = getLastCreatedEntity()
@@ -1615,13 +1623,13 @@ def casting():
     eventPlayer.casting_effect_id = getLastCreatedEntity()
 
     #Chase
-    chaseAtRate(eventPlayer.casting_timer, GRIM_REAPER_CAST_TIME if eventPlayer.is_using_ability[Talent.GRIM_REAPER] else 0.5 if faster_testing else 2.75, 1, ChaseRateReeval.DESTINATION_AND_RATE)
+    chaseAtRate(eventPlayer.casting_timer, GRIM_REAPER_CAST_TIME if eventPlayer.is_using_ability[Talent.GRIM_REAPER] else 1 if eventPlayer.is_using_open_options else 0.5 if faster_testing else 2.75, 1, ChaseRateReeval.DESTINATION_AND_RATE)
 
     #Wait
     if eventPlayer.is_using_ability[Talent.GRIM_REAPER]:
         waitUntil(eventPlayer.is_using_ability[Talent.GRIM_REAPER] == false, GRIM_REAPER_CAST_TIME)
     else:
-        wait(0.5 if faster_testing else 2.75, Wait.ABORT_WHEN_FALSE)
+        wait(1 if eventPlayer.is_using_open_options else 0.5 if faster_testing else 2.75, Wait.ABORT_WHEN_FALSE)
 
     #Result (Casting Complete)
     eventPlayer.casting_success = true
@@ -1634,6 +1642,8 @@ def casting():
         eventPlayer.setStatusEffect(null, Status.PHASED_OUT, 9999)
         heal(eventPlayer, null, eventPlayer.getMaxHealthOfType(Health.NORMAL))
         eventPlayer.stopFacing()
+        eventPlayer.removed_talent_this_shop_session = false
+        eventPlayer.shop_reload_released = false
         async(open_shop, AsyncBehavior.NOOP)
         eventPlayer.browsing_shop = true
         casting_cancelled()
@@ -1651,6 +1661,15 @@ def casting():
         eventPlayer.respawn()
         casting_cancelled()
 
+    elif eventPlayer.is_using_open_options == true:
+        if eventPlayer.browsing_options == false and eventPlayer.replacing_talent_show_bought_talents == false:
+            eventPlayer.browsing_options = true
+        else:
+            eventPlayer.browsing_options = false
+            eventPlayer.replacing_talent_show_bought_talents = false
+            eventPlayer.removing_talent_only = false
+            eventPlayer.startCamera(shop_location, eventPlayer.selected_talent_position, 12)
+
     elif eventPlayer.is_using_vote_yes and eventPlayer.replacing_talent_show_confirmation:
         eventPlayer.replacing_talent_show_bought_talents = true
         casting_cancelled()
@@ -1666,6 +1685,7 @@ def casting():
     eventPlayer.is_using_skip_talent = false
     eventPlayer.is_using_vote_yes = false
     eventPlayer.is_using_vote_no = false
+    eventPlayer.is_using_open_options = false
     stopChasingVariable(eventPlayer.casting_timer)
     eventPlayer.using_hearthstone_timer = 0
     destroyEffect(eventPlayer.casting_effect_id)
@@ -1717,7 +1737,7 @@ rule "TALENT SYSTEM - - - [GRIM REAPER] Use Grim Reaper":
 
     if eventPlayer.is_hacked == true:
         eventPlayer.hack_error_pending = true
-        waitUntil(eventPlayer.is_hacked == false or not RULE_CONDITION, 99999)
+        waitUntil(eventPlayer.is_hacked == false, 99999)
         if not RULE_CONDITION:
             return
     eventPlayer.grim_reaper_target = eventPlayer.grim_reaper_aim_indicator

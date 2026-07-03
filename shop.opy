@@ -112,12 +112,23 @@ rule "SHOP - - - Skip Talents & Exit Shop":
     @Condition eventPlayer.browsing_shop == true
     @Condition eventPlayer.replacing_talent_show_confirmation == false
     @Condition eventPlayer.replacing_talent_show_bought_talents == false
+    @Condition eventPlayer.browsing_options == false
+    @Condition eventPlayer.shop_reload_released == true
     @Condition eventPlayer.isHoldingButton(Button.RELOAD) == true
     @Condition eventPlayer.isHoldingButton(Button.JUMP if eventPlayer.using_gamepad else Button.INTERACT) == false
+    @Condition eventPlayer.isHoldingButton(Button.ULTIMATE) == false
 
-    wait(0.75 if faster_testing == false else 0.425, Wait.ABORT_WHEN_FALSE)
     eventPlayer.is_using_skip_talent = true
     casting()
+
+#The hearthstone cast holds Reload into the shop — skipping only arms once it has been released
+rule "SHOP - - - Arm Skip Talent (Reload Released)":
+    @Event eachPlayer
+    @Condition not eventPlayer.isDummy()
+    @Condition eventPlayer.browsing_shop == true
+    @Condition eventPlayer.isHoldingButton(Button.RELOAD) == false
+
+    eventPlayer.shop_reload_released = true
 
 rule "SHOP - - - Using Yes":
     @Event eachPlayer
@@ -127,7 +138,6 @@ rule "SHOP - - - Using Yes":
     @Condition eventPlayer.isHoldingButton(Button.ABILITY_1 if eventPlayer.using_gamepad else Button.PRIMARY_FIRE) == true
     @Condition eventPlayer.isHoldingButton(Button.ABILITY_2 if eventPlayer.using_gamepad else Button.SECONDARY_FIRE) == false
 
-    wait(0.125, Wait.ABORT_WHEN_FALSE)
     eventPlayer.is_using_vote_yes = true
     casting()
 
@@ -139,7 +149,6 @@ rule "SHOP - - - Using No":
     @Condition eventPlayer.isHoldingButton(Button.ABILITY_1 if eventPlayer.using_gamepad else Button.PRIMARY_FIRE) == false
     @Condition eventPlayer.isHoldingButton(Button.ABILITY_2 if eventPlayer.using_gamepad else Button.SECONDARY_FIRE) == true
 
-    wait(0.125, Wait.ABORT_WHEN_FALSE)
     eventPlayer.is_using_vote_no = true
     casting()
 
@@ -149,13 +158,17 @@ def open_shop():
     #empty and refill possible talents
     eventPlayer.possible_talents = []
 
+    #Catch-up: more than 5 levels behind the leader with open talent slots -> offers are unowned talents at rank 1 + boost (rank 5 cap)
+    eventPlayer.catch_up_rank_boost = max(min(player_with_most_talents.amount_of_talents_purchased - 5 - eventPlayer.amount_of_talents_purchased, 4), 0) if len(eventPlayer.bought_talents) < 5 else 0
+
     /*if len(eventPlayer.bought_talents) == 5:
         eventPlayer.possible_talents_selector = 4*/
-    eventPlayer.possible_talents_selector = len(eventPlayer.bought_talents) - 1
-    while eventPlayer.possible_talents_selector >= 0:
-        if eventPlayer.talent_ranks[eventPlayer.bought_talents[eventPlayer.possible_talents_selector]] < 5:
-            eventPlayer.possible_talents.append(eventPlayer.bought_talents[eventPlayer.possible_talents_selector])
-        eventPlayer.possible_talents_selector -= 1
+    if len(eventPlayer.bought_talents) == 5:
+        eventPlayer.possible_talents_selector = len(eventPlayer.bought_talents) - 1
+        while eventPlayer.possible_talents_selector >= 0:
+            if eventPlayer.talent_ranks[eventPlayer.bought_talents[eventPlayer.possible_talents_selector]] < 5:
+                eventPlayer.possible_talents.append(eventPlayer.bought_talents[eventPlayer.possible_talents_selector])
+            eventPlayer.possible_talents_selector -= 1
     /*else:
         eventPlayer.possible_talents_selector = len(eventPlayer.bought_talents) - 1
         while eventPlayer.possible_talents_selector >= 0:
@@ -165,7 +178,8 @@ def open_shop():
     if len(eventPlayer.bought_talents) < 5:
         eventPlayer.possible_talents_selector = len(eventPlayer.talents_you_do_not_have)
         while eventPlayer.possible_talents_selector >= 0:
-            if eventPlayer.talents_you_do_not_have[eventPlayer.possible_talents_selector] != null:
+            #A talent removed this session (still held in current_talent_replace_or_buy) can't be re-offered
+            if eventPlayer.talents_you_do_not_have[eventPlayer.possible_talents_selector] != null and not (eventPlayer.removed_talent_this_shop_session and eventPlayer.talents_you_do_not_have[eventPlayer.possible_talents_selector] == eventPlayer.current_talent_replace_or_buy):
                 eventPlayer.possible_talents.append(eventPlayer.talents_you_do_not_have[eventPlayer.possible_talents_selector])
             eventPlayer.possible_talents_selector -= 1
 
@@ -184,23 +198,17 @@ def open_shop():
     #Set left talent to a random choice in talents_you_do_not_have if selected_talent_will_replace = true, else random choice in possible_talents
     eventPlayer.talents_offered_in_shop[0] = random.choice(eventPlayer.talents_you_do_not_have.exclude(null)) if eventPlayer.selected_talent_will_replace[0] == true else random.choice(eventPlayer.possible_talents.exclude(null))
     #Remove the left talent
-    if len(eventPlayer.possible_talents.exclude(null)) > 2:
-        eventPlayer.possible_talents.remove(eventPlayer.talents_offered_in_shop[0])
-    else:
-        eventPlayer.possible_talents.remove(eventPlayer.talents_offered_in_shop[0])
+    eventPlayer.possible_talents.remove(eventPlayer.talents_offered_in_shop[0])
     #Will the middle talent replace a talent if taken?
     #return
-    if len(eventPlayer.bought_talents) == 5:
+    if len(eventPlayer.bought_talents) == 5 and len(eventPlayer.possible_talents.exclude(null)) == 0:
         eventPlayer.selected_talent_will_replace[1] = true
     else:
         eventPlayer.selected_talent_will_replace[1] = false
     #Set middle talent to a random choice in talents_you_do_not_have if selected_talent_will_replace = true, else random choice in possible_talents
     eventPlayer.talents_offered_in_shop[1] = random.choice([player for player in eventPlayer.talents_you_do_not_have if player != null and player != eventPlayer.talents_offered_in_shop[0]]) if eventPlayer.selected_talent_will_replace[1] == true else random.choice(eventPlayer.possible_talents.exclude(null))
     #Remove the middle talent
-    if len(eventPlayer.possible_talents.exclude(null)) > 1:
-        eventPlayer.possible_talents.remove(eventPlayer.talents_offered_in_shop[1])
-    else:
-        eventPlayer.possible_talents.remove(eventPlayer.talents_offered_in_shop[1])
+    eventPlayer.possible_talents.remove(eventPlayer.talents_offered_in_shop[1])
     #Will the right talent replace a talent if taken?
     #return
     if len(eventPlayer.bought_talents) == 5 and len(eventPlayer.possible_talents.exclude(null)) == 0:
@@ -213,16 +221,17 @@ def open_shop():
         #eventPlayer.startCamera(shop_location, shop_talent_positions[1], 0.5)
     playEffect(eventPlayer, DynamicEffect.SYMMETRA_TELEPORTER_REAPPEAR_SOUND, Color.TEAM_1, shop_location.getPosition(), 100)
 
-rule "SHOP - - - Toggle Controller Layout":
-    @Disabled
+rule "SHOP - - - Open Options Menu / Return To Shop":
     @Event eachPlayer
     @Condition not eventPlayer.isDummy()
     @Condition eventPlayer.browsing_shop == true
+    @Condition eventPlayer.replacing_talent_show_confirmation == false
     @Condition eventPlayer.isHoldingButton(Button.ULTIMATE) == true
+    @Condition eventPlayer.isHoldingButton(Button.RELOAD) == false
+    @Condition eventPlayer.isHoldingButton(Button.JUMP if eventPlayer.using_gamepad else Button.INTERACT) == false
 
-    eventPlayer.using_gamepad = not eventPlayer.using_gamepad
-    #bigMessage(eventPlayer, "Controller layout: {0}".format("ON" if eventPlayer.using_gamepad else "OFF"))
-    waitUntil(eventPlayer.isHoldingButton(Button.ULTIMATE) == false, 99999)
+    eventPlayer.is_using_open_options = true
+    casting()
 
 rule "SHOP - - - Shop Left":
     @Event eachPlayer
@@ -234,7 +243,7 @@ rule "SHOP - - - Shop Left":
     
     if eventPlayer.replacing_talent_show_bought_talents == true:
         if eventPlayer.selected_bought_talent == 0:
-            eventPlayer.selected_bought_talent = 4
+            eventPlayer.selected_bought_talent = len(eventPlayer.bought_talents) - 1
             eventPlayer.startCamera(shop_location, shop_talent_positions[eventPlayer.selected_talent_in_shop], 15)
         else:
             eventPlayer.selected_bought_talent -= 1
@@ -264,7 +273,7 @@ rule "SHOP - - - Shop Right":
     @Condition eventPlayer.isHoldingButton(Button.CROUCH) == false
     
     if eventPlayer.replacing_talent_show_bought_talents == true:
-        if eventPlayer.selected_bought_talent == 4:
+        if eventPlayer.selected_bought_talent == len(eventPlayer.bought_talents) - 1:
             eventPlayer.selected_bought_talent = 0
             eventPlayer.startCamera(shop_location, shop_talent_positions[eventPlayer.selected_talent_in_shop], 15)
         else:
@@ -292,7 +301,20 @@ rule "SHOP - - - Buy Talent":
     @Condition eventPlayer.using_one_of_the_hearthstones == false
     @Condition eventPlayer.replacing_talent_show_confirmation == false
     @Condition eventPlayer.isHoldingButton(Button.JUMP if eventPlayer.using_gamepad else Button.INTERACT) == true
+    @Condition eventPlayer.isHoldingButton(Button.ULTIMATE) == false
 
+    #Options menu: left/right orbs trigger instantly (shared 3s cooldown), middle orb continues into the hold-to-confirm flow
+    if eventPlayer.browsing_options == true and eventPlayer.selected_talent_in_shop != 1:
+        if getTotalTimeElapsed() - eventPlayer.options_action_time < 3:
+            return
+        eventPlayer.options_action_time = getTotalTimeElapsed()
+        if eventPlayer.selected_talent_in_shop == 0:
+            eventPlayer.using_gamepad = not eventPlayer.using_gamepad
+            smallMessage(eventPlayer, "Input optimized for {0}".format("Controller" if eventPlayer.using_gamepad else "Keyboard & Mouse"))
+            playEffect(eventPlayer, DynamicEffect.SOLDIER_SPRINT_START_SOUND, Color.WHITE, shop_location.getPosition(), 100)
+        else:
+            smallMessage(eventPlayer, "Coming soon!")
+        return
     if eventPlayer.selected_talent_in_shop == 0:
         eventPlayer.startCamera(shop_talent_positions[0], shop_talent_positions[0], 4.125 if faster_testing == false else 8.25)
     elif eventPlayer.selected_talent_in_shop == 1:
@@ -303,15 +325,33 @@ rule "SHOP - - - Buy Talent":
     if not eventPlayer.isHoldingButton(Button.JUMP if eventPlayer.using_gamepad else Button.INTERACT) or eventPlayer.isHoldingButton(Button.ABILITY_1 if eventPlayer.using_gamepad else Button.PRIMARY_FIRE) or eventPlayer.isHoldingButton(Button.ABILITY_2 if eventPlayer.using_gamepad else Button.SECONDARY_FIRE):
         wait(0.25)
         return
+    #Options menu middle orb: enter the bought-talents carousel in remove mode
+    if eventPlayer.browsing_options == true:
+        if eventPlayer.removed_talent_this_shop_session or len(eventPlayer.bought_talents) == 0:
+            smallMessage(eventPlayer, "You can only remove one talent per shop visit!" if eventPlayer.removed_talent_this_shop_session else "You have no talents to remove!")
+            eventPlayer.startCamera(shop_location, eventPlayer.selected_talent_position, 12)
+            playEffect(eventPlayer, DynamicEffect.DEBUFF_IMPACT_SOUND, Color.TEAM_1, shop_location.getPosition(), 100)
+            return
+        eventPlayer.selected_bought_talent = 0
+        eventPlayer.browsing_options = false
+        eventPlayer.removing_talent_only = true
+        eventPlayer.replacing_talent_show_bought_talents = true
+        eventPlayer.startCamera(shop_location, eventPlayer.selected_talent_position, 12)
+        playEffect(eventPlayer, DynamicEffect.RING_EXPLOSION_SOUND, Color.WHITE, shop_location, 100)
+        return
     if eventPlayer.replacing_talent_show_bought_talents == true:
         eventPlayer.current_talent_replace_or_buy = eventPlayer.bought_talents[eventPlayer.selected_bought_talent]
         validate_talent_removal()
         if eventPlayer.replacing_talent_cancelled == true:
             eventPlayer.startCamera(shop_location, eventPlayer.selected_talent_position, 12)
             playEffect(eventPlayer, DynamicEffect.DEBUFF_IMPACT_SOUND, Color.TEAM_1, shop_location.getPosition(), 100)
+            eventPlayer.replacing_talent_cancelled = false
+            #Remove mode: stay in the carousel — the busy rule instance rate-limits re-picking
+            if eventPlayer.removing_talent_only == true:
+                wait(3)
+                return
             eventPlayer.replacing_talent_show_confirmation = false
             eventPlayer.replacing_talent_show_bought_talents = false
-            eventPlayer.replacing_talent_cancelled = false
             return
         buy_or_upgrade_talent()
         eventPlayer.amount_of_talents_purchased -= eventPlayer.talent_ranks[eventPlayer.current_talent_replace_or_buy]
@@ -321,6 +361,16 @@ rule "SHOP - - - Buy Talent":
         eventPlayer.talent_on_cooldown[eventPlayer.current_talent_replace_or_buy] = false
         #Remove the talent you removed from bought_talents
         eventPlayer.bought_talents = eventPlayer.bought_talents.exclude(eventPlayer.bought_talents[eventPlayer.selected_bought_talent])
+        #Remove & reroll: nothing granted — reroll the shop and stay browsing
+        if eventPlayer.removing_talent_only == true:
+            eventPlayer.removing_talent_only = false
+            eventPlayer.removed_talent_this_shop_session = true
+            eventPlayer.replacing_talent_show_bought_talents = false
+            eventPlayer.selected_talent_in_shop = 1
+            eventPlayer.selected_talent_position = shop_talent_positions[1]
+            open_shop()
+            eventPlayer.startCamera(shop_location, eventPlayer.selected_talent_position, 12)
+            return
         eventPlayer.bought_talents.append(eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent_in_shop])
         goto lbl_0
     if eventPlayer.selected_talent_in_shop == 0:
@@ -345,18 +395,29 @@ rule "SHOP - - - Buy Talent":
     if len(eventPlayer.bought_talents) < 5 and not eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent_in_shop] in eventPlayer.bought_talents:
         eventPlayer.bought_talents.append(eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent_in_shop])
     eventPlayer.selected_talent_position = shop_talent_positions[1]
-    eventPlayer.amount_of_talents_purchased += 1
-    update_player_with_most_talent()
-    #Add +1 to "talent_ranks" in the correct index
-    eventPlayer.talent_ranks[eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent_in_shop]] += 1
-    #If the talent being purchased has reached 5...
-    if eventPlayer.talent_ranks[eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent_in_shop]] == 5:
-        #...remove it from possible talents.
-        eventPlayer.possible_talents[eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent_in_shop]] = null
     eventPlayer.replacing_talent_show_bought_talents = false
     eventPlayer.current_talent_replace_or_buy = eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent_in_shop]
-    eventPlayer.possible_talents[eventPlayer.current_talent_replace_or_buy] = eventPlayer.current_talent_replace_or_buy
-    buy_or_upgrade_talent()
+    #Catch-up: repeats the single-rank purchase until rank 1 + boost (runs once when boost is 0)
+    while true:
+        eventPlayer.amount_of_talents_purchased += 1
+        #A removal this session makes this buy a swap, not progress — no level/score
+        if not eventPlayer.removed_talent_this_shop_session:
+            eventPlayer.levels_gained += 1
+            eventPlayer.addToScore(1)
+        #Add +1 to "talent_ranks" in the correct index
+        eventPlayer.talent_ranks[eventPlayer.current_talent_replace_or_buy] += 1
+        #If the talent being purchased has reached 5...
+        if eventPlayer.talent_ranks[eventPlayer.current_talent_replace_or_buy] == 5:
+            #...remove it from possible talents.
+            eventPlayer.possible_talents[eventPlayer.current_talent_replace_or_buy] = null
+        eventPlayer.possible_talents[eventPlayer.current_talent_replace_or_buy] = eventPlayer.current_talent_replace_or_buy
+        buy_or_upgrade_talent()
+        if eventPlayer.talent_ranks[eventPlayer.current_talent_replace_or_buy] >= 1 + eventPlayer.catch_up_rank_boost or eventPlayer.talent_ranks[eventPlayer.current_talent_replace_or_buy] >= 5:
+            break
+    update_player_with_most_talent()
+    #Win at level 20 (>= catches catch-up multi-rank overshoot). scoreToWin is unreachable so only this triggers victory
+    if eventPlayer.levels_gained >= 20:
+        declarePlayerVictory(eventPlayer)
     /*
     if eventPlayer.amount_of_bonus_talents > 0:
         eventPlayer.amount_of_bonus_talents -= 1
@@ -372,7 +433,7 @@ rule "SHOP - - - Buy Talent":
     eventPlayer.browsing_shop = false
     eventPlayer.can_enter_shop = false
     eventPlayer.experience_current = 0
-    eventPlayer.experience_max = max_experience_per_level[eventPlayer.amount_of_talents_purchased]
+    eventPlayer.experience_max = max_experience_per_level[eventPlayer.levels_gained]
     #if eventPlayer.talent_ranks[Talent.FIREBALL] > 0 or eventPlayer.talent_ranks[Talent.JUGGERNAUT] > 0:
         #async(spawned_with_fireball, AsyncBehavior.RESTART)
     eventPlayer.is_respawning = true
@@ -406,8 +467,8 @@ rule "SHOP - - - Reset Shop Camera":
 
 def validate_talent_removal():
     @Name "TALENT SYSTEM - - - [SUBROUTINE] Validate Talent Removal (prerequisites)"
-    #--- Block replacing a talent with one that needs it (the new talent would have no owned prerequisite left) ---
-    if eventPlayer.current_talent_replace_or_buy in talent_requirements[eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent_in_shop]] and len([req for req in talent_requirements[eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent_in_shop]] if req != eventPlayer.current_talent_replace_or_buy and eventPlayer.talent_ranks[req] > 0]) == 0:
+    #--- Block replacing a talent with one that needs it (the new talent would have no owned prerequisite left) — skipped in remove mode (no incoming talent) ---
+    if eventPlayer.removing_talent_only == false and eventPlayer.current_talent_replace_or_buy in talent_requirements[eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent_in_shop]] and len([req for req in talent_requirements[eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent_in_shop]] if req != eventPlayer.current_talent_replace_or_buy and eventPlayer.talent_ranks[req] > 0]) == 0:
         smallMessage(eventPlayer, "You need {0} for {1}!".format(talent_names[eventPlayer.current_talent_replace_or_buy], talent_names[eventPlayer.talents_offered_in_shop[eventPlayer.selected_talent_in_shop]]))
         eventPlayer.replacing_talent_cancelled = true
         return
@@ -1017,7 +1078,7 @@ def buy_gigachad():
     #Knockback Received
     #eventPlayer.stats[Stat.KNOCKBACK_RECEIVED] -= 20
 
-/*    
+/*
 def buy_gunslinger():
     @Name "TALENT SYSTEM - - - [GUNSLINGER] [SUBROUTINE] Buy GUNSLINGER"
     

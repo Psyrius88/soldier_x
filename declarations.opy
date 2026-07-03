@@ -45,7 +45,7 @@ macro SHOP_TALENT_RADIUS = 5.4          #meters from the camera (shop_location) 
 macro SHOP_TALENT_ELEVATION = 0      #degrees ALL three talents sit above the camera's eye line
 macro SHOP_TALENT_MIDDLE_ELEVATION = 4  #EXTRA degrees the middle talent (index 1) sits above the side talents
 macro INVISIBLE_CHAR = "­"           #U+00AD soft hyphen: renders as nothing but counts as a character (anchors trailing blank padding lines so they aren't trimmed; pads empty talent slots)
-globalvar max_experience_per_level = [250, 275, 303, 333, 366, 403, 443, 487, 536, 589, 648, 713, 785, 863, 949, 1044, 1149, 1264, 1390, 1529, 1682, 1850, 2035, 2239, 2462, 2709]
+globalvar max_experience_per_level = compressed([250, 275, 303, 333, 366, 403, 443, 487, 536, 589, 648, 713, 785, 863, 949, 1044, 1149, 1264, 1390, 1529, 1682, 1850, 2035, 2239, 2462, 2709])
 playervar talent_trigger_times
 playervar talent_on_cooldown
 playervar railgun_charge
@@ -56,6 +56,7 @@ playervar railgun_chain_beams
 playervar railgun_chain_damage
 
 globalvar current_time
+globalvar discord_ad_color
 
 #--- Debug variables (plain declarations — Workshop Settings assigned in debug files) ---
 globalvar debug_spectator_tools
@@ -67,8 +68,6 @@ globalvar debug_bot_damage_test = false
 globalvar debug_bot_damage_multi = false
 globalvar debug_bot_low_hp = false
 globalvar debug_disable_cooldown_huds = false
-globalvar debug_hack_self = false
-globalvar debug_hack_self_rank = 1
 #!define IS_PLAYER(p) ((not p.isDummy()) or (p.isDummy() and debug_bot_load_test))
 #!define SWEEP_WAIT(window, count) wait(max((window) / (count), 0.016))
 
@@ -172,7 +171,7 @@ playervar adrenaline_rush_value = 100
 playervar current_immunity_target = 0
 playervar current_dive_bomb_target = 0
 
-#--- Multi-file defineMember (variable[0-43]) ---
+#--- Multi-file defineMember (variable[0-45]) ---
 #!defineMember is_using_hearthstone variable[0]
 #!defineMember is_using_skip_talent variable[1]
 #!defineMember is_using_vote_yes variable[2]
@@ -216,6 +215,17 @@ playervar current_dive_bomb_target = 0
 #!defineMember is_hacked variable[41]
 #!defineMember hacked_until variable[42]
 #!defineMember hack_error_pending variable[43]
+#!defineMember catch_up_rank_boost variable[44]
+#Player level = levels_gained (starting level is 0, win at 20). Never assigned, only incremented (starts null/0) — keeps it race-free vs init order, and replace/remove can never lower it
+#!defineMember levels_gained variable[45]
+
+#--- Shop options menu (variable[46-51]) ---
+#!defineMember is_using_open_options variable[46]
+#!defineMember browsing_options variable[47]
+#!defineMember removing_talent_only variable[48]
+#!defineMember removed_talent_this_shop_session variable[49]
+#!defineMember options_action_time variable[50]
+#!defineMember shop_reload_released variable[51]
 
 #--- Damage numbers: recent damage dealt per victim (variable[408-414]) ---
 #!defineMember recent_damage_victims variable[408]
@@ -333,7 +343,7 @@ macro DAMAGE_NUMBER_HELIX_THRESHOLD = 120
 #macro ADRENALINE_RUSH_DECAY_RATE = 2.5
 
 #--- Discord XP-bar ad ---
-#!define DISCORD_AD_MESSAGES ["Join the Discord! — DSC.GG/Soldier-X", "Found a bug? — DSC.GG/Soldier-X", "Got feedback? — DSC.GG/Soldier-X", "Join the community! — DSC.GG/Soldier-X"]
+#!define DISCORD_AD_MESSAGES ["Join the Discord! — DSC.GG/Soldier-X", "Found a bug? — DSC.GG/Soldier-X", "Got feedback? — DSC.GG/Soldier-X", "Join the community! — DSC.GG/Soldier-X", "Soldier-X is more fun Player vs Player"]
 macro DISCORD_BRIGHTNESS_RANGE = 30
 macro DISCORD_FADE_T = 1 - abs(((current_time * 4) % 2) - 1)
 macro DISCORD_FADE_OFFSET = DISCORD_BRIGHTNESS_RANGE * (2 * DISCORD_FADE_T - 1)

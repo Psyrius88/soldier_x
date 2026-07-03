@@ -56,6 +56,8 @@ rule "DEBUG - - - Activate Admin Rights [DEFAULT: OFF]":
     #@Condition hostPlayer == eventPlayer
 
     buy_debug_talents()
+    eventPlayer.levels_gained += eventPlayer.amount_of_talents_purchased
+    eventPlayer.addToScore(eventPlayer.amount_of_talents_purchased)
 
 def buy_debug_talents():
     /*
