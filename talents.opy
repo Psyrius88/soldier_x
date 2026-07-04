@@ -21,6 +21,7 @@
 #!defineMember hack_effect_id variable[117]
 #!defineMember hack_sound_id variable[118]
 #!defineMember explosive_ammo_round_count variable[119]
+#!defineMember grim_reaper_arrival_facing variable[120]
 
 #Global variables
 
@@ -39,7 +40,6 @@ playervar fireball_in_air
 playervar fireball_loop
 playervar gravity
 playervar has_hit_the_ground = true
-playervar health_regen_in_stealth_id
 playervar ignore_pain_damage_resistance
 /*playervar in_execution_range_effects*/
 playervar jetpack_will_have_a_delay
@@ -282,8 +282,6 @@ def break_stealth():
     eventPlayer.talent_on_cooldown[Talent.STEALTH] = true
     stopChasingVariable(eventPlayer.entering_stealth_timer)
     eventPlayer.entering_stealth_timer = 0
-    if eventPlayer.talent_ranks[Talent.HEALTH_REGEN] > 0:
-        stopHoT(eventPlayer.health_regen_in_stealth_id)
 
 # ============================================================
 # HACK (Stealth melee)
@@ -931,11 +929,10 @@ def health_regen_heal_over_time():
     @Name "TALENT SYSTEM - - - [TALENT 13: HEALTH REGEN] [SUBROUTINE] Health Regen Heal Over Time"
     
     while eventPlayer.talent_ranks[Talent.HEALTH_REGEN] > 0:
-        waitUntil(eventPlayer.getHealthOfType(Health.NORMAL) < eventPlayer.getMaxHealthOfType(Health.NORMAL) or eventPlayer.talent_ranks[Talent.HEALTH_REGEN] == 0, 99999)
-        eventPlayer.startHoT(eventPlayer, 99999, HEALTH_REGEN_HEALING_OVER_TIME)
-        eventPlayer.health_pool_id_or_hot_id[2] = getLastHoT()
-        waitUntil(eventPlayer.getHealthOfType(Health.NORMAL) >= eventPlayer.getMaxHealthOfType(Health.NORMAL) or eventPlayer.talent_ranks[Talent.HEALTH_REGEN] == 0, 99999)
-        stopHoT(eventPlayer.health_pool_id_or_hot_id[2])
+        waitUntil((eventPlayer.getHealthOfType(Health.NORMAL) < eventPlayer.getMaxHealthOfType(Health.NORMAL) and eventPlayer.isAlive()) or eventPlayer.talent_ranks[Talent.HEALTH_REGEN] == 0, 99999)
+        while eventPlayer.getHealthOfType(Health.NORMAL) < eventPlayer.getMaxHealthOfType(Health.NORMAL) and eventPlayer.isAlive() and eventPlayer.talent_ranks[Talent.HEALTH_REGEN] > 0:
+            eventPlayer.setHealth(min(eventPlayer.getHealthOfType(Health.NORMAL) + HEALTH_REGEN_HEALING_OVER_TIME / 4, eventPlayer.getMaxHealthOfType(Health.NORMAL)))
+            wait(0.25)
 
         /*
 rule "TALENT SYSTEM - - - [TALENT 14/31: HEALTH POTIONS/POISON VIAL] Use Health Potion or Poison Vial":
@@ -1214,7 +1211,7 @@ rule "TALENT SYSTEM - - - [TALENT 19: BURNING SOUL] Burning Soul Damage Aura":
     @Condition len([player for player in getAllPlayers() if IS_PLAYER(player) and player.talent_ranks[Talent.BURNING_SOUL] > 0]) > 0
 
     while RULE_CONDITION:
-        burning_soul_owners = [player for player in getAllPlayers() if IS_PLAYER(player) and player.talent_ranks[Talent.BURNING_SOUL] > 0 and player.browsing_shop == false and player.isAlive() == true and player.isUsingAbility1() == false and player.is_using_ability[Talent.GRIM_REAPER] == false]
+        burning_soul_owners = [player for player in getAllPlayers() if IS_PLAYER(player) and player.talent_ranks[Talent.BURNING_SOUL] > 0 and player.browsing_shop == false and player.isAlive() == true and player.isUsingAbility1() == false and player.is_using_ability[Talent.GRIM_REAPER] == false and player.is_using_ability[Talent.IMMUNITY] == false]
         if len(burning_soul_owners) == 0:
             wait(BURNING_SOUL_TICK)
         else:
@@ -1790,6 +1787,9 @@ def grim_reaper_casted():
     if eventPlayer.isDead():
         goto lbl_0
 
+    # CAPTURE THE FLIGHT VIEW DIRECTION FOR THE LANDING FACING
+    eventPlayer.grim_reaper_arrival_facing = directionTowards(eventPlayer.grim_reaper_camera_position, eventPlayer.grim_reaper_target.getPosition() + Vector.UP if entityExists(eventPlayer.grim_reaper_target) and eventPlayer.grim_reaper_target.isAlive() else eventPlayer.grim_reaper_camera_destination)
+
     # WHO WILL GET HIT?
     eventPlayer.victims_in_grim_reaper_radius = [player for player in getPlayersInRadius(eventPlayer.grim_reaper_camera_destination + Vector.DOWN, GRIM_REAPER_RADIUS, Team.ALL, LosCheck.OFF) if player != eventPlayer and player.is_using_ability[Talent.SHADOWSTEP] == false and player.is_using_ability[Talent.IMMUNITY] == false and player.browsing_shop == false and player.isAlive() == true]
     
@@ -1837,7 +1837,7 @@ def grim_reaper_casted():
     eventPlayer.stopCamera()
     if eventPlayer.isAlive():
         eventPlayer.teleport(eventPlayer.grim_reaper_feet_destination)
-        eventPlayer.setFacing(directionTowards(eventPlayer.getEyePosition(), eventPlayer.grim_reaper_target.getPosition() + Vector.UP if entityExists(eventPlayer.grim_reaper_target) and eventPlayer.grim_reaper_target.isAlive() else eventPlayer.grim_reaper_camera_destination), Relativity.TO_WORLD)
+        eventPlayer.setFacing(eventPlayer.grim_reaper_arrival_facing, Relativity.TO_WORLD)
 
     # FLIGHT END
     resume_player_input()

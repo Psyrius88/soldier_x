@@ -88,6 +88,8 @@ enum Orb:
 
 globalvar xp_orbs = []
 
+#!define XP_ORB_LIFETIME 60
+
 
 
 
@@ -343,7 +345,7 @@ macro DAMAGE_NUMBER_HELIX_THRESHOLD = 120
 #macro ADRENALINE_RUSH_DECAY_RATE = 2.5
 
 #--- Discord XP-bar ad ---
-#!define DISCORD_AD_MESSAGES ["Join the Discord! — DSC.GG/Soldier-X", "Found a bug? — DSC.GG/Soldier-X", "Got feedback? — DSC.GG/Soldier-X", "Join the community! — DSC.GG/Soldier-X", "Soldier-X is more fun Player vs Player"]
+#!define DISCORD_AD_MESSAGES ["Join the Discord! — DSC.GG/Soldier-X", "Bug? Discord: — DSC.GG/Soldier-X", "Feedback? Discord: — DSC.GG/Soldier-X"]
 macro DISCORD_BRIGHTNESS_RANGE = 30
 macro DISCORD_FADE_T = 1 - abs(((current_time * 4) % 2) - 1)
 macro DISCORD_FADE_OFFSET = DISCORD_BRIGHTNESS_RANGE * (2 * DISCORD_FADE_T - 1)

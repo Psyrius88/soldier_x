@@ -118,13 +118,13 @@ var talents = [
       name: "Cybernetics",
       icon: "('<tx0C00000000028FCB>')",
       keybind: '"[Passive]"',
-      description: "Install shield protection. Shields regenerate automatically and can't be healed with healing abilities.",
+      description: "Install Shields. Shields regenerate automatically and can't be healed with healing abilities.",
       cooldown: 0,
       upgrade_information: "[Upgrade: +Shields]",
       cd_reduction_per_rank: 0,
       requires_any_of: [],
       unlocks: [],
-      locks: [],
+      locks: ["health_regen"],
       stats: [
         { label: "Shields", base: 50, perRank: 12.5 },
       ],
@@ -289,7 +289,7 @@ var talents = [
       name: "Grim Reaper",
       icon: "('<tx0C0000000004F741>')",
       keybind: '"[[F]]"',
-      description: "See low-health players through walls. Cast to project yourself to a low-health target.",
+      description: "See low-health players through walls. Cast to fly to a low-health target.",
       cooldown: 0,
       upgrade_information: "[Upgrade: +Cast Speed, +Flight Speed]",
       cd_reduction_per_rank: 0,
@@ -298,7 +298,7 @@ var talents = [
       locks: [],
       stats: [
         { label: "Cast Time", base: 2, perRank: -0.25, suffix: "s", decimals: 2 },
-        { label: "Flight Speed", base: 15.6, perRank: 3.6, decimals: 1 },
+        { label: "Max Flight Speed", base: 23.4, perRank: 5.4, decimals: 1 },
       ],
       tuning: [
         { macro: "GRIM_REAPER_RADIUS", expr: "4" },
@@ -306,7 +306,7 @@ var talents = [
         { macro: "GRIM_REAPER_THRESHOLD_NORMALIZED_VICTIM", expr: "(0.150 + ({r} * 0.050))", context: "victim" },
         { macro: "GRIM_REAPER_CAST_TIME", expr: "2.25 - {r} * 0.25" },
         { macro: "GRIM_REAPER_CAST_TIME_LOCAL", expr: "2.25 - {r} * 0.25", context: "localPlayer" },
-        { macro: "GRIM_REAPER_FLIGHT_SPEED", expr: "12 + {r} * 3.6" },
+        { macro: "GRIM_REAPER_FLIGHT_SPEED", expr: "18 + {r} * 5.4" },
         { macro: "GRIM_REAPER_HEALTH_THRESHOLD", expr: "0.25" },
         { macro: "GRIM_REAPER_SCAN_WINDOW", expr: "0.128" },
       ],
@@ -361,13 +361,12 @@ var talents = [
       cd_reduction_per_rank: 0,
       requires_any_of: [],
       unlocks: [],
-      locks: [],
+      locks: ["cybernetics"],
       stats: [
         { label: "Healing Per Second", base: 5, perRank: 1.25, decimals: 2 },
       ],
       tuning: [
-        // Hidden +0.2084 on rank 1 (5 -> 5.2084/s) clears the ~5.2083 (125/24) heal-rate threshold below which OW's per-HP heal sound stutters.
-        { macro: "HEALTH_REGEN_HEALING_OVER_TIME", expr: "3.75 + {r} * 1.25 + (2084 / 10000 if {r} == 1 else 0)" },
+        { macro: "HEALTH_REGEN_HEALING_OVER_TIME", expr: "3.75 + {r} * 1.25" },
       ],
     },
     {
@@ -453,6 +452,7 @@ var talents = [
       stats: [
         { label: "Duration", base: 0.5, perRank: 0, suffix: "s", decimals: 1 },
         { label: "Cooldown", base: 22, perRank: -2, suffix: "s", decimals: 1 },
+        { label: "Cooldown Reduction", base: 2, perRank: 2, suffix: "s" },
       ],
       tuning: [
         { macro: "SHADOWSTEP_COOLDOWN_REDUCTION_PER_RANK", expr: "2" },
@@ -535,7 +535,7 @@ var talents = [
         { macro: "FIREBALL_DAMAGE_SELF_OVER_TIME", expr: "3.375 + {r} * 1.125" },
         { macro: "FIREBALL_DAMAGE_OVER_TIME", expr: "10.125 + {r} * 3.375" },
         { macro: "FIREBALL_DAMAGE_OVER_TIME_DURATION", expr: "5" },
-        { macro: "FIREBALL_SPEED", expr: "15" },
+        { macro: "FIREBALL_SPEED", expr: "12.5" },
         { macro: "FIREBALL_EXPLOSION_RADIUS", expr: "4" },
       ],
     },

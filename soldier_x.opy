@@ -1,7 +1,7 @@
 #!optimizeForSize
-#!define TOP_RIGHT_SUBHEADER "Soldier: X [v3.6.0]\nMade By Psyrius#21775\nWorkshop.codes/Zekk3"
-#!define GAME_MODE_DESCRIPTION "● Made by Psyrius\n● Code: ZEKK3\n● v3.6.0\n● RPG, Level up, Buy talents, FFA, Deathmatch\n● Developed since 2020\n● Discord: dsc.gg/soldier-x"
-#!define GAME_MODE_NAME "SOLDIER: X [v3.6.0]"
+#!define TOP_RIGHT_SUBHEADER "Soldier: X [v3.6.1]\nMade By Psyrius#21775\nWorkshop.codes/Zekk3"
+#!define GAME_MODE_DESCRIPTION "● Made by Psyrius\n● Code: ZEKK3\n● v3.6.1\n● RPG, Level up, Buy talents, FFA, Deathmatch\n● Developed since 2020\n● Discord: dsc.gg/soldier-x"
+#!define GAME_MODE_NAME "SOLDIER: X [v3.6.1]"
 #--- Shop HUD helpers (localPlayer-scoped) ---
 #!define KEYBIND(btn) ("[{0}]".format(buttonString(btn)) if not localPlayer.using_gamepad else buttonString(btn))
 #!define SHOP_BROWSING (localPlayer.browsing_shop and not localPlayer.replacing_talent_show_confirmation and not localPlayer.replacing_talent_show_bought_talents)
@@ -505,7 +505,7 @@ rule "GENERAL - - - Player Died":
     eventPlayer.player_xp_orb_index = len(xp_orbs)
     xp_orbs[eventPlayer.player_xp_orb_index] = [eventPlayer, getTotalTimeElapsed(), round(eventPlayer.experience_max * 0.2), true if eventPlayer.talent_ranks[Talent.BURNING_SOUL] > 0 else false, eventPlayer.talent_ranks[Talent.BURNING_SOUL], eventPlayer.getPosition() + Vector.UP * 0.25, orb_rarity_colors[floor(eventPlayer.levels_gained / 4)]]
 
-    createEffect(getAllPlayers().exclude(eventPlayer), Effect.ORB, orb_rarity_colors[floor(eventPlayer.levels_gained / 4)], eventPlayer.getPosition() + Vector.UP * 0.25, 1, EffectReeval.VISIBILITY)
+    createEffect(getAllPlayers(), Effect.ORB, orb_rarity_colors[floor(eventPlayer.levels_gained / 4)], eventPlayer.getPosition() + Vector.UP * 0.25, 1, EffectReeval.VISIBILITY)
 
     xp_orbs[eventPlayer.player_xp_orb_index][Orb.ORB_EFFECT_ID] = getLastCreatedEntity()
 

@@ -28,9 +28,9 @@ rule "XP SYSTEM - - - XP Orbs":
 
             #debug_loop_count += 1
 
-            if [player for player in getRealPlayersInRadius(xp_orbs[xp_orbs_current_index][Orb.POSITION], 2, Team.ALL, LosCheck.SURFACES) if player.isDummy() == false and player.browsing_shop == false and player != xp_orbs[xp_orbs_current_index][Orb.OWNING_PLAYER]] > 0:
+            if [player for player in getRealPlayersInRadius(xp_orbs[xp_orbs_current_index][Orb.POSITION], 2, Team.ALL, LosCheck.SURFACES) if player.isDummy() == false and player.browsing_shop == false] > 0:
 
-                player_picking_up_orb = [player for player in getRealClosestPlayer(xp_orbs[xp_orbs_current_index][Orb.POSITION], Team.ALL) if player.isDummy() == false and player.browsing_shop == false and player != xp_orbs[xp_orbs_current_index][Orb.OWNING_PLAYER]] 
+                player_picking_up_orb = [player for player in getRealClosestPlayer(xp_orbs[xp_orbs_current_index][Orb.POSITION], Team.ALL) if player.isDummy() == false and player.browsing_shop == false]
                 
                 destroyEffect(xp_orbs[xp_orbs_current_index][Orb.ORB_EFFECT_ID])
                 playEffect(getAllPlayers(), DynamicEffect.BUFF_IMPACT_SOUND, Color.WHITE, player_picking_up_orb, 75)
@@ -49,13 +49,15 @@ rule "XP SYSTEM - - - XP Orbs":
 
                 if xp_orbs[xp_orbs_current_index][Orb.EXPLOSIVE] == true and xp_orbs[xp_orbs_current_index][Orb.TIMESTAMP] >= getTotalTimeElapsed() - BURNING_SOUL_ORB_DURATION:
 
-                    player_picking_up_orb.applyImpulse(angleToDirection(horizontalAngleOfDirection(directionTowards(xp_orbs[xp_orbs_current_index][Orb.POSITION], player_picking_up_orb.getEyePosition() + Vector.DOWN)), min(verticalAngleOfDirection(directionTowards(xp_orbs[xp_orbs_current_index][Orb.POSITION], player_picking_up_orb.getEyePosition() + Vector.DOWN)), -30)), 12.5 * (player_picking_up_orb.stats[Stat.KNOCKBACK_RECEIVED] / 100), Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION_XYZ)
+                    if player_picking_up_orb.is_using_ability[Talent.IMMUNITY] == false:
 
-                    #wait to see knockback effect before getting killed
-                    wait(0.032)
+                        player_picking_up_orb.applyImpulse(angleToDirection(horizontalAngleOfDirection(directionTowards(xp_orbs[xp_orbs_current_index][Orb.POSITION], player_picking_up_orb.getEyePosition() + Vector.DOWN)), min(verticalAngleOfDirection(directionTowards(xp_orbs[xp_orbs_current_index][Orb.POSITION], player_picking_up_orb.getEyePosition() + Vector.DOWN)), -30)), 12.5 * (player_picking_up_orb.stats[Stat.KNOCKBACK_RECEIVED] / 100), Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION_XYZ)
 
-                    damage(player_picking_up_orb, xp_orbs[xp_orbs_current_index][Orb.OWNING_PLAYER], BURNING_SOUL_ORB_DAMAGE)
-                
+                        #wait to see knockback effect before getting killed
+                        wait(0.032)
+
+                        damage(player_picking_up_orb, xp_orbs[xp_orbs_current_index][Orb.OWNING_PLAYER], BURNING_SOUL_ORB_DAMAGE)
+
                     xp_orbs[xp_orbs_current_index][Orb.EXPLOSIVE] = false
                     destroyEffect(xp_orbs[xp_orbs_current_index][Orb.BURNING_SOUL_SOUND_EFFECT_ID])
                     destroyEffect(xp_orbs[xp_orbs_current_index][Orb.BURNING_SOUL_EFFECT_ID])
@@ -86,7 +88,7 @@ rule "XP SYSTEM - - - XP Orbs":
                     if player_picking_up_orb.is_hacked == true:
                         player_picking_up_orb.hack_error_pending = true
                     else:
-                        player_picking_up_orb.talent_trigger_times[Talent.SHADOWSTEP] = player_picking_up_orb.talent_trigger_times[Talent.SHADOWSTEP] - player_picking_up_orb.talent_ranks[Talent.SHADOWSTEP] * 2
+                        player_picking_up_orb.talent_trigger_times[Talent.SHADOWSTEP] = player_picking_up_orb.talent_trigger_times[Talent.SHADOWSTEP] - player_picking_up_orb.talent_ranks[Talent.SHADOWSTEP] * SHADOWSTEP_COOLDOWN_REDUCTION_PER_RANK
 
                 destroyEffect(xp_orbs[xp_orbs_current_index][Orb.BURNING_SOUL_SOUND_EFFECT_ID])
                 destroyEffect(xp_orbs[xp_orbs_current_index][Orb.BURNING_SOUL_EFFECT_ID])
@@ -102,6 +104,14 @@ rule "XP SYSTEM - - - XP Orbs":
                 destroyEffect(xp_orbs[xp_orbs_current_index][Orb.BURNING_SOUL_EFFECT_ID])
                 playEffect(getAllPlayers(), DynamicEffect.JUNKRAT_FRAG_LAUNCHER_EXPLOSION, Color.TEAM_2, xp_orbs[xp_orbs_current_index][Orb.POSITION] + (Vector.DOWN * 0.25), 1)
                 playEffect(getAllPlayers(), DynamicEffect.JUNKRAT_FRAG_LAUNCHER_EXPLOSION_SOUND, Color.TEAM_2, xp_orbs[xp_orbs_current_index][Orb.POSITION], 100)
+
+            elif getTotalTimeElapsed() - xp_orbs[xp_orbs_current_index][Orb.TIMESTAMP] > XP_ORB_LIFETIME:
+                destroyEffect(xp_orbs[xp_orbs_current_index][Orb.ORB_EFFECT_ID])
+                playEffect(getAllPlayers(), DynamicEffect.ORISA_HALT_IMPLOSION, Color.TEAM_2, xp_orbs[xp_orbs_current_index][Orb.POSITION], 1)
+                del xp_orbs[xp_orbs_current_index]
+                if RULE_CONDITION:
+                    wait()
+                    goto RULE_START
 
             wait(0.12 / len(xp_orbs))
         if RULE_CONDITION:

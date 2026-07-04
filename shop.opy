@@ -189,6 +189,7 @@ def open_shop():
     block_player_input()
     
     eventPlayer.browsing_shop = true
+    eventPlayer.startCamera(shop_location, eventPlayer.selected_talent_position, 0)
     #Will the left talent replace a talent if taken?
     #return
     if len(eventPlayer.bought_talents) == 5 and len(eventPlayer.possible_talents.exclude(null)) == 0:
@@ -463,7 +464,7 @@ rule "SHOP - - - Reset Shop Camera":
     @Condition eventPlayer.isHoldingButton(Button.JUMP if eventPlayer.using_gamepad else Button.INTERACT) == false
     @Condition (eventPlayer.is_using_skip_talent == true or not eventPlayer.isHoldingButton(Button.JUMP if eventPlayer.using_gamepad else Button.INTERACT)) == true
 
-    eventPlayer.startCamera(shop_location, eventPlayer.selected_talent_position, 0)
+    eventPlayer.startCamera(shop_location, eventPlayer.selected_talent_position, 15)
 
 def validate_talent_removal():
     @Name "TALENT SYSTEM - - - [SUBROUTINE] Validate Talent Removal (prerequisites)"
@@ -574,6 +575,7 @@ def buy_cybernetics():
     
     if eventPlayer.replacing_talent_show_bought_talents == true:
         eventPlayer.talents_you_do_not_have.append(Talent.CYBERNETICS)
+        eventPlayer.talents_you_do_not_have.append(Talent.HEALTH_REGEN)
         #Shields
         eventPlayer.stats[Stat.SHIELDS] = 0
         removeHealthPool(eventPlayer.cybernetics_health_pool_id)
@@ -581,6 +583,7 @@ def buy_cybernetics():
     if eventPlayer.talent_ranks[Talent.CYBERNETICS] > 0:
         eventPlayer.stats[Stat.SHIELDS] = CYBERNETICS_SHIELD_AMOUNT
         eventPlayer.talents_you_do_not_have.remove(Talent.CYBERNETICS)
+        eventPlayer.talents_you_do_not_have.remove(Talent.HEALTH_REGEN)
     #Shields
     #eventPlayer.stats[Stat.SHIELDS] += 18.75
 
@@ -809,16 +812,17 @@ def buy_health_regen():
     
     if eventPlayer.replacing_talent_show_bought_talents == true:
         eventPlayer.talents_you_do_not_have.append(Talent.HEALTH_REGEN)
+        eventPlayer.talents_you_do_not_have.append(Talent.CYBERNETICS)
         destroyEffect(eventPlayer.health_regen_sound_id)
         destroyEffect(eventPlayer.player_temp_effects[64])
-        stopHoT(eventPlayer.health_pool_id_or_hot_id[2])
         return
     if eventPlayer.talent_ranks[Talent.HEALTH_REGEN] == 1:
         createEffect(eventPlayer if eventPlayer.getHealthOfType(Health.NORMAL) < eventPlayer.getMaxHealthOfType(Health.NORMAL) and eventPlayer.isAlive() else null, Effect.SPARKLES_SOUND, Color.WHITE, eventPlayer, 100, EffectReeval.VISIBILITY_POSITION_RADIUS_AND_COLOR)
         eventPlayer.health_regen_sound_id = getLastCreatedEntity()
-        createEffect(eventPlayer if eventPlayer.getHealthOfType(Health.NORMAL) < eventPlayer.getMaxHealthOfType(Health.NORMAL) and eventPlayer.isAlive() else null, Effect.SPARKLES, Color.PURPLE if eventPlayer.is_using_ability[Talent.STEALTH] == true else Color.ORANGE, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_RADIUS_AND_COLOR)
+        createEffect((eventPlayer if eventPlayer.is_using_ability[Talent.STEALTH] or eventPlayer.is_using_ability[Talent.SHADOWSTEP] or eventPlayer.is_using_ability[Talent.GRIM_REAPER] or eventPlayer.browsing_shop else getAllPlayers()) if eventPlayer.getHealthOfType(Health.NORMAL) < eventPlayer.getMaxHealthOfType(Health.NORMAL) and eventPlayer.isAlive() else null, Effect.SPARKLES, Color.PURPLE if eventPlayer.is_using_ability[Talent.STEALTH] == true else Color.ORANGE, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_RADIUS_AND_COLOR)
         eventPlayer.player_temp_effects[64] = getLastCreatedEntity()
         eventPlayer.talents_you_do_not_have.remove(Talent.HEALTH_REGEN)
+        eventPlayer.talents_you_do_not_have.remove(Talent.CYBERNETICS)
         async(health_regen_heal_over_time, AsyncBehavior.NOOP)
 
 def buy_health_potions():
@@ -880,9 +884,9 @@ def buy_burning_soul():
         destroyEffect(eventPlayer.burning_soul_material_effect_id)
         return
     if eventPlayer.talent_ranks[Talent.BURNING_SOUL] == 1:
-        createEffect(getAllPlayers() if "{0}".format(eventPlayer.isCommunicatingEmote()) == "false" else null if eventPlayer.isUsingAbility1() else getAllPlayers().exclude(eventPlayer), Effect.ASHE_DYNAMITE_BURNING_PARTICLE, Color.TEAM_1, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+        createEffect(null if eventPlayer.is_using_ability[Talent.IMMUNITY] else getAllPlayers() if "{0}".format(eventPlayer.isCommunicatingEmote()) == "false" else null if eventPlayer.isUsingAbility1() else getAllPlayers().exclude(eventPlayer), Effect.ASHE_DYNAMITE_BURNING_PARTICLE, Color.TEAM_1, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
         eventPlayer.burning_soul_particle_effect_id = getLastCreatedEntity()
-        createEffect(null if eventPlayer.isUsingAbility1() or eventPlayer.is_using_ability[Talent.STEALTH] else getAllPlayers(), Effect.ASHE_DYNAMITE_BURNING_MATERIAL, Color.TEAM_2, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+        createEffect(null if eventPlayer.isUsingAbility1() or eventPlayer.is_using_ability[Talent.STEALTH] or eventPlayer.is_using_ability[Talent.IMMUNITY] else getAllPlayers(), Effect.ASHE_DYNAMITE_BURNING_MATERIAL, Color.TEAM_2, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
         eventPlayer.burning_soul_material_effect_id = getLastCreatedEntity()
         chase(eventPlayer.burning_soul_orb_timer, 0, rate=1, ChaseReeval.DESTINATION_AND_RATE)
         eventPlayer.talents_you_do_not_have.remove(Talent.BURNING_SOUL)
