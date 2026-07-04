@@ -229,6 +229,13 @@ playervar current_dive_bomb_target = 0
 #!defineMember options_action_time variable[50]
 #!defineMember shop_reload_released variable[51]
 
+#--- Casting busy gate (variable[52]) ---
+#!defineMember is_casting variable[52]
+
+#--- Fireball distance falloff (variable[53-54]) ---
+#!defineMember fireball_damage_fractions variable[53]
+#!defineMember pyromaniac_heal_fraction variable[54]
+
 #--- Damage numbers: recent damage dealt per victim (variable[408-414]) ---
 #!defineMember recent_damage_victims variable[408]
 #!defineMember recent_damage_other variable[409]
@@ -317,7 +324,8 @@ macro STEALTH_BASE_COOLDOWN = 22.5
 macro STEALTH_COOLDOWN_REDUCTION_PER_RANK = 2.5
 macro GRIM_REAPER_COOLDOWN_REDUCTION_PER_RANK = 6
 macro HEALTH_POTIONS_COOLDOWN_REDUCTION_PER_RANK = 1
-macro FIREBALL_PROJECTILE_RADIUS = 1.75
+macro FIREBALL_PROJECTILE_RADIUS = 1
+macro FIREBALL_FULL_DAMAGE_RADIUS = 1.5
 
 #Disabled/removed-talent tuning (kept commented for revival)
 #macro GUNSLINGER_ADDITIONAL_DAMAGE = round(eventDamage * 3.333 + eventDamage * attacker.talent_ranks[Talent.GUNSLINGER] * 0.166)

@@ -1,7 +1,7 @@
 #!optimizeForSize
-#!define TOP_RIGHT_SUBHEADER "Soldier: X [v3.6.2]\nMade By Psyrius#21775\nWorkshop.codes/Zekk3"
-#!define GAME_MODE_DESCRIPTION "● Made by Psyrius\n● Code: ZEKK3\n● v3.6.2\n● RPG, Level up, Buy talents, FFA, Deathmatch\n● Developed since 2020\n● Discord: dsc.gg/soldier-x"
-#!define GAME_MODE_NAME "SOLDIER: X [v3.6.2]"
+#!define TOP_RIGHT_SUBHEADER "Soldier: X [v3.6.3]\nMade By Psyrius#21775\nWorkshop.codes/Zekk3"
+#!define GAME_MODE_DESCRIPTION "● Made by Psyrius\n● Code: ZEKK3\n● v3.6.3\n● RPG, Level up, Buy talents, FFA, Deathmatch\n● Developed since 2020\n● Discord: dsc.gg/soldier-x"
+#!define GAME_MODE_NAME "SOLDIER: X [v3.6.3]"
 #--- Shop HUD helpers (localPlayer-scoped) ---
 #!define KEYBIND(btn) ("[{0}]".format(buttonString(btn)) if not localPlayer.using_gamepad else buttonString(btn))
 #!define SHOP_BROWSING (localPlayer.browsing_shop and not localPlayer.replacing_talent_show_confirmation and not localPlayer.replacing_talent_show_bought_talents)
@@ -187,11 +187,12 @@ rule "GENERAL - - - [EACH PLAYER] INIT":
 
     # Red Nova Icon
     createInWorldText(players_with_grim_reaper.exclude(eventPlayer) 
-    if eventPlayer.getHealth() < eventPlayer.getMaxHealth() * GRIM_REAPER_HEALTH_THRESHOLD 
-    and not eventPlayer.is_using_ability[Talent.STEALTH] 
-    and not eventPlayer.browsing_shop 
-    and eventPlayer.isAlive()  
-    else null, 
+    if eventPlayer.hasSpawned()
+    and eventPlayer.getHealth() <= eventPlayer.getMaxHealth() * GRIM_REAPER_HEALTH_THRESHOLD
+    and not eventPlayer.is_using_ability[Talent.STEALTH]
+    and not eventPlayer.browsing_shop
+    and eventPlayer.isAlive()
+    else null,
     "{0}".format(('<tx00000000B667>')), updateEveryFrame(eventPlayer.getPosition() + Vector.UP), 2, Clip.NONE, WorldTextReeval.VISIBILITY_AND_POSITION, Color.WHITE, SpecVisibility.DEFAULT)
     eventPlayer.grim_reaper_effect_id3 = getLastCreatedText()
     
@@ -501,26 +502,28 @@ rule "GENERAL - - - Player Died":
         #xp_orbs.remove(sorted(xp_orbs[Orb.TIMESTAMP])[0])
         xp_orbs.remove(sorted(xp_orbs, lambda orb: orb[Orb.TIMESTAMP])[0])*/
 
-    #eventPlayer.player_xp_orb_index = xp_orbs[len(xp_orbs)]
-    eventPlayer.player_xp_orb_index = len(xp_orbs)
-    xp_orbs[eventPlayer.player_xp_orb_index] = [eventPlayer, getTotalTimeElapsed(), round(eventPlayer.experience_max * 0.2), true if eventPlayer.talent_ranks[Talent.BURNING_SOUL] > 0 else false, eventPlayer.talent_ranks[Talent.BURNING_SOUL], eventPlayer.getPosition() + Vector.UP * 0.25, orb_rarity_colors[floor(eventPlayer.levels_gained / 4)]]
+    #No orb on self-kill (anti-abuse: suicide near your own orb to farm XP)
+    if attacker != victim:
+        #eventPlayer.player_xp_orb_index = xp_orbs[len(xp_orbs)]
+        eventPlayer.player_xp_orb_index = len(xp_orbs)
+        xp_orbs[eventPlayer.player_xp_orb_index] = [eventPlayer, getTotalTimeElapsed(), round(eventPlayer.experience_max * 0.2), true if eventPlayer.talent_ranks[Talent.BURNING_SOUL] > 0 else false, eventPlayer.talent_ranks[Talent.BURNING_SOUL], eventPlayer.getPosition() + Vector.UP * 0.25, orb_rarity_colors[floor(eventPlayer.levels_gained / 4)]]
 
-    createEffect(getAllPlayers(), Effect.ORB, orb_rarity_colors[floor(eventPlayer.levels_gained / 4)], eventPlayer.getPosition() + Vector.UP * 0.25, 1, EffectReeval.VISIBILITY)
+        createEffect(getAllPlayers(), Effect.ORB, orb_rarity_colors[floor(eventPlayer.levels_gained / 4)], eventPlayer.getPosition() + Vector.UP * 0.25, 1, EffectReeval.VISIBILITY)
 
-    xp_orbs[eventPlayer.player_xp_orb_index][Orb.ORB_EFFECT_ID] = getLastCreatedEntity()
+        xp_orbs[eventPlayer.player_xp_orb_index][Orb.ORB_EFFECT_ID] = getLastCreatedEntity()
 
-    if eventPlayer.talent_ranks[Talent.BURNING_SOUL] > 0:
+        if eventPlayer.talent_ranks[Talent.BURNING_SOUL] > 0:
 
-        stopChasingVariable(eventPlayer.burning_soul_orb_volume)
-        eventPlayer.burning_soul_orb_volume = 0
-        eventPlayer.burning_soul_orb_drop_position = eventPlayer.getPosition() + vect(0, 0.25, 0)
-        async(burning_soul_orb_sound_fade, AsyncBehavior.NOOP)
+            stopChasingVariable(eventPlayer.burning_soul_orb_volume)
+            eventPlayer.burning_soul_orb_volume = 0
+            eventPlayer.burning_soul_orb_drop_position = eventPlayer.getPosition() + vect(0, 0.25, 0)
+            async(burning_soul_orb_sound_fade, AsyncBehavior.NOOP)
 
-        createEffect(getAllPlayers(), Effect.TORBJORN_OVERLOADING_SOUND, Color.TEAM_2, eventPlayer.burning_soul_orb_drop_position, eventPlayer.burning_soul_orb_volume, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-        xp_orbs[eventPlayer.player_xp_orb_index][Orb.BURNING_SOUL_SOUND_EFFECT_ID] = getLastCreatedEntity()
+            createEffect(getAllPlayers(), Effect.TORBJORN_OVERLOADING_SOUND, Color.TEAM_2, eventPlayer.burning_soul_orb_drop_position, eventPlayer.burning_soul_orb_volume, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+            xp_orbs[eventPlayer.player_xp_orb_index][Orb.BURNING_SOUL_SOUND_EFFECT_ID] = getLastCreatedEntity()
 
-        createEffect(getAllPlayers(), Effect.GOOD_AURA, rgb(236, 50, 0), eventPlayer.getPosition() + Vector.UP * 0.25, 0.4, EffectReeval.VISIBILITY)
-        xp_orbs[eventPlayer.player_xp_orb_index][Orb.BURNING_SOUL_EFFECT_ID] = getLastCreatedEntity()
+            createEffect(getAllPlayers(), Effect.GOOD_AURA, rgb(236, 50, 0), eventPlayer.getPosition() + Vector.UP * 0.25, 0.4, EffectReeval.VISIBILITY)
+            xp_orbs[eventPlayer.player_xp_orb_index][Orb.BURNING_SOUL_EFFECT_ID] = getLastCreatedEntity()
 
     /*
     #apply impulse

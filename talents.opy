@@ -73,6 +73,7 @@ subroutine in_stealth
 subroutine health_potion_heal_monitor
 subroutine hack_error_feedback
 subroutine generate_explosive_ammo_pattern
+subroutine grim_reaper_homing
 
 #!extension explosionSounds
 #!extension buffStatusEffects
@@ -1367,15 +1368,22 @@ def fireball_casted():
     createProjectileEffect(getAllPlayers(), Projectile.REINHARDT_FIRE_STRIKE, Color.TEAM_1, eventPlayer.fireball_position, directionTowards(eventPlayer.fireball_position, eventPlayer.fireball_destination), 0, ProjectileEffectReeval.POSITION_DIRECTION_AND_SIZE)
     eventPlayer.fireball_effects[1] = getLastCreatedEntity()
 
-    waitUntil(eventPlayer.fireball_position == eventPlayer.fireball_destination or eventPlayer.talent_trigger_times[Talent.FIREBALL] + talent_base_cooldowns[Talent.FIREBALL] <= getTotalTimeElapsed() or any([player != eventPlayer and player.hasSpawned() and player.is_using_ability[Talent.SHADOWSTEP] == false and eventPlayer.fireball_position != null and player.isAlive() and player.browsing_shop == false and distance(eventPlayer.fireball_position, player.getPosition() + Vector.UP) <= FIREBALL_PROJECTILE_RADIUS and isInLoS(eventPlayer.fireball_position, player.getPosition() + Vector.UP, BarrierLos.PASS_THROUGH_BARRIERS) for player in getAllPlayers()]) == true, Math.INFINITY)
+    waitUntil(eventPlayer.fireball_position == eventPlayer.fireball_destination or eventPlayer.talent_trigger_times[Talent.FIREBALL] + talent_base_cooldowns[Talent.FIREBALL] <= getTotalTimeElapsed() or any([player != eventPlayer and player.hasSpawned() and player.is_using_ability[Talent.SHADOWSTEP] == false and eventPlayer.fireball_position != null and player.isAlive() and player.browsing_shop == false and distance(eventPlayer.fireball_position, player.getPosition() + Vector.UP) <= FIREBALL_PROJECTILE_RADIUS * player.stats[Stat.SIZE] and isInLoS(eventPlayer.fireball_position, player.getPosition() + Vector.UP, BarrierLos.PASS_THROUGH_BARRIERS) for player in getAllPlayers()]) == true, Math.INFINITY)
 
-    eventPlayer.victims_in_fireball_radius = [player for player in getPlayersInRadius(eventPlayer.fireball_position, FIREBALL_EXPLOSION_RADIUS, Team.ALL, LosCheck.SURFACES) 
-        if 
-            player.browsing_shop == false 
-            and player.isAlive() 
-            #and player != eventPlayer 
-            and player.is_using_ability[Talent.IMMUNITY] == false 
+    #Freeze the impact point before the victim loop — the chase would keep moving it toward the destination during the per-victim waits
+    stopChasingVariable(eventPlayer.fireball_position)
+
+    eventPlayer.victims_in_fireball_radius = [player for player in getPlayersInRadius(eventPlayer.fireball_position, FIREBALL_EXPLOSION_RADIUS, Team.ALL, LosCheck.SURFACES)
+        if
+            player.browsing_shop == false
+            and player.isAlive()
+            #and player != eventPlayer
+            and player.is_using_ability[Talent.IMMUNITY] == false
             and player.is_using_ability[Talent.SHADOWSTEP] == false]
+
+    #Distance falloff: full damage within FIREBALL_FULL_DAMAGE_RADIUS of the impact, then 2/3 fading linearly to 1/3 at the explosion edge
+    eventPlayer.fireball_damage_fractions = eventPlayer.victims_in_fireball_radius.map(lambda victim: distance(eventPlayer.fireball_position, victim.getPosition() + Vector.UP))
+    eventPlayer.fireball_damage_fractions = eventPlayer.fireball_damage_fractions.map(lambda victimDistance: 1 if victimDistance <= FIREBALL_FULL_DAMAGE_RADIUS else max(2 / 3 - (victimDistance - FIREBALL_FULL_DAMAGE_RADIUS) / ((FIREBALL_EXPLOSION_RADIUS - FIREBALL_FULL_DAMAGE_RADIUS) * 3), 1 / 3))
 
     for eventPlayer.fireball_loop in range(len(eventPlayer.victims_in_fireball_radius)):
 
@@ -1384,18 +1392,19 @@ def fireball_casted():
 
         wait(0.032)
 
-        damage(eventPlayer.victims_in_fireball_radius[eventPlayer.fireball_loop], eventPlayer, FIREBALL_DAMAGE if eventPlayer.victims_in_fireball_radius[eventPlayer.fireball_loop] != eventPlayer else FIREBALL_DAMAGE_SELF if eventPlayer.talent_ranks[Talent.PYROMANIAC] == 0 else 0)
-        playEffect(getAllPlayers(), DynamicEffect.REINHARDT_FIRE_STRIKE_TARGET_IMPACT, Color.TEAM_2, eventPlayer.victims_in_fireball_radius[eventPlayer.fireball_loop], 1)
-        eventPlayer.victims_in_fireball_radius[eventPlayer.fireball_loop].startDoT(eventPlayer, FIREBALL_DAMAGE_OVER_TIME_DURATION if eventPlayer.victims_in_fireball_radius[eventPlayer.fireball_loop] != eventPlayer else FIREBALL_DAMAGE_SELF_OVER_TIME_DURATION, FIREBALL_DAMAGE_OVER_TIME if eventPlayer.victims_in_fireball_radius[eventPlayer.fireball_loop] != eventPlayer else FIREBALL_DAMAGE_SELF_OVER_TIME if eventPlayer.talent_ranks[Talent.PYROMANIAC] == 0 else 0)
+        damage(eventPlayer.victims_in_fireball_radius[eventPlayer.fireball_loop], eventPlayer, (FIREBALL_DAMAGE if eventPlayer.victims_in_fireball_radius[eventPlayer.fireball_loop] != eventPlayer else FIREBALL_DAMAGE_SELF if eventPlayer.talent_ranks[Talent.PYROMANIAC] == 0 else 0) * eventPlayer.fireball_damage_fractions[eventPlayer.fireball_loop])
+        if eventPlayer.fireball_damage_fractions[eventPlayer.fireball_loop] == 1:
+            playEffect(getAllPlayers(), DynamicEffect.REINHARDT_FIRE_STRIKE_TARGET_IMPACT, Color.TEAM_2, eventPlayer.victims_in_fireball_radius[eventPlayer.fireball_loop], 1)
+        eventPlayer.victims_in_fireball_radius[eventPlayer.fireball_loop].startDoT(eventPlayer, FIREBALL_DAMAGE_OVER_TIME_DURATION if eventPlayer.victims_in_fireball_radius[eventPlayer.fireball_loop] != eventPlayer else FIREBALL_DAMAGE_SELF_OVER_TIME_DURATION, (FIREBALL_DAMAGE_OVER_TIME if eventPlayer.victims_in_fireball_radius[eventPlayer.fireball_loop] != eventPlayer else FIREBALL_DAMAGE_SELF_OVER_TIME if eventPlayer.talent_ranks[Talent.PYROMANIAC] == 0 else 0) * eventPlayer.fireball_damage_fractions[eventPlayer.fireball_loop])
 
         #Set Status Burning
         eventPlayer.victims_in_fireball_radius[eventPlayer.fireball_loop].setStatusEffect(eventPlayer, Status.BURNING, FIREBALL_DAMAGE_OVER_TIME_DURATION)
         if eventPlayer.talent_ranks[Talent.PYROMANIAC] > 0 and eventPlayer.victims_in_fireball_radius[eventPlayer.fireball_loop] == eventPlayer:
+            eventPlayer.pyromaniac_heal_fraction = eventPlayer.fireball_damage_fractions[eventPlayer.fireball_loop]
             async(pyromaniac_heal_over_time, AsyncBehavior.NOOP)
     playEffect(getAllPlayers(), DynamicEffect.ASHE_DYNAMITE_EXPLOSION, Color.TEAM_2, eventPlayer.fireball_position, 2)
     playEffect(getAllPlayers(), DynamicEffect.ASHE_DYNAMITE_EXPLOSION_SOUND, Color.TEAM_2, eventPlayer.fireball_position, 100)
     eventPlayer.fireball_in_air = false
-    stopChasingVariable(eventPlayer.fireball_position)
     destroyEffect(eventPlayer.fireball_effects[0])
     destroyEffect(eventPlayer.fireball_effects[1])
     wait()
@@ -1513,14 +1522,14 @@ def casting_cancelled():
             return
     # SKIPPING TALENT
     elif eventPlayer.is_using_skip_talent == true:
-        waitUntil(eventPlayer.isHoldingButton(Button.RELOAD) == false or eventPlayer.isHoldingButton(Button.JUMP if eventPlayer.using_gamepad else Button.INTERACT) or eventPlayer.casting_success)
+        waitUntil(eventPlayer.isHoldingButton(Button.RELOAD) == false or eventPlayer.isHoldingButton(Button.JUMP if eventPlayer.using_gamepad else Button.INTERACT) or eventPlayer.isHoldingButton(Button.ULTIMATE) or eventPlayer.casting_success)
 
         if eventPlayer.casting_success == true:
             return
 
     # OPENING OPTIONS MENU / RETURNING TO SHOP
     elif eventPlayer.is_using_open_options == true:
-        waitUntil(eventPlayer.isHoldingButton(Button.ULTIMATE) == false or eventPlayer.isHoldingButton(Button.JUMP if eventPlayer.using_gamepad else Button.INTERACT) or eventPlayer.casting_success)
+        waitUntil(eventPlayer.isHoldingButton(Button.ULTIMATE) == false or eventPlayer.isHoldingButton(Button.JUMP if eventPlayer.using_gamepad else Button.INTERACT) or eventPlayer.isHoldingButton(Button.RELOAD) or eventPlayer.casting_success)
 
         if eventPlayer.casting_success == true:
             return
@@ -1573,9 +1582,12 @@ def casting_cancelled():
     eventPlayer.using_hearthstone_timer = 0
     destroyEffect(eventPlayer.casting_effect_id)
     destroyEffect(eventPlayer.casting_sound_effect_id)
+    eventPlayer.is_casting = false
 
 def casting():
     @Name "GENERAL - - - [SUBROUTINE] Casting"
+
+    eventPlayer.is_casting = true
 
     # Reset from previous cast
     eventPlayer.casting_success = false
@@ -1597,6 +1609,9 @@ def casting():
 
     eventPlayer.casting_timer = 0
 
+    destroyEffect(eventPlayer.casting_effect_id)
+    destroyEffect(eventPlayer.casting_sound_effect_id)
+
     #SFX (Casting)
     if eventPlayer.is_using_hearthstone or eventPlayer.is_using_ability[Talent.GRIM_REAPER]:
 
@@ -1615,7 +1630,7 @@ def casting():
     
     elif eventPlayer.is_using_ability[Talent.GRIM_REAPER]: 
         
-        createEffect(getAllPlayers() if eventPlayer.casting_timer < GRIM_REAPER_CAST_TIME and not eventPlayer.is_using_ability[Talent.STEALTH] else null, Effect.GOOD_AURA, Color.RED, updateEveryTick(eventPlayer.getPosition() + Vector.UP), GIGACHAD_SCALED_SIZE, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+        createEffect(getAllPlayers() if eventPlayer.casting_timer < GRIM_REAPER_CAST_TIME else null, Effect.GOOD_AURA, Color.RED, updateEveryTick(eventPlayer.getPosition() + Vector.UP), GIGACHAD_SCALED_SIZE, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
 
     eventPlayer.casting_effect_id = getLastCreatedEntity()
 
@@ -1687,6 +1702,7 @@ def casting():
     eventPlayer.using_hearthstone_timer = 0
     destroyEffect(eventPlayer.casting_effect_id)
     destroyEffect(eventPlayer.casting_sound_effect_id)
+    eventPlayer.is_casting = false
 
 rule "TALENT SYSTEM - - - [GRIM REAPER] Aim-Indicator Sweep":
     @Condition len([player for player in getAllPlayers() if IS_PLAYER(player) and player.talent_ranks[Talent.GRIM_REAPER] > 0]) > 0
@@ -1696,7 +1712,7 @@ rule "TALENT SYSTEM - - - [GRIM REAPER] Aim-Indicator Sweep":
         if len(grim_reaper_owners) == 0:
             wait(GRIM_REAPER_SCAN_WINDOW)
         else:
-            grim_reaper_valid_targets = [player for player in getAllPlayers() if player.isAlive() == true and player.getHealth() < player.getMaxHealth() * GRIM_REAPER_HEALTH_THRESHOLD and player.is_using_ability[Talent.STEALTH] == false and player.is_using_ability[Talent.SHADOWSTEP] == false]
+            grim_reaper_valid_targets = [player for player in getAllPlayers() if player.hasSpawned() and player.isAlive() == true and player.getHealth() <= player.getMaxHealth() * GRIM_REAPER_HEALTH_THRESHOLD and player.is_using_ability[Talent.STEALTH] == false and player.is_using_ability[Talent.SHADOWSTEP] == false]
             for grim_reaper_sweep_index in range(len(grim_reaper_owners)):
                 current_grim_reaper_owner = grim_reaper_owners[grim_reaper_sweep_index]
                 current_grim_reaper_owner.grim_reaper_aim_indicator = null
@@ -1740,6 +1756,8 @@ rule "TALENT SYSTEM - - - [GRIM REAPER] Use Grim Reaper":
     eventPlayer.grim_reaper_target = eventPlayer.grim_reaper_aim_indicator
 
     eventPlayer.is_using_ability[Talent.GRIM_REAPER] = true
+    if eventPlayer.is_using_ability[Talent.STEALTH] == true:
+        async(break_stealth, AsyncBehavior.NOOP)
     eventPlayer.grim_reaper_camera_destination = eventPlayer.grim_reaper_target.getEyePosition()
     eventPlayer.grim_reaper_feet_destination = eventPlayer.grim_reaper_target.getPosition()
     
@@ -1758,24 +1776,28 @@ def grim_reaper_casted():
         eventPlayer.grim_reaper_feet_destination = eventPlayer.grim_reaper_target.getPosition()
 
     # DISAPPEAR
-    playEffect(getAllPlayers() if not eventPlayer.is_using_ability[Talent.STEALTH] else null, DynamicEffect.MOIRA_FADE_DISAPPEAR, Color.TEAM_2, eventPlayer.getPosition(), 1)
-    playEffect(getAllPlayers() if not eventPlayer.is_using_ability[Talent.STEALTH] else null, DynamicEffect.MOIRA_FADE_DISAPPEAR_SOUND, Color.TEAM_2, eventPlayer.getPosition(), 100)
+    playEffect(getAllPlayers(), DynamicEffect.MOIRA_FADE_DISAPPEAR, Color.TEAM_2, eventPlayer.getPosition(), 1)
+    playEffect(getAllPlayers(), DynamicEffect.MOIRA_FADE_DISAPPEAR_SOUND, Color.TEAM_2, eventPlayer.getPosition(), 100)
 
     # CAMERA START POSITION (IS CHASED)
     eventPlayer.grim_reaper_camera_position = eventPlayer.getEyePosition()
 
     # CREATE EFFECTS
-    createProjectileEffect(getAllPlayers() if not eventPlayer.is_using_ability[Talent.STEALTH] else null, Projectile.MOIRA_DAMAGE_ORB, null, eventPlayer.grim_reaper_camera_position + Vector.DOWN, eventPlayer.grim_reaper_camera_destination, 0, ProjectileEffectReeval.POSITION_DIRECTION_AND_SIZE)
+    createProjectileEffect(getAllPlayers(), Projectile.MOIRA_DAMAGE_ORB, null, eventPlayer.grim_reaper_camera_position + Vector.DOWN, eventPlayer.grim_reaper_camera_destination, 0, ProjectileEffectReeval.POSITION_DIRECTION_AND_SIZE)
     eventPlayer.grim_reaper_effect_id = getLastCreatedEntity()
-    createEffect(getAllPlayers() if not eventPlayer.is_using_ability[Talent.STEALTH] else null, Effect.LUCIO_SOUND_BARRIER_PROTECTED_SOUND, Color.WHITE, eventPlayer.grim_reaper_camera_position + Vector.DOWN, 100, EffectReeval.POSITION_AND_RADIUS)
+    createEffect(getAllPlayers(), Effect.LUCIO_SOUND_BARRIER_PROTECTED_SOUND, Color.WHITE, eventPlayer.grim_reaper_camera_position + Vector.DOWN, 100, EffectReeval.POSITION_AND_RADIUS)
     eventPlayer.grim_reaper_sound_id = getLastCreatedEntity()
 
     eventPlayer.grim_reaper_ramp_up = 0
     chaseOverTime(eventPlayer.grim_reaper_ramp_up, GRIM_REAPER_FLIGHT_SPEED, 1 **4, ChaseTimeReeval.DESTINATION_AND_DURATION)
     chaseAtRate(eventPlayer.grim_reaper_camera_position, eventPlayer.grim_reaper_camera_destination, eventPlayer.grim_reaper_ramp_up, ChaseRateReeval.DESTINATION_AND_RATE)
 
-    eventPlayer.stopFacing()
-    eventPlayer.startCamera(eventPlayer.grim_reaper_camera_position, eventPlayer.grim_reaper_target.getPosition() + Vector.UP if eventPlayer.grim_reaper_target.isAlive() else eventPlayer.grim_reaper_camera_destination, 30)
+    # IN-FLIGHT HOMING
+    eventPlayer.grim_reaper_arrival_facing = directionTowards(eventPlayer.grim_reaper_camera_position, eventPlayer.grim_reaper_camera_destination)
+    async(grim_reaper_homing, AsyncBehavior.NOOP)
+
+    eventPlayer.startFacing(directionTowards(eventPlayer.grim_reaper_camera_position, (eventPlayer.grim_reaper_target.getPosition() + Vector.UP if eventPlayer.grim_reaper_target.isAlive() and eventPlayer.grim_reaper_target.browsing_shop == false else eventPlayer.grim_reaper_camera_destination) + eventPlayer.grim_reaper_arrival_facing), 10000, Relativity.TO_WORLD, FacingReeval.DIRECTION_AND_TURN_RATE)
+    eventPlayer.startCamera(eventPlayer.grim_reaper_camera_position, (eventPlayer.grim_reaper_target.getPosition() + Vector.UP if eventPlayer.grim_reaper_target.isAlive() and eventPlayer.grim_reaper_target.browsing_shop == false else eventPlayer.grim_reaper_camera_destination) + eventPlayer.grim_reaper_arrival_facing, 30)
 
     waitUntil(distance(eventPlayer.grim_reaper_camera_position, eventPlayer.grim_reaper_camera_destination) < GRIM_REAPER_RADIUS * 2 or eventPlayer.isDead() or eventPlayer.grim_reaper_target.isDead() or not entityExists(eventPlayer.grim_reaper_target), Math.INFINITY)
 
@@ -1787,23 +1809,24 @@ def grim_reaper_casted():
     if eventPlayer.isDead():
         goto lbl_0
 
-    # CAPTURE THE FLIGHT VIEW DIRECTION FOR THE LANDING FACING
-    eventPlayer.grim_reaper_arrival_facing = directionTowards(eventPlayer.grim_reaper_camera_position, eventPlayer.grim_reaper_target.getPosition() + Vector.UP if entityExists(eventPlayer.grim_reaper_target) and eventPlayer.grim_reaper_target.isAlive() else eventPlayer.grim_reaper_camera_destination)
-
     # WHO WILL GET HIT?
-    eventPlayer.victims_in_grim_reaper_radius = [player for player in getPlayersInRadius(eventPlayer.grim_reaper_camera_destination + Vector.DOWN, GRIM_REAPER_RADIUS, Team.ALL, LosCheck.OFF) if player != eventPlayer and player.is_using_ability[Talent.SHADOWSTEP] == false and player.is_using_ability[Talent.IMMUNITY] == false and player.browsing_shop == false and player.isAlive() == true]
+    eventPlayer.victims_in_grim_reaper_radius = [player for player in getPlayersInRadius(eventPlayer.grim_reaper_camera_destination + Vector.DOWN, GRIM_REAPER_RADIUS, Team.ALL, LosCheck.OFF) if player != eventPlayer and player.is_using_ability[Talent.SHADOWSTEP] == false and player.browsing_shop == false and player.isAlive() == true]
     
     # EFFECTS - PLAYED ONCE
-    playEffect(getAllPlayers() if not eventPlayer.is_using_ability[Talent.STEALTH] else null, DynamicEffect.SOMBRA_TRANSLOCATOR_REAPPEAR, Color.TEAM_2, eventPlayer.grim_reaper_camera_destination + Vector.DOWN, 1)
+    playEffect(getAllPlayers(), DynamicEffect.SOMBRA_TRANSLOCATOR_REAPPEAR, Color.TEAM_2, eventPlayer.grim_reaper_camera_destination + Vector.DOWN, 1)
     
     if eventPlayer.victims_in_grim_reaper_radius != []:
 
-        playEffect(getAllPlayers() if not eventPlayer.is_using_ability[Talent.STEALTH] else null, DynamicEffect.SIGMA_HYPERSPHERE_IMPLOSION_SOUND, Color.WHITE, eventPlayer.grim_reaper_camera_destination + Vector.DOWN, 100)
+        playEffect(getAllPlayers(), DynamicEffect.SIGMA_HYPERSPHERE_IMPLOSION_SOUND, Color.WHITE, eventPlayer.grim_reaper_camera_destination + Vector.DOWN, 100)
 
             for eventPlayer.grim_reaper_selector in range(len(eventPlayer.victims_in_grim_reaper_radius)):
 
-                # APPLY IMPULSE
-                eventPlayer.victims_in_grim_reaper_radius[eventPlayer.grim_reaper_selector].applyImpulse(angleToDirection(horizontalAngleOfDirection(directionTowards(eventPlayer.grim_reaper_camera_position + Vector.DOWN, eventPlayer.victims_in_grim_reaper_radius[eventPlayer.grim_reaper_selector].getEyePosition() + Vector.DOWN)), min(verticalAngleOfDirection(directionTowards(eventPlayer.grim_reaper_camera_position + Vector.DOWN, eventPlayer.victims_in_grim_reaper_radius[eventPlayer.grim_reaper_selector].getEyePosition() + Vector.DOWN)), -30)), 7.5, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION_XYZ)
+                # APPLY IMPULSE - ALONG THE FLIGHT DIRECTION
+                eventPlayer.victims_in_grim_reaper_radius[eventPlayer.grim_reaper_selector].applyImpulse(angleToDirection(horizontalAngleOfDirection(eventPlayer.grim_reaper_arrival_facing), min(verticalAngleOfDirection(eventPlayer.grim_reaper_arrival_facing), -30)), 7.5, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION_XYZ)
+
+                # STUN
+                if eventPlayer.victims_in_grim_reaper_radius[eventPlayer.grim_reaper_selector].is_using_ability[Talent.IMMUNITY] == false:
+                    eventPlayer.victims_in_grim_reaper_radius[eventPlayer.grim_reaper_selector].setStatusEffect(eventPlayer, Status.STUNNED, 0.5)
 
                 # EFFECT - FOR EACH PLAYER
                 playEffect(getAllPlayers(), DynamicEffect.SIGMA_HYPERSPHERE_IMPLOSION, Color.TEAM_2, eventPlayer.victims_in_grim_reaper_radius[eventPlayer.grim_reaper_selector], 1)
@@ -1815,11 +1838,11 @@ def grim_reaper_casted():
         goto lbl_0
 
     # EFFECT - PLAYER REAPPEARING
-    playEffect(getAllPlayers() if not eventPlayer.is_using_ability[Talent.STEALTH] else null, DynamicEffect.BAD_PICKUP_EFFECT, Color.RED, eventPlayer.grim_reaper_camera_destination + Vector.DOWN, 1)
+    playEffect(getAllPlayers(), DynamicEffect.BAD_PICKUP_EFFECT, Color.RED, eventPlayer.grim_reaper_camera_destination + Vector.DOWN, 1)
 
-    playEffect(getAllPlayers() if not eventPlayer.is_using_ability[Talent.STEALTH] else null, DynamicEffect.MOIRA_FADE_REAPPEAR, Color.TEAM_2, eventPlayer.getPosition(), 1)
+    playEffect(getAllPlayers(), DynamicEffect.MOIRA_FADE_REAPPEAR, Color.TEAM_2, eventPlayer.getPosition(), 1)
 
-    playEffect(getAllPlayers() if not eventPlayer.is_using_ability[Talent.STEALTH] else null, DynamicEffect.MOIRA_FADE_REAPPEAR_SOUND, Color.TEAM_2, eventPlayer.getPosition(), 100)
+    playEffect(getAllPlayers(), DynamicEffect.MOIRA_FADE_REAPPEAR_SOUND, Color.TEAM_2, eventPlayer.getPosition(), 100)
 
     eventPlayer.teleport(eventPlayer.grim_reaper_feet_destination)
 
@@ -1837,15 +1860,26 @@ def grim_reaper_casted():
     eventPlayer.stopCamera()
     if eventPlayer.isAlive():
         eventPlayer.teleport(eventPlayer.grim_reaper_feet_destination)
-        eventPlayer.setFacing(eventPlayer.grim_reaper_arrival_facing, Relativity.TO_WORLD)
 
-    # FLIGHT END
+    # FLIGHT END - FACING KEEPS TRACKING SLIGHTLY PAST INPUT RESUME
     resume_player_input()
+    wait(0.048)
+
+    eventPlayer.stopFacing()
 
     waitUntil(not eventPlayer.isHoldingButton(Button.INTERACT) or eventPlayer.isDead(), 99999)
     eventPlayer.grim_reaper_target = null
 
     eventPlayer.is_using_ability[Talent.GRIM_REAPER] = false
+
+def grim_reaper_homing():
+    @Name "TALENT SYSTEM - - - [GRIM REAPER] In-Flight Homing"
+
+    while eventPlayer.isAlive() and eventPlayer.is_using_ability[Talent.GRIM_REAPER] and entityExists(eventPlayer.grim_reaper_target) and eventPlayer.grim_reaper_target.isAlive() and eventPlayer.grim_reaper_target.browsing_shop == false and distance(eventPlayer.grim_reaper_camera_position, eventPlayer.grim_reaper_camera_destination) >= GRIM_REAPER_RADIUS:
+        eventPlayer.grim_reaper_camera_destination = eventPlayer.grim_reaper_target.getEyePosition()
+        eventPlayer.grim_reaper_feet_destination = eventPlayer.grim_reaper_target.getPosition()
+        eventPlayer.grim_reaper_arrival_facing = directionTowards(eventPlayer.grim_reaper_camera_position, eventPlayer.grim_reaper_camera_destination)
+        wait()
 
 rule "TALENT SYSTEM - - - [TALENT 22: IGNORE PAIN] How Much Damage Was Resisted Inside Combat?":
     @Event eachPlayer

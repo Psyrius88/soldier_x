@@ -99,6 +99,7 @@ rule "SHOP - - - Using Hearthstone":
     @Condition eventPlayer.is_using_ability[Talent.GRIM_REAPER] == false
     @Condition eventPlayer.railgun_charge == 0
     @Condition eventPlayer.in_combat == false
+    @Condition (eventPlayer.is_casting == false or eventPlayer.is_using_hearthstone == true) == true
     @Condition eventPlayer.isHoldingButton(Button.RELOAD) == true
     
     wait(0.125, Wait.ABORT_WHEN_FALSE)
@@ -114,6 +115,7 @@ rule "SHOP - - - Skip Talents & Exit Shop":
     @Condition eventPlayer.replacing_talent_show_bought_talents == false
     @Condition eventPlayer.browsing_options == false
     @Condition eventPlayer.shop_reload_released == true
+    @Condition (eventPlayer.is_casting == false or eventPlayer.is_using_skip_talent == true) == true
     @Condition eventPlayer.isHoldingButton(Button.RELOAD) == true
     @Condition eventPlayer.isHoldingButton(Button.JUMP if eventPlayer.using_gamepad else Button.INTERACT) == false
     @Condition eventPlayer.isHoldingButton(Button.ULTIMATE) == false
@@ -135,6 +137,7 @@ rule "SHOP - - - Using Yes":
     @Condition not eventPlayer.isDummy()
     @Condition eventPlayer.browsing_shop == true
     @Condition eventPlayer.replacing_talent_show_confirmation == true
+    @Condition (eventPlayer.is_casting == false or eventPlayer.is_using_vote_yes == true) == true
     @Condition eventPlayer.isHoldingButton(Button.ABILITY_1 if eventPlayer.using_gamepad else Button.PRIMARY_FIRE) == true
     @Condition eventPlayer.isHoldingButton(Button.ABILITY_2 if eventPlayer.using_gamepad else Button.SECONDARY_FIRE) == false
 
@@ -146,6 +149,7 @@ rule "SHOP - - - Using No":
     @Condition not eventPlayer.isDummy()
     @Condition eventPlayer.browsing_shop == true
     @Condition eventPlayer.replacing_talent_show_confirmation == true
+    @Condition (eventPlayer.is_casting == false or eventPlayer.is_using_vote_no == true) == true
     @Condition eventPlayer.isHoldingButton(Button.ABILITY_1 if eventPlayer.using_gamepad else Button.PRIMARY_FIRE) == false
     @Condition eventPlayer.isHoldingButton(Button.ABILITY_2 if eventPlayer.using_gamepad else Button.SECONDARY_FIRE) == true
 
@@ -227,6 +231,7 @@ rule "SHOP - - - Open Options Menu / Return To Shop":
     @Condition not eventPlayer.isDummy()
     @Condition eventPlayer.browsing_shop == true
     @Condition eventPlayer.replacing_talent_show_confirmation == false
+    @Condition (eventPlayer.is_casting == false or eventPlayer.is_using_open_options == true) == true
     @Condition eventPlayer.isHoldingButton(Button.ULTIMATE) == true
     @Condition eventPlayer.isHoldingButton(Button.RELOAD) == false
     @Condition eventPlayer.isHoldingButton(Button.JUMP if eventPlayer.using_gamepad else Button.INTERACT) == false
