@@ -158,8 +158,8 @@ def open_shop():
     #empty and refill possible talents
     eventPlayer.possible_talents = []
 
-    #Catch-up: more than 5 levels behind the leader with open talent slots -> offers are unowned talents at rank 1 + boost (rank 5 cap)
-    eventPlayer.catch_up_rank_boost = max(min(player_with_most_talents.amount_of_talents_purchased - 5 - eventPlayer.amount_of_talents_purchased, 4), 0) if len(eventPlayer.bought_talents) < 5 else 0
+    #Catch-up: 5+ levels behind the leader with open talent slots -> offers are unowned talents at rank 1 + boost (rank 5 cap)
+    eventPlayer.catch_up_rank_boost = max(min(player_with_most_talents.amount_of_talents_purchased - 4 - eventPlayer.amount_of_talents_purchased, 4), 0) if len(eventPlayer.bought_talents) < 5 else 0
 
     /*if len(eventPlayer.bought_talents) == 5:
         eventPlayer.possible_talents_selector = 4*/
@@ -819,7 +819,7 @@ def buy_health_regen():
     if eventPlayer.talent_ranks[Talent.HEALTH_REGEN] == 1:
         createEffect(eventPlayer if eventPlayer.getHealthOfType(Health.NORMAL) < eventPlayer.getMaxHealthOfType(Health.NORMAL) and eventPlayer.isAlive() else null, Effect.SPARKLES_SOUND, Color.WHITE, eventPlayer, 100, EffectReeval.VISIBILITY_POSITION_RADIUS_AND_COLOR)
         eventPlayer.health_regen_sound_id = getLastCreatedEntity()
-        createEffect((eventPlayer if eventPlayer.is_using_ability[Talent.STEALTH] or eventPlayer.is_using_ability[Talent.SHADOWSTEP] or eventPlayer.is_using_ability[Talent.GRIM_REAPER] or eventPlayer.browsing_shop else getAllPlayers()) if eventPlayer.getHealthOfType(Health.NORMAL) < eventPlayer.getMaxHealthOfType(Health.NORMAL) and eventPlayer.isAlive() else null, Effect.SPARKLES, Color.PURPLE if eventPlayer.is_using_ability[Talent.STEALTH] == true else Color.ORANGE, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_RADIUS_AND_COLOR)
+        createEffect(eventPlayer if eventPlayer.getHealthOfType(Health.NORMAL) < eventPlayer.getMaxHealthOfType(Health.NORMAL) and eventPlayer.isAlive() else null, Effect.SPARKLES, Color.PURPLE if eventPlayer.is_using_ability[Talent.STEALTH] == true else Color.ORANGE, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_RADIUS_AND_COLOR)
         eventPlayer.player_temp_effects[64] = getLastCreatedEntity()
         eventPlayer.talents_you_do_not_have.remove(Talent.HEALTH_REGEN)
         eventPlayer.talents_you_do_not_have.remove(Talent.CYBERNETICS)

@@ -1,7 +1,7 @@
 #!optimizeForSize
-#!define TOP_RIGHT_SUBHEADER "Soldier: X [v3.6.1]\nMade By Psyrius#21775\nWorkshop.codes/Zekk3"
-#!define GAME_MODE_DESCRIPTION "● Made by Psyrius\n● Code: ZEKK3\n● v3.6.1\n● RPG, Level up, Buy talents, FFA, Deathmatch\n● Developed since 2020\n● Discord: dsc.gg/soldier-x"
-#!define GAME_MODE_NAME "SOLDIER: X [v3.6.1]"
+#!define TOP_RIGHT_SUBHEADER "Soldier: X [v3.6.2]\nMade By Psyrius#21775\nWorkshop.codes/Zekk3"
+#!define GAME_MODE_DESCRIPTION "● Made by Psyrius\n● Code: ZEKK3\n● v3.6.2\n● RPG, Level up, Buy talents, FFA, Deathmatch\n● Developed since 2020\n● Discord: dsc.gg/soldier-x"
+#!define GAME_MODE_NAME "SOLDIER: X [v3.6.2]"
 #--- Shop HUD helpers (localPlayer-scoped) ---
 #!define KEYBIND(btn) ("[{0}]".format(buttonString(btn)) if not localPlayer.using_gamepad else buttonString(btn))
 #!define SHOP_BROWSING (localPlayer.browsing_shop and not localPlayer.replacing_talent_show_confirmation and not localPlayer.replacing_talent_show_bought_talents)
@@ -543,6 +543,9 @@ rule "GENERAL - - - Player Died":
         if eventPlayer.xp_boost_is_active == true:
             stopChasingVariable(eventPlayer.experience_current)
             eventPlayer.xp_boost_is_active = false
+        #Level 0: dying grants the first talent point
+        if eventPlayer.levels_gained == 0:
+            eventPlayer.experience_current = eventPlayer.experience_max
         if eventPlayer.is_using_ability[Talent.STEALTH] == true:
             async(break_stealth, AsyncBehavior.NOOP)
         eventPlayer.is_respawning = true
@@ -699,6 +702,10 @@ rule "GENERAL - - - Player Took Damage":
             eventPlayer.bot_combat_awareness_start = 0
             eventPlayer.bot_state_id = BotState.COMBAT
         return
+
+    #Catch-up: taking damage from someone 5+ levels above grants XP at the dealing-damage rate
+    if attacker != eventPlayer and attacker.levels_gained >= eventPlayer.levels_gained + 5 and eventPlayer.experience_current < eventPlayer.experience_max:
+        eventPlayer.experience_current += eventDamage / 5 * eventPlayer.stats[Stat.XP]
 
     #if victim.cybernetics_shields > 0:
         #stopChasingVariable(victim.cybernetics_shields)
