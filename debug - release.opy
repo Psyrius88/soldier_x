@@ -12,6 +12,7 @@ globalvar debug_burning_soul = createWorkshopSettingInt("03. Talents (Use at you
 globalvar debug_cryogenics = createWorkshopSettingInt("03. Talents (Use at your own risk)", "Cryogenics", 0, 0, 5, 0)
 globalvar debug_cybernetics = createWorkshopSettingInt("03. Talents (Use at your own risk)", "Cybernetics", 0, 0, 5, 0)
 globalvar debug_dive_bomb = createWorkshopSettingInt("03. Talents (Use at your own risk)", "Dive Bomb", 0, 0, 5, 0)
+globalvar debug_engineer = createWorkshopSettingInt("03. Talents (Use at your own risk)", "Engineer", 0, 0, 5, 0)
 globalvar debug_fireball = createWorkshopSettingInt("03. Talents (Use at your own risk)", "Fireball", 0, 0, 5, 0)
 globalvar debug_gigachad = createWorkshopSettingInt("03. Talents (Use at your own risk)", "Gigachad", 0, 0, 5, 0)
 #globalvar debug_gunslinger = createWorkshopSettingInt("03. Talents (Use at your own risk)", "Gunslinger", 0, 0, 5, 0)
@@ -86,6 +87,12 @@ def buy_debug_talents():
         buy_helix()
         eventPlayer.talent_ranks[Talent.HELIX] = debug_helix
         eventPlayer.amount_of_talents_purchased += debug_helix
+    if debug_engineer > 0:
+        eventPlayer.talent_ranks[Talent.ENGINEER] = 1
+        eventPlayer.bought_talents.append(Talent.ENGINEER)
+        buy_engineer()
+        eventPlayer.talent_ranks[Talent.ENGINEER] = debug_engineer
+        eventPlayer.amount_of_talents_purchased += debug_engineer
     if debug_lifesteal_ammo > 0:
         eventPlayer.talent_ranks[Talent.LIFESTEAL_AMMO] = 1
         eventPlayer.bought_talents.append(Talent.LIFESTEAL_AMMO)

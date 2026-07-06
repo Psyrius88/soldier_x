@@ -7,7 +7,6 @@
 #!defineMember lifesteal_sound_id variable[203]
 #!defineMember lifesteal_target_effect_id variable[204]
 #!defineMember lifesteal_self_effect_id variable[205]
-#!defineMember health_regen_sound_id variable[206]
 #!defineMember health_regen_effect_id variable[207]
 #!defineMember burning_soul_particle_effect_id variable[208]
 #!defineMember burning_soul_material_effect_id variable[209]
@@ -84,6 +83,7 @@ subroutine buy_pyromaniac
 subroutine buy_alchemist
 #subroutine buy_bombardment
 subroutine buy_gigachad
+subroutine buy_engineer
 #subroutine buy_gunslinger
 #subroutine buy_adrenaline_rush
 
@@ -545,6 +545,8 @@ def buy_or_upgrade_talent():
         buy_gigachad()
     elif eventPlayer.current_talent_replace_or_buy == [Talent.HELIX]:
         buy_helix()
+    elif eventPlayer.current_talent_replace_or_buy == [Talent.ENGINEER]:
+        buy_engineer()
     #elif eventPlayer.current_talent_replace_or_buy == [Talent.GUNSLINGER]:
         #buy_gunslinger()
     #elif eventPlayer.current_talent_replace_or_buy == [Talent.ADRENALINE_RUSH]:
@@ -580,7 +582,6 @@ def buy_cybernetics():
     
     if eventPlayer.replacing_talent_show_bought_talents == true:
         eventPlayer.talents_you_do_not_have.append(Talent.CYBERNETICS)
-        eventPlayer.talents_you_do_not_have.append(Talent.HEALTH_REGEN)
         #Shields
         eventPlayer.stats[Stat.SHIELDS] = 0
         removeHealthPool(eventPlayer.cybernetics_health_pool_id)
@@ -588,7 +589,6 @@ def buy_cybernetics():
     if eventPlayer.talent_ranks[Talent.CYBERNETICS] > 0:
         eventPlayer.stats[Stat.SHIELDS] = CYBERNETICS_SHIELD_AMOUNT
         eventPlayer.talents_you_do_not_have.remove(Talent.CYBERNETICS)
-        eventPlayer.talents_you_do_not_have.remove(Talent.HEALTH_REGEN)
     #Shields
     #eventPlayer.stats[Stat.SHIELDS] += 18.75
 
@@ -619,7 +619,6 @@ def buy_stealth():
         eventPlayer.entering_stealth = false
         destroyEffect(eventPlayer.stealth_effect_id)
         destroyEffect(eventPlayer.stealth_effect_id2)
-        destroyEffect(eventPlayer.stealth_sound_id)
         destroyEffect(eventPlayer.stealth_hack_text_id)
         eventPlayer.talents_you_do_not_have.append(Talent.STEALTH)
         eventPlayer.talents_you_do_not_have.remove(Talent.POISONOUS_DAGGER)
@@ -630,8 +629,6 @@ def buy_stealth():
         eventPlayer.entering_stealth = false
         createEffect(eventPlayer if eventPlayer.is_using_ability[Talent.STEALTH] == true else null, Effect.REAPER_WRAITH_FORM, Color.TEAM_1, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
         eventPlayer.stealth_effect_id = getLastCreatedEntity()
-        createEffect(eventPlayer if eventPlayer.is_using_ability[Talent.STEALTH] == true else null, Effect.SIGMA_GRAVITIC_FLUX_TARGET_SOUND, Color.WHITE, eventPlayer, 100, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-        eventPlayer.stealth_sound_id = getLastCreatedEntity()
         createEffect(eventPlayer if eventPlayer.is_using_ability[Talent.STEALTH] == true else null, Effect.ECHO_CLONING, Color.TEAM_1, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
         eventPlayer.stealth_effect_id2 = getLastCreatedEntity()
 
@@ -817,17 +814,10 @@ def buy_health_regen():
     
     if eventPlayer.replacing_talent_show_bought_talents == true:
         eventPlayer.talents_you_do_not_have.append(Talent.HEALTH_REGEN)
-        eventPlayer.talents_you_do_not_have.append(Talent.CYBERNETICS)
-        destroyEffect(eventPlayer.health_regen_sound_id)
-        destroyEffect(eventPlayer.player_temp_effects[64])
+        stopHoT(eventPlayer.health_pool_id_or_hot_id[2])
         return
     if eventPlayer.talent_ranks[Talent.HEALTH_REGEN] == 1:
-        createEffect(eventPlayer if eventPlayer.getHealthOfType(Health.NORMAL) < eventPlayer.getMaxHealthOfType(Health.NORMAL) and eventPlayer.isAlive() else null, Effect.SPARKLES_SOUND, Color.WHITE, eventPlayer, 100, EffectReeval.VISIBILITY_POSITION_RADIUS_AND_COLOR)
-        eventPlayer.health_regen_sound_id = getLastCreatedEntity()
-        createEffect(eventPlayer if eventPlayer.getHealthOfType(Health.NORMAL) < eventPlayer.getMaxHealthOfType(Health.NORMAL) and eventPlayer.isAlive() else null, Effect.SPARKLES, Color.PURPLE if eventPlayer.is_using_ability[Talent.STEALTH] == true else Color.ORANGE, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_RADIUS_AND_COLOR)
-        eventPlayer.player_temp_effects[64] = getLastCreatedEntity()
         eventPlayer.talents_you_do_not_have.remove(Talent.HEALTH_REGEN)
-        eventPlayer.talents_you_do_not_have.remove(Talent.CYBERNETICS)
         async(health_regen_heal_over_time, AsyncBehavior.NOOP)
 
 def buy_health_potions():
@@ -1086,6 +1076,20 @@ def buy_gigachad():
     eventPlayer.startModifyingVoicelinePitch(eventPlayer.stats[Stat.VOICE], false)
     #Knockback Received
     #eventPlayer.stats[Stat.KNOCKBACK_RECEIVED] -= 20
+
+def buy_engineer():
+    @Name "TALENT SYSTEM - - - [TALENT 29: ENGINEER] [SUBROUTINE] Buy Engineer"
+
+    if eventPlayer.replacing_talent_show_bought_talents == true:
+        eventPlayer.talents_you_do_not_have.append(Talent.ENGINEER)
+        removeHealthPool(eventPlayer.engineer_armor_pool_id)
+        eventPlayer.engineer_armor_banked = 0
+        eventPlayer.engineer_scrap_wallet = 0
+        eventPlayer.engineer_charging = false
+        eventPlayer.engineer_charge_ticks = 0
+        return
+    if eventPlayer.talent_ranks[Talent.ENGINEER] == 1:
+        eventPlayer.talents_you_do_not_have.remove(Talent.ENGINEER)
 
 /*
 def buy_gunslinger():

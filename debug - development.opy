@@ -89,7 +89,7 @@ rule "DEBUG - - - Real Server Load Average":
     @Condition debug_spectator_tools == true
 
     #--- Phase 1: Init (sample until all bots have respawned) ---
-    while spawn_bots and (getNumberOfPlayers(Team.ALL) < amount_of_bots_and_players \
+    while spawn_bots and (getNumberOfPlayers(Team.ALL) < TOTAL_LOBBY_SIZE_BY_PLAYER_COUNT[REAL_PLAYER_COUNT] \
         or len([p for p in getAllPlayers() if p.isDummy() and not p.reaper_has_respawned_once]) > 0):
         debug_srv_load_sample_count += 1
         debug_srv_load_sum += getServerLoad()
@@ -124,13 +124,13 @@ rule "DEBUG - - - Real Server Load Average":
         wait(0.1)
 
 
-#--- Load-test arena: dynamically backfills Soldier:76 bots so getNumberOfPlayers(Team.ALL) stays at amount_of_bots_and_players, whether the host spectates or plays (OW auto-evicts a bot when the host takes a field seat). ---
+#--- Load-test arena: dynamically backfills Soldier:76 bots so getNumberOfPlayers(Team.ALL) stays at DEBUG_TEST_BOT_COUNT, whether the host spectates or plays (OW auto-evicts a bot when the host takes a field seat). ---
 rule "DEBUG - - - Load-Test Arena Setup":
     @Condition debug_bot_load_test == true
 
     destroyAllDummies()
     while RULE_CONDITION:
-        if getNumberOfPlayers(Team.ALL) < amount_of_bots_and_players:
+        if getNumberOfPlayers(Team.ALL) < DEBUG_TEST_BOT_COUNT:
             createDummy(Hero.SOLDIER, Team.ALL, -1, nearestWalkablePosition(DEBUG_TEST_SPAWN_POS(len([player for player in getAllPlayers() if player.isDummy() == true]))), Vector.FORWARD)
         wait(1)
 

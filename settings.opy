@@ -8,7 +8,7 @@ settings {
     "lobby": {
         "allowPlayersInQueue": true,
         "mapRotation": "afterGame",
-        "ffaSlots": 7,
+        "ffaSlots": 6,
         "spectatorSlots": 1,
         "returnToLobby": "never",
         "swapTeamsAfterMatch": false

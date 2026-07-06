@@ -124,7 +124,7 @@ var talents = [
       cd_reduction_per_rank: 0,
       requires_any_of: [],
       unlocks: [],
-      locks: ["health_regen"],
+      locks: [],
       stats: [
         { label: "Shields", base: 50, perRank: 12.5 },
       ],
@@ -361,12 +361,13 @@ var talents = [
       cd_reduction_per_rank: 0,
       requires_any_of: [],
       unlocks: [],
-      locks: ["cybernetics"],
+      locks: [],
       stats: [
-        { label: "Healing Per Second", base: 5, perRank: 1.25, decimals: 2 },
+        { label: "Healing / Second", base: 5, perRank: 1.25, decimals: 2 },
       ],
       tuning: [
-        { macro: "HEALTH_REGEN_HEALING_OVER_TIME", expr: "3.75 + {r} * 1.25" },
+        // Hidden +0.2084 on rank 1 (5 -> 5.2084/s) clears the ~5.2083 (125/24) heal-rate threshold below which OW's per-HP heal sound stutters.
+        { macro: "HEALTH_REGEN_HEALING_OVER_TIME", expr: "3.75 + {r} * 1.25 + (2084 / 10000 if {r} == 1 else 0)" },
       ],
     },
     {
@@ -382,7 +383,7 @@ var talents = [
       unlocks: ["alchemist"],
       locks: [],
       stats: [
-        { label: "Healing Per Potion", base: 200/3, perRank: 50/3 },
+        { label: "Healing / Potion", base: 200/3, perRank: 50/3 },
         { label: "Heal Duration", base: 2, perRank: 0, suffix: "s" },
         { label: "Recharge Time", base: 15, perRank: 0, suffix: "s" },
         { label: "Max Charges", base: 3, perRank: 0 },
@@ -471,7 +472,7 @@ var talents = [
       unlocks: [],
       locks: [],
       stats: [
-        { label: "Damage Per Second", base: 12, perRank: 3 },
+        { label: "Damage / Second", base: 12, perRank: 3 },
         { label: "Aura Radius", base: 8, perRank: 0 },
         { label: "Orb Damage", base: 100, perRank: 25 },
       ],
@@ -542,7 +543,7 @@ var talents = [
     {
       id: "ignore_pain",
       name: "Ignore Pain",
-      icon: "('<tx0C0000000004F73E>')",
+      icon: "('<tx0C0000000000356C>')",
       keybind: '"[Passive]"',
       description: "Resist a lot of damage while you are casting, reloading, sprinting or stunned.",
       cooldown: 0,
@@ -723,6 +724,31 @@ var talents = [
       ],
       tuning: [
         { macro: "HELIX_COOLDOWN", expr: "13.5 - {r} * 1.5" },
+      ],
+    },
+    {
+      id: "engineer",
+      name: "Engineer",
+      icon: "('<tx0C0000000004F73E>')",
+      keybind: '"[Look Down]"',
+      description: "XP orbs award you Scrap. Stand still and look down to spend Scrap repairing your Armor.",
+      cooldown: 0,
+      upgrade_information: "[Upgrade: +Armor]",
+      cd_reduction_per_rank: 0,
+      requires_any_of: [],
+      unlocks: [],
+      locks: [],
+      stats: [
+        { label: "Max Armor", base: 100, perRank: 25 },
+        { label: "Repair / Second", base: 25, perRank: 6.25, decimals: 2 },
+        { label: "Scrap / Orb", base: 50, perRank: 12.5, decimals: 1 },
+        { label: "Carry Limit", base: 100, perRank: 25 },
+      ],
+      tuning: [
+        { macro: "ENGINEER_ARMOR_AMOUNT", expr: "75 + {r} * 25" },
+        { macro: "ENGINEER_ARMOR_AMOUNT_LOCAL", expr: "75 + {r} * 25", context: "localPlayer" },
+        { macro: "ENGINEER_SCRAP_PER_ORB", expr: "(75 + {r} * 25) / 2", context: "player_picking_up_orb" },
+        { macro: "ENGINEER_SCRAP_CAP", expr: "75 + {r} * 25", context: "player_picking_up_orb" },
       ],
     },
     /*

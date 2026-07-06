@@ -1,6 +1,6 @@
 #!mainFile "soldier_x.opy"
 
-#--- Talent-only defineMember (variable[100-118]) ---
+#--- Talent-only defineMember (variable[100-120]) ---
 #!defineMember bandage_heal_over_time_id variable[100]
 #!defineMember bloodthirst_heal_amount_for_hud variable[101]
 #!defineMember bloodthirst_remaining_heal_amount variable[102]
@@ -930,10 +930,11 @@ def health_regen_heal_over_time():
     @Name "TALENT SYSTEM - - - [TALENT 13: HEALTH REGEN] [SUBROUTINE] Health Regen Heal Over Time"
     
     while eventPlayer.talent_ranks[Talent.HEALTH_REGEN] > 0:
-        waitUntil((eventPlayer.getHealthOfType(Health.NORMAL) < eventPlayer.getMaxHealthOfType(Health.NORMAL) and eventPlayer.isAlive()) or eventPlayer.talent_ranks[Talent.HEALTH_REGEN] == 0, 99999)
-        while eventPlayer.getHealthOfType(Health.NORMAL) < eventPlayer.getMaxHealthOfType(Health.NORMAL) and eventPlayer.isAlive() and eventPlayer.talent_ranks[Talent.HEALTH_REGEN] > 0:
-            eventPlayer.setHealth(min(eventPlayer.getHealthOfType(Health.NORMAL) + HEALTH_REGEN_HEALING_OVER_TIME / 4, eventPlayer.getMaxHealthOfType(Health.NORMAL)))
-            wait(0.25)
+        waitUntil(eventPlayer.getHealthOfType(Health.NORMAL) < eventPlayer.getMaxHealthOfType(Health.NORMAL) or eventPlayer.talent_ranks[Talent.HEALTH_REGEN] == 0, 99999)
+        eventPlayer.startHoT(eventPlayer, 99999, HEALTH_REGEN_HEALING_OVER_TIME)
+        eventPlayer.health_pool_id_or_hot_id[2] = getLastHoT()
+        waitUntil(eventPlayer.getHealthOfType(Health.NORMAL) >= eventPlayer.getMaxHealthOfType(Health.NORMAL) or eventPlayer.talent_ranks[Talent.HEALTH_REGEN] == 0, 99999)
+        stopHoT(eventPlayer.health_pool_id_or_hot_id[2])
 
         /*
 rule "TALENT SYSTEM - - - [TALENT 14/31: HEALTH POTIONS/POISON VIAL] Use Health Potion or Poison Vial":
@@ -2110,4 +2111,35 @@ rule "TALENT SYSTEM - - - [BANDAGE] Use Bandage":
     stopHoT(eventPlayer.bandage_heal_over_time_id)
     eventPlayer.talent_trigger_times[Talent.BANDAGE] = getTotalTimeElapsed()
     eventPlayer.talent_on_cooldown[Talent.BANDAGE] = true
-    
+
+
+# ============================================================
+# ENGINEER
+# ============================================================
+
+rule "TALENT SYSTEM - - - [TALENT 29: ENGINEER] Repair Channel":
+    @Event eachPlayer
+    @Condition eventPlayer.talent_ranks[Talent.ENGINEER] > 0
+    @Condition eventPlayer.isAlive() == true
+    @Condition eventPlayer.browsing_shop == false
+    @Condition eventPlayer.getVerticalFacingAngle() >= 60
+
+    eventPlayer.engineer_charging = true
+    eventPlayer.engineer_charge_ticks = 0
+    while RULE_CONDITION:
+        if eventPlayer.engineer_scrap_wallet > 0 and eventPlayer.getHealthOfType(Health.ARMOR) < ENGINEER_ARMOR_AMOUNT and eventPlayer.isOnGround() == true and eventPlayer.getSpeed() < 0.1:
+            eventPlayer.engineer_charge_ticks += 1
+            wait(0.25)
+            if eventPlayer.engineer_charge_ticks >= 2:
+                eventPlayer.engineer_charge_ticks = 0
+                eventPlayer.engineer_armor_banked = min(eventPlayer.getHealthOfType(Health.ARMOR) + min(ENGINEER_ARMOR_AMOUNT / 8, eventPlayer.engineer_scrap_wallet), ENGINEER_ARMOR_AMOUNT)
+                eventPlayer.engineer_scrap_wallet = max(eventPlayer.engineer_scrap_wallet - ENGINEER_ARMOR_AMOUNT / 8, 0)
+                removeHealthPool(eventPlayer.engineer_armor_pool_id)
+                eventPlayer.addHealthPool(Health.ARMOR, eventPlayer.engineer_armor_banked, false, false)
+                eventPlayer.engineer_armor_pool_id = getLastCreatedHealthPool()
+                playEffect(getAllPlayers() if eventPlayer.is_using_ability[Talent.STEALTH] == false else null, DynamicEffect.BRIGITTE_REPAIR_PACK_ARMOR, Color.TEAM_1, eventPlayer.getPosition() + Vector.UP, 1)
+                playEffect(getAllPlayers() if eventPlayer.is_using_ability[Talent.STEALTH] == false else null, DynamicEffect.BRIGITTE_REPAIR_PACK_ARMOR_SOUND, Color.TEAM_1, eventPlayer.getPosition() + Vector.UP, 100)
+        else:
+            eventPlayer.engineer_charge_ticks = 0
+            wait(0.25)
+    eventPlayer.engineer_charging = false

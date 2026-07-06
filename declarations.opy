@@ -33,8 +33,10 @@ globalvar xp_orbs_current_index
 globalvar player_picking_up_orb
 #--- Bot system ---
 globalvar spawn_bots = createWorkshopSettingBool("01. Bots", "Spawn bots?", true, 0)
-globalvar amount_of_bots_and_players = createWorkshopSettingInt("01. Bots", "How many bots and players?", 8, 1, 8, 1)
 globalvar bots_friendly = createWorkshopSettingBool("01. Bots", "Friendly?", false, 1)
+#Desired total lobby size (real players + bots), indexed by real player count: 0p→8b, 1p→7b, 2p→5b, 3p→4b, 4p→3b, 5p→1b, 6p→0b
+macro TOTAL_LOBBY_SIZE_BY_PLAYER_COUNT = [8, 8, 7, 7, 7, 6, 6]
+macro REAL_PLAYER_COUNT = len(getAllPlayers().filter(lambda somePlayer: not somePlayer.isDummy()))
 
 #--- Shop system ---
 globalvar shop_location
@@ -203,7 +205,6 @@ playervar current_dive_bomb_target = 0
 #!defineMember casting_success variable[27]
 #!defineMember cybernetics_health_pool_id variable[28]
 #!defineMember stealth_effect_id variable[29]
-#!defineMember stealth_sound_id variable[30]
 #!defineMember stealth_effect_id2 variable[31]
 #!defineMember stealth_hack_text_id variable[32]
 #!defineMember current_stealth_target variable[33]
@@ -246,6 +247,13 @@ playervar current_dive_bomb_target = 0
 #!defineMember engaged_since_spawn variable[405]
 #!defineMember discord_ad_message variable[406]
 
+#--- Engineer (variable[122-127], 121+126 free; cross-file: shop + soldier_x + talents + xp) ---
+#!defineMember engineer_armor_banked variable[122]
+#!defineMember engineer_charging variable[123]
+#!defineMember engineer_charge_ticks variable[124]
+#!defineMember engineer_scrap_wallet variable[125]
+#!defineMember engineer_armor_pool_id variable[127]
+
 #--- Shared global defineMember (global_variable[0-49]) ---
 
 #!defineMember highest_grim_reaper_rank_in_match global_variable[0]
@@ -272,6 +280,10 @@ globalvar grim_reaper_sweep_index
 #!defineMember current_cooldown_talent global_variable[11]
 globalvar cooldown_sweep_index
 globalvar cooldown_sweep_talent_index
+
+#--- Bot add/remove reconciler (global_variable[13-14]) ---
+#!defineMember bot_target_lobby_size global_variable[13]
+#!defineMember bot_removal_candidates global_variable[14]
 
 #Subroutine names
 subroutine buy_debug_talents
@@ -311,6 +323,9 @@ subroutine block_player_input
 #!extension explosionSounds
 #!extension buffAndDebuffSounds
 #!extension projectiles
+#!extension beamEffects
+#!extension beamSounds
+#!extension playMoreEffects
 
 #!define generateTalents() __script__("talents.js")
 generateTalents()

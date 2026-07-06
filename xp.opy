@@ -36,6 +36,13 @@ rule "XP SYSTEM - - - XP Orbs":
                 playEffect(getAllPlayers(), DynamicEffect.BUFF_IMPACT_SOUND, Color.WHITE, player_picking_up_orb, 75)
                 playEffect(getAllPlayers(), DynamicEffect.GOOD_PICKUP_EFFECT, xp_orbs[xp_orbs_current_index][Orb.COLOR], xp_orbs[xp_orbs_current_index][Orb.POSITION], 1)
 
+                #Engineer: orbs award scrap (armor + wallet never exceeds the carry limit)
+                if player_picking_up_orb.talent_ranks[Talent.ENGINEER] > 0 and player_picking_up_orb.getHealthOfType(Health.ARMOR) + player_picking_up_orb.engineer_scrap_wallet < ENGINEER_SCRAP_CAP:
+                    if player_picking_up_orb.is_hacked == true:
+                        player_picking_up_orb.hack_error_pending = true
+                    else:
+                        player_picking_up_orb.engineer_scrap_wallet = min(player_picking_up_orb.engineer_scrap_wallet + ENGINEER_SCRAP_PER_ORB, ENGINEER_SCRAP_CAP - player_picking_up_orb.getHealthOfType(Health.ARMOR))
+
                 if player_picking_up_orb.experience_current < player_picking_up_orb.experience_max:
 
                     xp_received_message = xp_orbs[xp_orbs_current_index][Orb.XP_AMOUNT]

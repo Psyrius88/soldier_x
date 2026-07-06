@@ -95,12 +95,20 @@ subroutine bot_start_facing
 # BOT SPAWN / INIT
 # ============================================================
 
-rule "GENERAL - - - Add Bots":
+rule "GENERAL - - - Add / Remove Bots":
     @Condition spawn_bots == true
     @Condition debug_bot_load_test == false
-    @Condition getNumberOfPlayers(Team.ALL) < amount_of_bots_and_players
+    @Condition getNumberOfPlayers(Team.ALL) != TOTAL_LOBBY_SIZE_BY_PLAYER_COUNT[REAL_PLAYER_COUNT]
 
-    createDummy(Hero.REAPER, Team.ALL, -1, dummy_bot_spawn_position, dummy_bot_spawn_facing)
+    bot_target_lobby_size = TOTAL_LOBBY_SIZE_BY_PLAYER_COUNT[REAL_PLAYER_COUNT]
+    if getNumberOfPlayers(Team.ALL) < bot_target_lobby_size:
+        createDummy(Hero.REAPER, Team.ALL, -1, dummy_bot_spawn_position, dummy_bot_spawn_facing)
+    elif getNumberOfPlayers(Team.ALL) > bot_target_lobby_size:
+        #Prefer removing a dead bot so no one's active fight target vanishes
+        bot_removal_candidates = getAllPlayers().filter(lambda somePlayer: somePlayer.isDummy() and not somePlayer.isAlive())
+        if len(bot_removal_candidates) == 0:
+            bot_removal_candidates = getAllPlayers().filter(lambda somePlayer: somePlayer.isDummy())
+        destroyDummy(Team.ALL, bot_removal_candidates[0].getSlot())
     wait(1)
     if RULE_CONDITION:
         goto RULE_START
