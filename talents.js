@@ -20,7 +20,9 @@ var BG_HEIGHT_FACTOR = 0.72        // bar height = round(textLines * this + BG_H
 var BG_HEIGHT_BASE = 0.6           // constant rows added on top of the factor — covers the fixed margin short cards need (a pure multiplier undershoots 3-line cards and overshoots 12-line ones). Tune in-game.
 var EMDASH_FILL = 0.55             // em-dash divider length = round(barWidthSpaces * this). Em-dashes (and "»") are Latin-1 and do NOT reskin the font, so the dividers sit in the normal merged text; an em-dash is ~2 spaces wide, so < 1. Tune until the line spans the background.
 var INFO_TEXT_PAD = 22             // blank lines above the description text — moves the whole text block DOWN toward/under the orbs
-var INFO_BAR_PAD = 12               // blank rows above the bar — moves the bar DOWN to sit behind the text (pair with INFO_TEXT_PAD)
+var INFO_BAR_PAD = 9                // blank rows above the bar — moves the bar DOWN to sit behind the text (pair with INFO_TEXT_PAD); the keybind-helper bg plate (LEFT/0, 2 header rows) sits above the whole column, so this is reduced to keep the info bg in place
+var KEYBIND_BG_WIDTH = 80           // spaces — keybind-helper bg bar width (header-font spaces; the keybind line is ~55-65 text chars). Tune in-game.
+var KEYBIND_BG_ROWS = 2             // header rows — keybind-helper bg bar height. Tune in-game.
 var PAD_CHAR = "\xAD"               // soft hyphen (U+00AD): renders as nothing but counts as a character; anchors each bar/pad row so trailing spaces & blank lines aren't trimmed
 var ARROW = " » "                   // " » " (U+00BB) between current and upgraded stat value. Like "—", it's a Latin-1 char that does NOT reskin the font, so it's safe inside the normal merged text.
 //--- Colored upgrade value matches the talent's orb color, indexed by current rank ---
@@ -97,19 +99,19 @@ var talents = [
       keybind: '"[[Q]]"',
       description: "Activate to gain immunity, exit combat and increase healing received. You can't perform offensive actions while immune.",
       cooldown: 45,
-      upgrade_information: "[Upgrade: +Duration, +Healing Received]",
-      cd_reduction_per_rank: 0,
+      upgrade_information: "[Upgrade: +Healing Received, -Cooldown]",
+      cd_reduction_per_rank: 5,
       requires_any_of: [],
       unlocks: [],
       locks: ["berserker"],
       stats: [
-        { label: "Duration", base: 5, perRank: 1.25, suffix: "s", decimals: 1 },
-        { label: "Healing Received", base: 150, perRank: 25, suffix: "%" },
-        { label: "Cooldown", base: 45, perRank: 0, suffix: "s" },
+        { label: "Duration", base: 5, perRank: 0, suffix: "s" },
+        { label: "Healing Received", base: 125, perRank: 6.25, suffix: "%", decimals: 2 },
+        { label: "Cooldown", base: 40, perRank: -5, suffix: "s" },
       ],
       tuning: [
-        { macro: "IMMUNITY_HEALING_RECEIVED", expr: "125 + {r} * 25" },
-        { macro: "IMMUNITY_DURATION", expr: "3.75 + {r} * 1.25" },
+        { macro: "IMMUNITY_HEALING_RECEIVED", expr: "118.75 + {r} * 6.25" },
+        { macro: "IMMUNITY_DURATION", expr: "5" },
         { macro: "IMMUNITY_MOVE_SPEED", expr: "100" },
       ],
     },
@@ -220,6 +222,7 @@ var talents = [
     },
     {
       id: "dive_bomb",
+      disabled: true,
       sweep_cooldown: true,
       name: "Dive Bomb",
       icon: "('<tx0C000000000207B7>')",
@@ -380,7 +383,7 @@ var talents = [
       upgrade_information: "[Upgrade: +Healing]",
       cd_reduction_per_rank: 0,
       requires_any_of: [],
-      unlocks: ["alchemist"],
+      unlocks: [],
       locks: [],
       stats: [
         { label: "Healing / Potion", base: 200/3, perRank: 50/3 },
@@ -490,7 +493,7 @@ var talents = [
       name: "Berserker",
       icon: "iconString(Icon.SKULL)",
       keybind: '"[[Q]]"',
-      description: "Activate to deal 25% more damage and receive 10% more damage temporarily.",
+      description: "Activate to deal 25% more damage temporarily.",
       cooldown: 45,
       upgrade_information: "[Upgrade: +Duration]",
       cd_reduction_per_rank: 0,
@@ -506,7 +509,6 @@ var talents = [
         { macro: "BERSERKER_DURATION", expr: "3.75 + {r} * 1.25" },
         { macro: "BERSERKER_DURATION_LOCAL", expr: "3.75 + {r} * 1.25", context: "localPlayer" },
         { macro: "BERSERKER_DAMAGE_DEALT", expr: "1.25" },
-        { macro: "BERSERKER_DAMAGE_RECEIVED", expr: "1.10" },
       ],
     },
     {
@@ -536,7 +538,7 @@ var talents = [
         { macro: "FIREBALL_DAMAGE_SELF_OVER_TIME", expr: "(9.375 + {r} * 3.125) / 3" },
         { macro: "FIREBALL_DAMAGE_OVER_TIME", expr: "9.375 + {r} * 3.125" },
         { macro: "FIREBALL_DAMAGE_OVER_TIME_DURATION", expr: "5" },
-        { macro: "FIREBALL_SPEED", expr: "12.5" },
+        { macro: "FIREBALL_SPEED", expr: "15" },
         { macro: "FIREBALL_EXPLOSION_RADIUS", expr: "4" },
       ],
     },
@@ -645,6 +647,7 @@ var talents = [
     },
     {
       id: "alchemist",
+      disabled: true,
       name: "Alchemist",
       icon: "iconString(Icon.RADIOACTIVE)",
       keybind: '"[Passive]"',
@@ -966,6 +969,7 @@ result += "globalvar talent_descriptions = [" + talents.map(t => JSON.stringify(
 result += "globalvar talent_info_bg = [" + talents.map(t => JSON.stringify(infoBgRows(t))) + "]\n"
 result += "globalvar talent_emdash_sep = [" + talents.map(t => JSON.stringify("—".repeat(Math.round(barWidthSpaces(t) * EMDASH_FILL)))) + "]\n"
 result += "globalvar talent_info_bar_pad = " + JSON.stringify(Array(INFO_BAR_PAD).fill(PAD_CHAR).join("\n")) + "\n"
+result += "macro KEYBIND_HELPER_BG = " + JSON.stringify(Array(KEYBIND_BG_ROWS).fill(" ".repeat(KEYBIND_BG_WIDTH) + PAD_CHAR).join("\n")) + "\n"
 //--- talent_availability[talent]: precomputed "Unlocks: ...\nLocks: a, b" block (multiple separated by commas) for the HUD subheader, or "" if the talent has no unlocks/locks. References talent_names (declared above) for the icon+name. ---
 result += "globalvar talent_availability = [" + talents.map(t => {
     var availability = availabilityRows(t)

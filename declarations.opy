@@ -58,7 +58,6 @@ playervar railgun_chain_beams
 playervar railgun_chain_damage
 
 globalvar current_time
-globalvar discord_ad_color
 
 #--- Debug variables (plain declarations — Workshop Settings assigned in debug files) ---
 globalvar debug_spectator_tools
@@ -178,9 +177,6 @@ playervar current_dive_bomb_target = 0
 #--- Multi-file defineMember (variable[0-45]) ---
 #!defineMember is_using_hearthstone variable[0]
 #!defineMember is_using_skip_talent variable[1]
-#!defineMember is_using_vote_yes variable[2]
-#!defineMember is_using_vote_no variable[3]
-#!defineMember replacing_talent_show_confirmation variable[4]
 #!defineMember replacing_talent_show_bought_talents variable[5]
 #!defineMember replacing_talent_cancelled variable[6]
 #!defineMember totalTimeElapsed_alignment variable[7]
@@ -223,12 +219,17 @@ playervar current_dive_bomb_target = 0
 #!defineMember levels_gained variable[45]
 
 #--- Shop options menu (variable[46-51]) ---
-#!defineMember is_using_open_options variable[46]
+#!defineMember options_toggle_time variable[46]
 #!defineMember browsing_options variable[47]
-#!defineMember removing_talent_only variable[48]
 #!defineMember removed_talent_this_shop_session variable[49]
 #!defineMember options_action_time variable[50]
 #!defineMember shop_reload_released variable[51]
+
+#--- Shop offer weights (variable[56-57]) ---
+#Plain playervar: per-index += must compile to the native padding Modify At Index, which nested variable[N][i] writes don't get
+playervar talent_offer_weights
+#!defineMember removed_talents_penalized variable[56]
+#!defineMember reroll_base_rank variable[57]
 
 #--- Casting busy gate (variable[52]) ---
 #!defineMember is_casting variable[52]
@@ -243,9 +244,11 @@ playervar current_dive_bomb_target = 0
 #!defineMember recent_damage_time_other variable[410]
 #!defineMember recent_damage_crit_other variable[412]
 
-#--- Discord XP-bar ad (variable[405-406]) ---
+#--- Discord info bar (variable[405-406, 415-416]) ---
 #!defineMember engaged_since_spawn variable[405]
 #!defineMember discord_ad_message variable[406]
+#!defineMember discord_info_enabled variable[415]
+#!defineMember discord_toggle_time variable[416]
 
 #--- Engineer (variable[122-127], 121+126 free; cross-file: shop + soldier_x + talents + xp) ---
 #!defineMember engineer_armor_banked variable[122]
@@ -295,12 +298,12 @@ subroutine create_talent_helpers
 subroutine create_talent_hud_texts
 subroutine dropped_burning_soul_orb
 subroutine burning_soul_orb_sound_fade
+subroutine fall_death_xp_penalty
 #subroutine dropped_xp_orb
 subroutine If_map
 /*subroutine juggernaut_effects
 subroutine juggernaut_impulse_sound_cd
 subroutine juggernaut_knockback*/
-subroutine replace_talent
 subroutine spawned_with_fireball
 subroutine stopped_using_hearthstone
 subroutine using_one_of_the_hearthstones
@@ -339,7 +342,7 @@ macro STEALTH_BASE_COOLDOWN = 22.5
 macro STEALTH_COOLDOWN_REDUCTION_PER_RANK = 2.5
 macro GRIM_REAPER_COOLDOWN_REDUCTION_PER_RANK = 6
 macro HEALTH_POTIONS_COOLDOWN_REDUCTION_PER_RANK = 1
-macro FIREBALL_PROJECTILE_RADIUS = 1
+macro FIREBALL_PROJECTILE_RADIUS = 1.1
 macro FIREBALL_FULL_DAMAGE_RADIUS = 1.5
 
 #Disabled/removed-talent tuning (kept commented for revival)
@@ -368,7 +371,7 @@ macro DAMAGE_NUMBER_HELIX_THRESHOLD = 120
 #macro ADRENALINE_RUSH_DECAY_RATE = 2.5
 
 #--- Discord XP-bar ad ---
-#!define DISCORD_AD_MESSAGES ["Join the Discord! — DSC.GG/Soldier-X", "Bug? Discord: — DSC.GG/Soldier-X", "Feedback? Discord: — DSC.GG/Soldier-X"]
+#!define DISCORD_AD_MESSAGES ["Discord:  ·  DSC.GG/Soldier-X", "Bug? Discord:  ·  DSC.GG/Soldier-X", "Feedback? Discord:  ·  DSC.GG/Soldier-X"]
 macro DISCORD_BRIGHTNESS_RANGE = 30
 macro DISCORD_FADE_T = 1 - abs(((current_time * 4) % 2) - 1)
 macro DISCORD_FADE_OFFSET = DISCORD_BRIGHTNESS_RANGE * (2 * DISCORD_FADE_T - 1)

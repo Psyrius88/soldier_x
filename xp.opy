@@ -124,6 +124,13 @@ rule "XP SYSTEM - - - XP Orbs":
         if RULE_CONDITION:
             goto RULE_START
 
+def fall_death_xp_penalty():
+    @Name "XP SYSTEM - - - [SUBROUTINE] Fall Death XP Penalty"
+
+    chase(eventPlayer.experience_current, min(eventPlayer.experience_current, eventPlayer.experience_max) / 2, duration=3, ChaseReeval.NONE)
+    wait(3)
+    stopChasingVariable(eventPlayer.experience_current)
+
 def activate_xp_boost():
     @Name "XP SYSTEM - - - [SUBROUTINE] Activate XP Boost"
 

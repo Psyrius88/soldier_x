@@ -140,7 +140,7 @@ rule "TALENT SYSTEM - - - [TALENT 1: IMMUNITY] Use Immunity":
     eventPlayer.player_temp_effects[49] = getLastCreatedEntity()
     createEffect((eventPlayer if eventPlayer.is_using_ability[Talent.STEALTH] == true or eventPlayer.is_using_ability[Talent.SHADOWSTEP] == true else getAllPlayers()) if eventPlayer.browsing_shop == false else null, Effect.BAPTISTE_IMMORTALITY_FIELD_PROTECTED, Color.TEAM_1, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
     eventPlayer.player_temp_effects[50] = getLastCreatedEntity()
-    createEffect((eventPlayer if eventPlayer.is_using_ability[Talent.STEALTH] == true or eventPlayer.is_using_ability[Talent.SHADOWSTEP] == true else getAllPlayers()) if eventPlayer.browsing_shop == false else null, Effect.BAPTISTE_IMMORTALITY_FIELD_PROTECTED_SOUND, Color.TEAM_1, eventPlayer.getPosition(), 100, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+    createEffect((null if eventPlayer.is_using_ability[Talent.STEALTH] == true or eventPlayer.is_using_ability[Talent.SHADOWSTEP] == true else getAllPlayers()) if eventPlayer.browsing_shop == false else null, Effect.BAPTISTE_IMMORTALITY_FIELD_PROTECTED_SOUND, Color.TEAM_1, eventPlayer.getPosition(), 100, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
     eventPlayer.player_temp_effects[51] = getLastCreatedEntity()
     eventPlayer.setHealingReceived(IMMUNITY_HEALING_RECEIVED)
     #eventPlayer.player_temp_effects[52] = getLastCreatedText()
@@ -214,7 +214,7 @@ def in_stealth():
     playEffect(getAllPlayers(), DynamicEffect.MOIRA_FADE_DISAPPEAR_SOUND, Color.TEAM_1, eventPlayer.getPosition(), 100)
     eventPlayer.is_using_ability[Talent.STEALTH] = true
     while eventPlayer.entering_stealth_timer > 0:
-        eventPlayer.current_stealth_target = sorted([player for player in eventPlayer.getRealPlayersInViewAngle(Team.ALL, 45) if player != eventPlayer and player.isAlive() == true and player.is_using_ability[Talent.STEALTH] == false and player.is_using_ability[Talent.SHADOWSTEP] == false and player.is_using_ability[Talent.IMMUNITY] == false and player.browsing_shop == false and isInLoS(eventPlayer, player, BarrierLos.PASS_THROUGH_BARRIERS) == true], lambda player: distance(eventPlayer.getPosition(), player.getPosition()))[0]
+        eventPlayer.current_stealth_target = sorted([player for player in eventPlayer.getRealPlayersInViewAngle(Team.ALL, 45) if player != eventPlayer and player.isAlive() == true and player.is_using_ability[Talent.STEALTH] == false and player.is_using_ability[Talent.SHADOWSTEP] == false and player.is_using_ability[Talent.IMMUNITY] == false and player.is_using_ability[Talent.GRIM_REAPER] == false and player.browsing_shop == false and isInLoS(eventPlayer, player, BarrierLos.PASS_THROUGH_BARRIERS) == true], lambda player: distance(eventPlayer.getPosition(), player.getPosition()))[0]
         wait()
     waitUntil(eventPlayer.entering_stealth_timer == 0, 99999)
     if eventPlayer.is_using_ability[Talent.STEALTH] == true:
@@ -291,6 +291,7 @@ rule "TALENT SYSTEM - - - [STEALTH] Hacked Effect":
     @Event eachPlayer
     @Condition eventPlayer.is_hacked == true
 
+    bigMessage(eventPlayer, "Hacked!")
     playEffect(getAllPlayers(), DynamicEffect.SOMBRA_HACKED_STARTING, Color.TEAM_1, eventPlayer.getPosition(), 1)
     createEffect(getAllPlayers(), Effect.SOMBRA_HACKED_SOUND, Color.TEAM_1, eventPlayer, 100)
     eventPlayer.hack_sound_id = getLastCreatedEntity()
@@ -1011,7 +1012,7 @@ rule "TALENT SYSTEM - - - [TALENT 14: HEALTH POTIONS] Use Health Potion":
         return
     eventPlayer.is_using_ability[Talent.HEALTH_POTIONS] = true
     #health_potion_hps()
-    playEffect(getAllPlayers(), DynamicEffect.BRIGITTE_REPAIR_PACK_IMPACT_SOUND, Color.WHITE, eventPlayer.getPosition(), 100)
+    playEffect(getAllPlayers() if eventPlayer.is_using_ability[Talent.STEALTH] == false else null, DynamicEffect.BRIGITTE_REPAIR_PACK_IMPACT_SOUND, Color.WHITE, eventPlayer.getPosition(), 100)
     playEffect(getAllPlayers() if eventPlayer.is_using_ability[Talent.STEALTH] == false else eventPlayer, DynamicEffect.BRIGITTE_REPAIR_PACK_IMPACT, Color.TEAM_1, eventPlayer, 100)
     
     # Store expiry timestamp for this potion
@@ -1074,7 +1075,7 @@ rule "TALENT SYSTEM - - - [TALENT 14: HEALTH POTIONS] Health Potion Start Rechar
     eventPlayer.amount_of_health_potions += 1
     if eventPlayer.amount_of_health_potions == 3:
         eventPlayer.talent_trigger_times[Talent.HEALTH_POTIONS] = getTotalTimeElapsed() - talent_base_cooldowns[Talent.HEALTH_POTIONS] - eventPlayer.talent_ranks[Talent.ALCHEMIST]
-    playEffect(eventPlayer, DynamicEffect.BRIGITTE_REPAIR_PACK_ARMOR_SOUND, Color.WHITE, eventPlayer, 100)
+    playEffect(eventPlayer if eventPlayer.is_using_ability[Talent.STEALTH] == false else null, DynamicEffect.BRIGITTE_REPAIR_PACK_ARMOR_SOUND, Color.WHITE, eventPlayer, 100)
     if RULE_CONDITION:
         goto RULE_START
 /*
@@ -1177,10 +1178,10 @@ rule "TALENT SYSTEM - - - [SHADOWSTEP] Use Shadowstep":
     eventPlayer.is_using_ability[Talent.SHADOWSTEP] = true
     eventPlayer.talent_trigger_times[Talent.SHADOWSTEP] = getTotalTimeElapsed()
     eventPlayer.talent_on_cooldown[Talent.SHADOWSTEP] = true
-    createEffect(eventPlayer, Effect.SOMBRA_HACKING_SOUND, Color.TEAM_1, eventPlayer, 100, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+    createEffect(eventPlayer if eventPlayer.is_using_ability[Talent.STEALTH] == false else null, Effect.SOMBRA_HACKING_SOUND, Color.TEAM_1, eventPlayer, 100, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
     eventPlayer.player_temp_effects[6] = getLastCreatedEntity()
     playEffect(getAllPlayers() if eventPlayer.is_using_ability[Talent.STEALTH] == false else null, DynamicEffect.SOMBRA_TRANSLOCATOR_DISAPPEAR, Color.TEAM_1, eventPlayer.getPosition(), 1)
-    playEffect(getAllPlayers(), DynamicEffect.SOMBRA_TRANSLOCATOR_DISAPPEAR_SOUND, Color.TEAM_1, eventPlayer.getPosition(), 100)
+    playEffect(getAllPlayers() if eventPlayer.is_using_ability[Talent.STEALTH] == false else null, DynamicEffect.SOMBRA_TRANSLOCATOR_DISAPPEAR_SOUND, Color.TEAM_1, eventPlayer.getPosition(), 100)
     eventPlayer.setStatusEffect(null, Status.PHASED_OUT, 0.5)
     eventPlayer.setGravity(0)
     eventPlayer.applyImpulse(eventPlayer.getFacingDirection(), 41.421 if eventPlayer.getVerticalFacingAngle() > 0 else (7.5 + ((178 + eventPlayer.getVerticalFacingAngle()) * 0.113)) * 1.5, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION_XYZ)
@@ -1204,7 +1205,7 @@ rule "TALENT SYSTEM - - - [SHADOWSTEP] Use Shadowstep":
     eventPlayer.is_using_ability[Talent.SHADOWSTEP] = false
     destroyEffect(eventPlayer.player_temp_effects[6])
     playEffect(getAllPlayers() if eventPlayer.is_using_ability[Talent.STEALTH] == false else null, DynamicEffect.SOMBRA_TRANSLOCATOR_REAPPEAR, Color.TEAM_2, eventPlayer.getPosition(), 1)
-    playEffect(getAllPlayers(), DynamicEffect.SOMBRA_TRANSLOCATOR_REAPPEAR_SOUND, Color.TEAM_2, eventPlayer.getPosition(), 100)
+    playEffect(getAllPlayers() if eventPlayer.is_using_ability[Talent.STEALTH] == false else null, DynamicEffect.SOMBRA_TRANSLOCATOR_REAPPEAR_SOUND, Color.TEAM_2, eventPlayer.getPosition(), 100)
     if eventPlayer.is_using_ability[Talent.STEALTH] == false:
         eventPlayer.setInvisibility(Invis.NONE)
     destroyEffect(eventPlayer.player_temp_effects[7])
@@ -1275,13 +1276,11 @@ rule "TALENT SYSTEM - - - [TALENT 20: BERSERKER] Use Berserker":
     eventPlayer.talent_trigger_times[Talent.BERSERKER] = getTotalTimeElapsed()
     eventPlayer.talent_on_cooldown[Talent.BERSERKER] = true
     eventPlayer.setDamageDealt(eventPlayer.stats[Stat.DAMAGE] * BERSERKER_DAMAGE_DEALT)
-    recalculate_damage_received()
     wait(0.5)
     #BERSERKER_DURATION -0.5 to account for button mash protection
     waitUntil(eventPlayer.isDead() or eventPlayer.isHoldingButton(Button.ULTIMATE), BERSERKER_DURATION - 0.5)
     eventPlayer.setDamageDealt(eventPlayer.stats[Stat.DAMAGE])
     eventPlayer.is_using_ability[Talent.BERSERKER] = false
-    recalculate_damage_received()
     stopChasingVariable(eventPlayer.berserker_duration)
     if eventPlayer.isAlive() and eventPlayer.talent_ranks[Talent.BLOODTHIRST] > 0 and eventPlayer.bloodthirst_remaining_heal_amount >= 1:
         if eventPlayer.berserker_duration < 1:
@@ -1528,26 +1527,6 @@ def casting_cancelled():
         if eventPlayer.casting_success == true:
             return
 
-    # OPENING OPTIONS MENU / RETURNING TO SHOP
-    elif eventPlayer.is_using_open_options == true:
-        waitUntil(eventPlayer.isHoldingButton(Button.ULTIMATE) == false or eventPlayer.isHoldingButton(Button.JUMP if eventPlayer.using_gamepad else Button.INTERACT) or eventPlayer.isHoldingButton(Button.RELOAD) or eventPlayer.casting_success)
-
-        if eventPlayer.casting_success == true:
-            return
-
-    # VOTING YES      
-    elif eventPlayer.is_using_vote_yes == true:
-        waitUntil(eventPlayer.isHoldingButton(Button.ABILITY_1 if eventPlayer.using_gamepad else Button.PRIMARY_FIRE) == false or eventPlayer.isHoldingButton(Button.ABILITY_2 if eventPlayer.using_gamepad else Button.SECONDARY_FIRE) or eventPlayer.casting_success)
-
-        if eventPlayer.casting_success == true:
-            return
-    # VOTING NO
-    elif eventPlayer.is_using_vote_no == true:
-        waitUntil(eventPlayer.isHoldingButton(Button.ABILITY_2 if eventPlayer.using_gamepad else Button.SECONDARY_FIRE) == false or eventPlayer.isHoldingButton(Button.ABILITY_1 if eventPlayer.using_gamepad else Button.PRIMARY_FIRE) or eventPlayer.casting_success)
-
-        if eventPlayer.casting_success == true:
-            return
-    
     # CASTING GRIM REAPER
     elif eventPlayer.is_using_ability[Talent.GRIM_REAPER] == true:
         #Tap to cast, tap again to cancel: first wait for the activation press to release so it isn't read as the cancel press
@@ -1576,9 +1555,6 @@ def casting_cancelled():
     eventPlayer.using_one_of_the_hearthstones = false
     eventPlayer.is_using_hearthstone = false
     eventPlayer.is_using_skip_talent = false
-    eventPlayer.is_using_vote_yes = false
-    eventPlayer.is_using_vote_no = false
-    eventPlayer.is_using_open_options = false
     stopChasingVariable(eventPlayer.casting_timer)
     eventPlayer.using_hearthstone_timer = 0
     destroyEffect(eventPlayer.casting_effect_id)
@@ -1619,7 +1595,7 @@ def casting():
         #Vector 0 Right, 1.8 Up, 1 Forward
         createEffect(getAllPlayers() if not eventPlayer.is_using_ability[Talent.STEALTH] else null, Effect.GOOD_AURA_SOUND, Color.WHITE, updateEveryFrame(eventPlayer.getPosition() + worldVector(vect(0, 1.8, 1), eventPlayer, Transform.ROTATION)), 100, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
 
-    elif eventPlayer.is_using_skip_talent or eventPlayer.is_using_vote_yes or eventPlayer.is_using_vote_no or eventPlayer.is_using_open_options:
+    elif eventPlayer.is_using_skip_talent:
         createEffect(eventPlayer, Effect.SOMBRA_HACKING_SOUND, Color.WHITE, shop_location if eventPlayer.browsing_shop == true else eventPlayer.getPosition(), 100, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
 
     eventPlayer.casting_sound_effect_id = getLastCreatedEntity()
@@ -1636,13 +1612,13 @@ def casting():
     eventPlayer.casting_effect_id = getLastCreatedEntity()
 
     #Chase
-    chaseAtRate(eventPlayer.casting_timer, GRIM_REAPER_CAST_TIME if eventPlayer.is_using_ability[Talent.GRIM_REAPER] else 1 if eventPlayer.is_using_open_options else 0.5 if faster_testing else 2.75, 1, ChaseRateReeval.DESTINATION_AND_RATE)
+    chaseAtRate(eventPlayer.casting_timer, GRIM_REAPER_CAST_TIME if eventPlayer.is_using_ability[Talent.GRIM_REAPER] else 0.5 if faster_testing else 2.75, 1, ChaseRateReeval.DESTINATION_AND_RATE)
 
     #Wait
     if eventPlayer.is_using_ability[Talent.GRIM_REAPER]:
         waitUntil(eventPlayer.is_using_ability[Talent.GRIM_REAPER] == false, GRIM_REAPER_CAST_TIME)
     else:
-        wait(1 if eventPlayer.is_using_open_options else 0.5 if faster_testing else 2.75, Wait.ABORT_WHEN_FALSE)
+        wait(0.5 if faster_testing else 2.75, Wait.ABORT_WHEN_FALSE)
 
     #Result (Casting Complete)
     eventPlayer.casting_success = true
@@ -1656,6 +1632,7 @@ def casting():
         heal(eventPlayer, null, eventPlayer.getMaxHealthOfType(Health.NORMAL))
         eventPlayer.stopFacing()
         eventPlayer.removed_talent_this_shop_session = false
+        eventPlayer.reroll_base_rank = 0
         eventPlayer.shop_reload_released = false
         async(open_shop, AsyncBehavior.NOOP)
         eventPlayer.browsing_shop = true
@@ -1670,25 +1647,12 @@ def casting():
         eventPlayer.experience_current = 0
         eventPlayer.selected_talent_in_shop = 1
         eventPlayer.skipped_a_talent = true
+        #Skipped offers sink in future rolls (cleared on any purchase)
+        eventPlayer.talent_offer_weights[eventPlayer.talents_offered_in_shop[0]] += 1
+        eventPlayer.talent_offer_weights[eventPlayer.talents_offered_in_shop[1]] += 1
+        eventPlayer.talent_offer_weights[eventPlayer.talents_offered_in_shop[2]] += 1
         eventPlayer.is_respawning = true
         eventPlayer.respawn()
-        casting_cancelled()
-
-    elif eventPlayer.is_using_open_options == true:
-        if eventPlayer.browsing_options == false and eventPlayer.replacing_talent_show_bought_talents == false:
-            eventPlayer.browsing_options = true
-        else:
-            eventPlayer.browsing_options = false
-            eventPlayer.replacing_talent_show_bought_talents = false
-            eventPlayer.removing_talent_only = false
-            eventPlayer.startCamera(shop_location, eventPlayer.selected_talent_position, 12)
-
-    elif eventPlayer.is_using_vote_yes and eventPlayer.replacing_talent_show_confirmation:
-        eventPlayer.replacing_talent_show_bought_talents = true
-        casting_cancelled()
-
-    elif eventPlayer.is_using_vote_no and eventPlayer.replacing_talent_show_confirmation:
-        eventPlayer.replacing_talent_cancelled = true
         casting_cancelled()
 
     elif eventPlayer.is_using_ability[Talent.GRIM_REAPER] == true:
@@ -1696,9 +1660,6 @@ def casting():
 
     eventPlayer.is_using_hearthstone = false
     eventPlayer.is_using_skip_talent = false
-    eventPlayer.is_using_vote_yes = false
-    eventPlayer.is_using_vote_no = false
-    eventPlayer.is_using_open_options = false
     stopChasingVariable(eventPlayer.casting_timer)
     eventPlayer.using_hearthstone_timer = 0
     destroyEffect(eventPlayer.casting_effect_id)
